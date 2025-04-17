@@ -1,0 +1,21 @@
+# Fichiers et dossiers à exclure
+.git/                     # Répertoire Git
+.gitignore                # Fichier .gitignore
+__pycache__/              # Dossier des fichiers Python compilés
+*.pyc                     # Fichiers Python compilés
+*.pyo                     # Fichiers Python optimisés
+*.log                     # Fichiers journaux
+docker-compose.override.yml
+# Répertoires spécifiques au projet
+logs/                     # Répertoire des fichiers journaux
+env/                      # Environnements virtuels Python
+venv/                     # Autre dossier d'environnements virtuels
+node_modules/             # Si le projet inclut des dépendances Node.js
+.old/                     # Tout dossier que vous avez défini comme archive ou ancien
+ 
+
+# Fichiers sensibles ou inutiles
+.env                      # Fichier d'environnement contenant des variables sensibles
+secrets/                  # Répertoires contenant des fichiers sensibles
+.DS_Store                 # Fichier spécifique à macOS
+Thumbs.db                 # Fichier spécifique à Windows

@@ -1,0 +1,77 @@
+version: "3.8"  # Spécifie la version du format Docker Compose utilisée
+
+services:  # Liste des services à déployer dans cette stack
+
+  # ============================================================================
+  # Service PostgreSQL local — Base de données interne à Airflow
+  # ============================================================================
+  postgres:
+    image: postgres:15  # Image officielle de PostgreSQL version 15
+    container_name: postgres  # Nom du conteneur PostgreSQL
+    restart: always  # Redémarre automatiquement le conteneur s’il crash
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}  # Utilisateur défini dans .env
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}  # Mot de passe défini dans .env
+      POSTGRES_DB: ${POSTGRES_DB}  # Base utilisée pour Airflow
+    ports:
+      - "${POSTGRES_PORT}:5432"  # Mappe le port 5432 interne vers l’hôte
+    volumes:
+      - postgres_data:/var/lib/postgresql/data  # Stockage persistant des données PostgreSQL
+
+  # ============================================================================
+  # Service d'initialisation de la base Airflow — à exécuter une seule fois
+  # ============================================================================
+  airflow-init:
+    build: .
+    depends_on:
+      - postgres  # Attendre que le service postgres soit prêt
+    environment:
+      AIRFLOW__CORE__EXECUTOR: ${AIRFLOW__CORE__EXECUTOR}  # Exécuteur local
+      AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW__CORE__FERNET_KEY}  # Clé de chiffrement
+      AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}  # Connexion PostgreSQL
+    volumes:
+      - ./dags:/opt/airflow/dags  # Montage du dossier DAGs
+      - ./data:/opt/airflow/data  # Montage des données
+    entrypoint: /bin/bash -c "airflow db init"  # Initialise la base Airflow
+
+  # ============================================================================
+  # Service Webserver Airflow — Interface Web sur localhost:8082
+  # ============================================================================
+  airflow-webserver:
+    build: .
+    container_name: airflow-webserver
+    restart: always
+    depends_on:
+      - postgres  # Démarre après le service PostgreSQL
+    ports:
+      - "8082:8080"  # Expose le port 8080 du conteneur sur 8082 en local
+    environment:
+      AIRFLOW__CORE__EXECUTOR: ${AIRFLOW__CORE__EXECUTOR}
+      AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW__CORE__FERNET_KEY}
+      AIRFLOW__WEBSERVER__SECRET_KEY: ${AIRFLOW__WEBSERVER__SECRET_KEY}
+      AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./data:/opt/airflow/data
+    command: webserver  # Démarre le serveur web Airflow
+
+  # ============================================================================
+  # Service Scheduler Airflow — Responsable du déclenchement des DAGs
+  # ============================================================================
+  airflow-scheduler:
+    build: .
+    container_name: airflow-scheduler
+    restart: always
+    depends_on:
+      - postgres  # Nécessite PostgreSQL avant de démarrer
+    environment:
+      AIRFLOW__CORE__EXECUTOR: ${AIRFLOW__CORE__EXECUTOR}
+      AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW__CORE__FERNET_KEY}
+      AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./data:/opt/airflow/data
+    command: scheduler  # Démarre le scheduler Airflow (planification des DAGs)
+
+volumes:
+  postgres_data:  # Volume persistant nommé pour PostgreSQL
