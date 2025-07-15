@@ -1,0 +1,85 @@
+# ==========================================================================================
+# Fichier    : airflow/requirements.txt
+# Objectif   : Dépendances Python pour la stack Sport Data Solution (POC complet, Data & Orchestration)
+# Auteur     : Xavier Rousseau | Juillet 2025
+# ==========================================================================================
+ 
+########## ORCHESTRATION, AUTOMATION, DAG ##########
+apache-airflow[celery,postgres,redis]==2.9.0        # Orchestrateur DAGs avec exécution distribuée Celery
+celery==5.3.6                                       # Exécution distribuée — requis pour Flower
+flower==1.2.0                                       # UI de monitoring des workers Celery
+
+
+########## BASES DE DONNÉES / INGESTION / ORM ##########
+psycopg2-binary==2.9.9           # Connecteur PostgreSQL
+sqlalchemy==1.4.51               # ORM SQL Python, compatible Airflow 2.9, dbt, pandas
+dbt-core==1.7.9                  # Transformation analytique SQL moderne (core)
+dbt-postgres==1.7.9              # Adaptateur dbt PostgreSQL
+
+########## INGESTION, OBJET STORAGE, MINIO ##########
+minio==7.2.7                     # Client Python MinIO (S3-compatible)
+
+########## DATAFRAMES, MANIPULATION, TRAITEMENT ##########
+pandas==2.1.4
+numpy==1.26.4
+
+########## LECTURE/EXPORT FICHIERS EXCEL, CSV, TXT ##########
+openpyxl==3.1.2                  # Lecture/écriture Excel xlsx (pandas engine)
+xlsxwriter>=3.0.0                # Export Excel avancé (pandas engine)
+
+########## TRAITEMENT DISTRIBUÉ & DATA LAKE ##########
+pyspark==3.5.1                   # Traitement distribué Spark
+delta-spark==3.1.0               # Support Delta Lake sur Spark
+
+########## STREAMING (Kafka/Redpanda) ##########
+confluent-kafka==2.3.0           # Client Python Kafka/Redpanda
+
+########## DATA QUALITY, TESTS & PROFILING ##########
+great_expectations==0.18.12      # Data quality et validation
+pandas-profiling==3.6.6          # Data profiling rapide (pandas 1.x/2.x)
+ydata-profiling==4.8.3           # Profiling avancé (fork compatible pandas >=2.x)
+
+########## SIMULATION & GÉNÉRATION DE DONNÉES ##########
+faker==24.8.0                    # Générateur de données fictives
+randomname==0.1.5                # Générateur de prénoms/noms aléatoires
+
+########## API EXTERNES, INTÉGRATION GOOGLE, HTTP ##########
+requests==2.32.2                 # Appels API HTTP (Google Maps, Slack…)
+google-auth==2.29.0              # Authentification Google API
+google-api-python-client==2.130.0 # Pour Google Sheets, Drive, Maps…
+slack_sdk==3.27.0                # Intégration Slack (notifications)
+
+########## GESTION DES DATES, TEMPS, TIMEZONE ##########
+python-dateutil==2.9.0
+pytz==2024.1
+pendulum==3.0.0                  # Dates, timezones, parsing robustes (Airflow utilise pendulum)
+
+########## LOGGING, MONITORING, ALERTING ##########
+loguru==0.7.2                    # Logging évolué et lisible
+prometheus-client==0.20.0        # Export métriques Prometheus
+
+########## CHARGEMENT DE VARIABLES D'ENVIRONNEMENT ##########
+python-dotenv==1.0.1
+
+########## DÉVELOPPEMENT, TESTS, NOTEBOOKS (facultatif) ##########
+pytest==8.2.1                    # Tests unitaires
+ipython==8.24.0                  # Console interactive
+jupyter==1.0.0                   # Notebook Jupyter
+
+########## VISUALISATION, REPORTING, BI, DASHBOARDS ##########
+matplotlib==3.8.4                # Graphiques et data viz Python
+seaborn==0.13.2                  # Data viz avancée
+plotly==5.22.0                   # Data viz interactive (tableaux, dashboards)
+# dash==2.17.0                     # Webapp data viz Python (optionnel)
+# powerbiclient==3.1.1              # Client Power BI Python (optionnel, notebook)
+# metabase-api==3.5.1               # Intégration Metabase scripts (optionnel, à part)
+
+########## AUTRES OUTILS UTILES (selon besoin du projet) ##########
+tqdm==4.66.2                     # Progress bars en CLI
+click==8.1.7                     # CLI élégante pour scripts Python
+# rich==13.7.1                      # Affichage terminal enrichi/logs (optionnel)
+tenacity==8.3.0                  # Retry intelligent pour APIs
+xmltodict==0.13.0                # Parsing XML facile (API)
+
+########## EXPORT AIRFLOW/PROMETHEUS (optionnel, monitoring Airflow) ##########
+# apache-airflow-exporter==1.8.0

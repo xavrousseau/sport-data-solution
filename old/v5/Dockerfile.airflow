@@ -1,0 +1,40 @@
+# ================================================================================
+# FICHIER : Dockerfile.airflow
+# OBJET   : Image stable et minimale pour Apache Airflow (2.9.0)
+#           - Sans surcharge Flask/Session
+#           - Avec providers nécessaires
+#           - Timezone configuré en UTC
+# AUTEUR  : Xavier Rousseau | Juin 2025
+# ================================================================================
+
+# ------------------------------------------------------------------------------
+# 🔹 Base officielle Apache Airflow (Python 3.10)
+# ------------------------------------------------------------------------------
+FROM apache/airflow:2.9.0-python3.10
+
+# ------------------------------------------------------------------------------
+# 🔹 Étape 1 : Installation des dépendances métier
+# ------------------------------------------------------------------------------
+COPY requirements.txt /requirements.txt
+RUN pip install --no-cache-dir -r /requirements.txt
+
+# ------------------------------------------------------------------------------
+# 🔹 Étape 2 : Installation des providers Airflow nécessaires
+# ------------------------------------------------------------------------------
+RUN pip install --no-cache-dir \
+    apache-airflow-providers-postgres \
+    apache-airflow-providers-redis \
+    apache-airflow-providers-celery
+
+# ------------------------------------------------------------------------------
+# 🔹 Étape 3 : Configuration système — Fuseau horaire UTC
+# ------------------------------------------------------------------------------
+USER root
+ENV TZ=UTC
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+USER airflow
+
+# ------------------------------------------------------------------------------
+# 🔹 Étape 4 : Répertoire de travail par défaut
+# ------------------------------------------------------------------------------
+WORKDIR /opt/airflow

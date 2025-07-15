@@ -1,0 +1,75 @@
+# ==========================================================================================
+# Fichier    : docker-compose.override.pgadmin.yml (full .env)
+# Objectif   : Ajouter pgAdmin (UI web) pour requêter, administrer et monitorer PostgreSQL
+# Auteur     : Xavier Rousseau | Juin 2025
+#
+# Ce fichier ajoute une interface d’administration web pour PostgreSQL :
+#   - Accès complet à la base, requêtage, sauvegarde/restauration, gestion des droits
+#   - Configuration 100% par .env (aucune info statique ou mot de passe en dur)
+#   - Persistance locale du profil pgAdmin (favoris, connexions, historiques)
+#   - Prêt pour démo, formation, dev, prod ou audit
+# ==========================================================================================
+ 
+services:
+
+  # ----------------------------------------------------------------------------------------
+  # sport-pgadmin — Interface web d’administration PostgreSQL
+  #
+  # 🎯  Rôle :
+  #     - Permet d’administrer PostgreSQL via une UI web moderne
+  #     - Gère comptes, schémas, sauvegardes, requêtes, triggers, droits utilisateurs…
+  #
+  # 🔗  Accès :
+  #     - http://localhost:${PGADMIN_PORT} (le port externe est piloté par .env)
+  #
+  # 💾  Persistance :
+  #     - Les préférences, favoris, historiques et profils sont stockés dans ./pgadmin côté hôte
+  #
+  # 🚦  Démarrage :
+  #     - Attend que PostgreSQL soit opérationnel (`depends_on`)
+  #     - Peut être redémarré sans perte d’état utilisateur
+  #
+  # 🛡️  Sécurité :
+  #     - Aucun login/mdp en dur : tout passe par .env (modifiable à chaud)
+  # ----------------------------------------------------------------------------------------
+  sport-pgadmin:
+    image: dpage/pgadmin4                         # Image officielle, à jour
+    container_name: sport-pgadmin
+    restart: always
+
+    # -----------------------------------------------------------
+    # Variables d’environnement pour login initial et port
+    # -----------------------------------------------------------
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}         # Login admin pgAdmin (via .env)
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}   # Mot de passe (via .env)
+      PGADMIN_LISTEN_PORT: ${PGADMIN_LISTEN_PORT}             # Port interne UI (par défaut 80)
+
+    # -----------------------------------------------------------
+    # Port externe piloté par .env (par défaut : 5050 ou 8081 selon projet)
+    # -----------------------------------------------------------
+    ports:
+      - "${PGADMIN_PORT}:80"
+
+    # -----------------------------------------------------------
+    # Volume local pour la persistance (profils utilisateurs, favoris, etc.)
+    # Si tu veux un profil "jetable", retire ce volume !
+    # -----------------------------------------------------------
+    volumes:
+      - ./pgadmin:/var/lib/pgadmin
+
+    # -----------------------------------------------------------
+    # Démarre seulement après PostgreSQL pour éviter toute erreur de connexion initiale
+    # -----------------------------------------------------------
+    depends_on:
+      - sport-postgres
+
+    # -----------------------------------------------------------
+    # Rattachement au même réseau que le reste de la stack pour accès direct au service DB
+    # -----------------------------------------------------------
+    networks:
+      - sportdata_net
+
+# ==========================================================================================
+# FIN DE FICHIER — docker-compose.override.pgadmin.yml
+# ==========================================================================================

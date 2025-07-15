@@ -1,0 +1,69 @@
+# ====================================================================================
+# Fichier : prometheus.yml
+# Objectif : Configuration du monitoring Prometheus pour la stack Sport Data Solution
+# Auteur : Xavier Rousseau | Juin 2025
+#
+# Contenus :
+# - Intervalle global de scraping et d’évaluation
+# - Monitoring de Prometheus, Redpanda, Spark, ntfy
+# - Exemples commentés pour exporter des métriques PostgreSQL et application Python
+# ====================================================================================
+
+global:
+  scrape_interval: 15s          # ⏱️ Fréquence de collecte des métriques (défaut : 1 min)
+  evaluation_interval: 15s      # ⏱️ Fréquence d’évaluation des règles (alertes, etc.)
+
+scrape_configs:
+
+  # ------------------------------------------------------------------------------
+  # 1. Monitoring de Prometheus lui-même (auto-scraping)
+  # ------------------------------------------------------------------------------
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # ------------------------------------------------------------------------------
+  # 2. Monitoring de Redpanda (Broker Kafka) via Admin API (public_metrics)
+  #    ⚠️ Le port 9644 doit être exposé dans le docker-compose
+  # ------------------------------------------------------------------------------
+  - job_name: 'redpanda'
+    metrics_path: /public_metrics      # Path spécifique pour Redpanda metrics
+    static_configs:
+      - targets: ['redpanda:9644']    # Utilise le nom de service docker-compose
+
+  # ------------------------------------------------------------------------------
+  # 3. Monitoring de Spark (UI Web, métriques Prometheus intégrées)
+  #    ⚠️ Spark doit être lancé avec l’option --conf spark.metrics.conf
+  # ------------------------------------------------------------------------------
+  - job_name: 'spark'
+    metrics_path: /metrics/prometheus/
+    static_configs:
+      - targets: ['spark:4040']       # Port exposé dans docker-compose (UI & metrics)
+
+  # ------------------------------------------------------------------------------
+  # 4. (Optionnel) Monitoring PostgreSQL (Exporter à activer et ajouter dans le compose)
+  #    👉 Décommente si tu ajoutes un postgres_exporter dans ta stack !
+  # ------------------------------------------------------------------------------
+  # - job_name: 'postgres'
+  #   static_configs:
+  #     - targets: ['postgres_exporter:9187']
+
+  # ------------------------------------------------------------------------------
+  # 5. (Optionnel) Monitoring d’une application Python personnalisée
+  #    👉 L’app doit exposer un endpoint /metrics compatible Prometheus
+  # ------------------------------------------------------------------------------
+  # - job_name: 'app'
+  #   static_configs:
+  #     - targets: ['sportdata-app:8000']
+
+  # ------------------------------------------------------------------------------
+  # 6. Monitoring de ntfy (notifications push, alertes)
+  # ------------------------------------------------------------------------------
+  - job_name: 'ntfy'
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['ntfy:80']
+
+# ====================================================================================
+# FIN DU FICHIER — prometheus.yml
+# ====================================================================================

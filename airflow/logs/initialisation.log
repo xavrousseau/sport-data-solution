@@ -1,0 +1,22 @@
+2025-07-02 11:45:16.452 | INFO     | __main__:main:124 - Connexion à la base PostgreSQL...
+2025-07-02 11:45:19.159 | ERROR    | __main__:main:199 - ❌ Une erreur est survenue : 
+Traceback (most recent call last):
+
+  File "F:\1.Boulot\03_Github\sport-data-solution\airflow\scripts\initialisation.py", line 214, in <module>
+    main()
+    └ <function main at 0x000002A637A99940>
+
+> File "F:\1.Boulot\03_Github\sport-data-solution\airflow\scripts\initialisation.py", line 125, in main
+    conn = psycopg2.connect(
+           │        └ <function connect at 0x000002A6372C44A0>
+           └ <module 'psycopg2' from 'C:\\Users\\rouss\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\psycopg2\\__init_...
+
+  File "C:\Users\rouss\AppData\Local\Programs\Python\Python311\Lib\site-packages\psycopg2\__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+           │        │                       │                     └ {}
+           │        │                       └ None
+           │        └ 'host=sport-postgres port=5432 dbname=sportdata user=user password=password'
+           └ <built-in function _connect>
+
+psycopg2.OperationalError
+2025-07-02 11:45:19.179 | INFO     | __main__:main:208 - Connexion PostgreSQL fermée.

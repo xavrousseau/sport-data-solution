@@ -1,0 +1,62 @@
+# ====================================================================================
+# FICHIER : docker/docker-compose.override.metabase.yml
+# OBJET   : Déploiement de Metabase (interface BI no-code connectée à PostgreSQL)
+# CONTEXTE : Utilise le réseau Docker partagé et un volume persistant
+# ====================================================================================
+
+services:
+
+  # ------------------------------------------------------------------------------
+  # 📊 Service Metabase — Interface de visualisation et d’analyse des données
+  # ------------------------------------------------------------------------------
+  sport-metabase:
+    image: metabase/metabase:latest
+    container_name: sport-metabase
+
+    ports:
+      - "${METABASE_PORT}:3000"  # Port d’accès local (ex: 3001)
+
+    environment:
+      # 🔗 Configuration de la base interne de Metabase
+      MB_DB_TYPE: postgres
+      MB_DB_DBNAME: ${POSTGRES_DB}
+      MB_DB_PORT: ${POSTGRES_PORT}
+      MB_DB_USER: ${POSTGRES_USER}
+      MB_DB_PASS: ${POSTGRES_PASSWORD}
+      MB_DB_HOST: ${POSTGRES_HOST}
+
+      # 🌍 Définition du fuseau horaire
+      MB_TIMEZONE: ${MB_TIMEZONE}
+
+    volumes:
+      # 💾 Volume persistant pour conserver dashboards, utilisateurs, configs
+      - metabase_data:/metabase
+
+    restart: unless-stopped  # 🔁 Redémarre automatiquement sauf si stoppé manuellement
+
+    depends_on:
+      sport-postgres:
+        condition: service_healthy  # ✅ Attente de la santé de PostgreSQL avant démarrage
+
+    healthcheck:
+      # ❤️ Vérifie que l’API de Metabase est disponible
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+    networks:
+      - sport-network  # 🌐 Réseau commun à tous les services de la stack
+
+# ------------------------------------------------------------------------------
+# 🌐 Réseau partagé entre tous les services de la stack
+# ------------------------------------------------------------------------------
+networks:
+  sport-network:
+    driver: bridge
+
+# ------------------------------------------------------------------------------
+# 💾 Volume persistant pour les données Metabase
+# ------------------------------------------------------------------------------
+volumes:
+  metabase_data:

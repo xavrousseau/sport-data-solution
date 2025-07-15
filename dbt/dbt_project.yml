@@ -1,0 +1,22 @@
+# ======================================================================================
+# Fichier : dbt/dbt_project.yml
+# Objectif : Configuration du projet dbt pour Sport Data Solution
+# ======================================================================================
+
+name: sportdata
+version: '1.0'
+config-version: 2
+
+profile: sportdata_profile
+
+# Dossier contenant les fichiers .sql à transformer
+source-paths: ["models"]
+
+target-path: "target"
+clean-targets: ["target", "dbt_modules"]
+
+model-paths: ["models"]
+
+models:
+  sportdata:
+    +materialized: view

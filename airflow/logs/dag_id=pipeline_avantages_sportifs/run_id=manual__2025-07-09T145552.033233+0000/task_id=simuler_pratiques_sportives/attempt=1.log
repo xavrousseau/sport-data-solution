@@ -1,0 +1,31 @@
+[2025-07-09T14:56:15.632+0000] {local_task_job_runner.py:120} INFO - ::group::Pre task execution logs
+[2025-07-09T14:56:15.650+0000] {taskinstance.py:2073} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: pipeline_avantages_sportifs.simuler_pratiques_sportives manual__2025-07-09T14:55:52.033233+00:00 [queued]>
+[2025-07-09T14:56:15.656+0000] {taskinstance.py:2073} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: pipeline_avantages_sportifs.simuler_pratiques_sportives manual__2025-07-09T14:55:52.033233+00:00 [queued]>
+[2025-07-09T14:56:15.656+0000] {taskinstance.py:2303} INFO - Starting attempt 1 of 2
+[2025-07-09T14:56:15.666+0000] {taskinstance.py:2327} INFO - Executing <Task(BashOperator): simuler_pratiques_sportives> on 2025-07-09 14:55:52.033233+00:00
+[2025-07-09T14:56:15.672+0000] {standard_task_runner.py:63} INFO - Started process 134 to run task
+[2025-07-09T14:56:15.675+0000] {standard_task_runner.py:90} INFO - Running: ['airflow', 'tasks', 'run', 'pipeline_avantages_sportifs', 'simuler_pratiques_sportives', 'manual__2025-07-09T14:55:52.033233+00:00', '--job-id', '5', '--raw', '--subdir', 'DAGS_FOLDER/dag_pipeline_avantages.py', '--cfg-path', '/tmp/tmp2li2xj8x']
+[2025-07-09T14:56:15.677+0000] {standard_task_runner.py:91} INFO - Job 5: Subtask simuler_pratiques_sportives
+[2025-07-09T14:56:15.719+0000] {task_command.py:426} INFO - Running <TaskInstance: pipeline_avantages_sportifs.simuler_pratiques_sportives manual__2025-07-09T14:55:52.033233+00:00 [running]> on host c19735a04e2b
+[2025-07-09T14:56:15.782+0000] {taskinstance.py:2644} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='xavier' AIRFLOW_CTX_DAG_ID='pipeline_avantages_sportifs' AIRFLOW_CTX_TASK_ID='simuler_pratiques_sportives' AIRFLOW_CTX_EXECUTION_DATE='2025-07-09T14:55:52.033233+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-07-09T14:55:52.033233+00:00'
+[2025-07-09T14:56:15.783+0000] {taskinstance.py:430} INFO - ::endgroup::
+[2025-07-09T14:56:15.794+0000] {subprocess.py:63} INFO - Tmp dir root location: /tmp
+[2025-07-09T14:56:15.799+0000] {subprocess.py:75} INFO - Running command: ['/usr/bin/bash', '-c', 'python /opt/airflow/scripts/simuler_pratiques_sportives.py']
+[2025-07-09T14:56:15.809+0000] {subprocess.py:86} INFO - Output:
+[2025-07-09T14:56:17.122+0000] {subprocess.py:93} INFO - 2025-07-09 14:56:17.121 | INFO     | __main__:<module>:168 - === Démarrage simulation Strava-like et injection pipeline ===
+[2025-07-09T14:56:17.123+0000] {subprocess.py:93} INFO - 2025-07-09 14:56:17.122 | INFO     | minio_helper:__init__:49 - 📡 Connexion MinIO → http://sport-minio:9000 | Bucket : sportdata
+[2025-07-09T14:56:17.269+0000] {subprocess.py:93} INFO - 2025-07-09 14:56:17.269 | SUCCESS  | __main__:charger_salaries_eligibles_minio:70 - ✅ Fichier RH nettoyé téléchargé depuis MinIO dans /tmp/tmp08bzotii.xlsx
+[2025-07-09T14:56:17.395+0000] {subprocess.py:93} INFO - 2025-07-09 14:56:17.395 | INFO     | __main__:simuler_activites_strava:117 - Nombre total d'activités simulées : 426
+[2025-07-09T14:56:17.449+0000] {subprocess.py:93} INFO - 2025-07-09 14:56:17.448 | SUCCESS  | __main__:inserer_donnees_postgres:128 - ✅ 426 activités simulées insérées dans PostgreSQL (table 'activites_sportives')
+[2025-07-09T14:56:17.450+0000] {subprocess.py:93} INFO - 2025-07-09 14:56:17.449 | INFO     | minio_helper:__init__:49 - 📡 Connexion MinIO → http://sport-minio:9000 | Bucket : sportdata
+[2025-07-09T14:56:17.532+0000] {subprocess.py:93} INFO - 2025-07-09 14:56:17.532 | SUCCESS  | __main__:exporter_excel:136 - ✅ Fichier Excel exporté : simulations_activites_sportives.xlsx
+[2025-07-09T14:56:17.542+0000] {subprocess.py:93} INFO - 2025-07-09 14:56:17.541 | SUCCESS  | __main__:upload_file_to_minio:159 - ✅ Fichier simulation uploadé sur MinIO : simulation/activites_sportives.xlsx
+[2025-07-09T14:56:17.547+0000] {subprocess.py:93} INFO - 2025-07-09 14:56:17.547 | SUCCESS  | __main__:exporter_csv:144 - ✅ Fichier CSV exporté : simulations_activites_sportives.csv
+[2025-07-09T14:56:17.557+0000] {subprocess.py:93} INFO - 2025-07-09 14:56:17.557 | SUCCESS  | __main__:upload_file_to_minio:159 - ✅ Fichier simulation uploadé sur MinIO : simulation/activites_sportives.csv
+[2025-07-09T14:56:17.558+0000] {subprocess.py:93} INFO - 2025-07-09 14:56:17.557 | INFO     | __main__:<module>:182 - === Simulation Strava-like terminée, fichiers dispos sur PostgreSQL & MinIO ===
+[2025-07-09T14:56:17.758+0000] {subprocess.py:97} INFO - Command exited with return code 0
+[2025-07-09T14:56:17.759+0000] {taskinstance.py:441} INFO - ::group::Post task execution logs
+[2025-07-09T14:56:17.915+0000] {taskinstance.py:1205} INFO - Marking task as SUCCESS. dag_id=pipeline_avantages_sportifs, task_id=simuler_pratiques_sportives, execution_date=20250709T145552, start_date=20250709T145615, end_date=20250709T145617
+[2025-07-09T14:56:17.981+0000] {local_task_job_runner.py:240} INFO - Task exited with return code 0
+[2025-07-09T14:56:17.997+0000] {taskinstance.py:3482} INFO - 1 downstream tasks scheduled from follow-on schedule check
+[2025-07-09T14:56:18.000+0000] {local_task_job_runner.py:222} INFO - ::endgroup::

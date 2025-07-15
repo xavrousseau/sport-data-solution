@@ -1,0 +1,57 @@
+# ==========================================================================================
+# Fichier    : requirements.txt
+# Objectif   : Dépendances Python pour la stack Sport Data Solution (POC complet, Data & Orchestration)
+# Auteur     : Xavier Rousseau | Juin 2025
+# ==========================================================================================
+pip==24.0
+
+# === Orchestration (Airflow + Celery + Redis + PostgreSQL) ===
+apache-airflow[celery,postgres,redis]==2.9.0        # Orchestrateur DAGs avec exécution distribuée Celery
+
+# === Traitement et analyse de données (DataFrame, Excel, array) ===
+pandas==2.1.4              # Manipulation et analyse de données tabulaires
+openpyxl==3.1.2            # Lecture/écriture fichiers Excel
+numpy==1.26.4              # Calcul vectoriel, support Spark/pandas
+
+# === Modélisation SQL & transformations (dbt) ===
+dbt-core==1.7.9            # Moteur dbt
+dbt-postgres==1.7.9        # Cible PostgreSQL
+
+# === Qualité des données (tests, validation, profiling) ===
+great_expectations==0.18.12  # Framework de data quality
+
+# === Monitoring, alerting, logs ===
+prometheus-client==0.20.0   # Exposition de métriques Prometheus
+loguru==0.7.2               # Logging moderne, structuré
+
+# === Connexion à PostgreSQL (scripts, ETL, tests…) ===
+psycopg2-binary==2.9.9      # Driver PostgreSQL
+
+# === Génération et simulation de données (démos, tests, init) ===
+faker==24.8.0               # Données factices
+randomname==0.1.5           # Noms aléatoires
+
+# === Intégration API/HTTP externes ===
+requests==2.32.2            # Requêtes HTTP
+
+# === Gestion des dates et timezones ===
+python-dateutil==2.9.0      # Parsing intelligent
+pytz==2024.1                # Timezones (support pandas, airflow)
+
+# === Kafka / Redpanda (streaming) ===
+confluent-kafka==2.3.0      # Client Kafka performant
+
+# === Traitement distribué Spark / Delta Lake ===
+pyspark==3.5.1              # Spark Python API
+delta-spark==3.1.0          # ACID table support
+
+# === Chargement de fichiers .env ===
+python-dotenv==1.0.1        # Lecture .env
+
+# === Développement, test, notebooks (facultatif) ===
+pytest==8.2.1               # Tests unitaires
+ipython==8.24.0             # Shell interactif
+jupyter==1.0.0              # Notebooks
+
+# === Optionnel : export Prometheus pour Airflow (si activé)
+# apache-airflow-exporter==1.8.0

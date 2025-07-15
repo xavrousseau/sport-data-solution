@@ -1,0 +1,48 @@
+# ================================================================================
+# FICHIER : Dockerfile.airflow
+# OBJET   : Image personnalisée Apache Airflow avec :
+#           - Providers nécessaires
+#           - Timezone fixée à UTC
+#           - Correctifs Flask/Session pour éviter crash interface web
+# AUTEUR  : Xavier Rousseau — Juin 2025
+# ================================================================================
+
+FROM apache/airflow:2.9.0-python3.10
+
+# --------------------------------------------------------------------
+# Étape 1 : Dépendances Python personnalisées + correctifs compatibilité
+# --------------------------------------------------------------------
+COPY requirements.txt /requirements.txt
+
+# Install requirements principaux
+RUN pip install --no-cache-dir -r /requirements.txt
+
+# Versions stables et compatibles de Flask / Session
+RUN pip uninstall -y flask flask-session && \
+    pip install --no-cache-dir \
+        Flask==2.2.5 \
+        Flask-Session==0.4.0 \
+        flask-limiter==2.4.6 \
+        flask-wtf==1.1.1
+
+
+# --------------------------------------------------------------------
+# Étape 2 : Installation des providers Airflow utiles
+# --------------------------------------------------------------------
+RUN pip install --no-cache-dir \
+    apache-airflow-providers-postgres \
+    apache-airflow-providers-redis \
+    apache-airflow-providers-celery
+
+# --------------------------------------------------------------------
+# Étape 3 : Fixe le fuseau horaire UTC pour éviter les bugs Flask/Session
+# --------------------------------------------------------------------
+USER root
+ENV TZ=UTC
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+USER airflow
+
+# --------------------------------------------------------------------
+# Étape 4 : Répertoire de travail par défaut
+# --------------------------------------------------------------------
+WORKDIR /opt/airflow

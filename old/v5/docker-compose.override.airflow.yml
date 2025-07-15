@@ -1,0 +1,164 @@
+# ====================================================================================
+# FICHIER : docker-compose.override.airflow.yml
+# OBJET   : Déploiement Airflow (CeleryExecutor) + services associés
+# AUTEUR  : Xavier Rousseau | Optimisé Juin 2025
+# ====================================================================================
+
+# =======================================================
+# 🔁 FACTORISATION ENV — Airflow configuration centralisée
+# =======================================================
+x-airflow-env: &airflow-env
+  AIRFLOW__CORE__DEFAULT_TIMEZONE: utc
+  AIRFLOW__CORE__EXECUTOR: ${AIRFLOW_EXECUTOR}
+  AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: ${AIRFLOW__DATABASE__SQL_ALCHEMY_CONN}
+  AIRFLOW__CELERY__BROKER_URL: ${AIRFLOW__CELERY__BROKER_URL}
+  AIRFLOW__CELERY__RESULT_BACKEND: ${AIRFLOW__CELERY__RESULT_BACKEND}
+  AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW__CORE__FERNET_KEY}
+  AIRFLOW__WEBSERVER__SECRET_KEY: ${AIRFLOW__WEBSERVER__SECRET_KEY}
+  AIRFLOW__LOGGING__LOGGING_LEVEL: INFO
+
+services:
+
+  # =======================================================
+  # 1. Initialisation (DB + utilisateur admin)
+  # =======================================================
+  sport-airflow-init:
+    build:
+      context: .
+      dockerfile: Dockerfile.airflow
+    image: sport-airflow:latest
+    container_name: sport-airflow-init
+    depends_on:
+      sport-postgres:
+        condition: service_healthy
+      sport-redis:
+        condition: service_healthy
+    restart: "no"
+    environment:
+      <<: *airflow-env
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./airflow/logs:/opt/airflow/logs
+      - ./airflow/plugins:/opt/airflow/plugins
+      - ./requirements.txt:/requirements.txt
+      - ./scripts:/opt/airflow/scripts
+      - ./data:/opt/airflow/data
+    entrypoint:
+      - bash
+      - -c
+      - |
+        pip install -r /requirements.txt && \
+        airflow db migrate && \
+        airflow users create \
+          --username ${AIRFLOW_ADMIN_USER} \
+          --firstname ${AIRFLOW_ADMIN_FIRSTNAME} \
+          --lastname ${AIRFLOW_ADMIN_LASTNAME} \
+          --role Admin \
+          --email ${AIRFLOW_ADMIN_EMAIL} \
+          --password ${AIRFLOW_ADMIN_PASSWORD}
+    networks:
+      - sport-network
+
+  # =======================================================
+  # 2. Webserver — Interface UI Airflow
+  # =======================================================
+  sport-airflow-webserver:
+    image: sport-airflow:latest
+    container_name: sport-airflow-webserver
+    depends_on:
+      - sport-airflow-init
+    restart: unless-stopped
+    environment:
+      <<: *airflow-env
+    ports:
+      - "${AIRFLOW_WEB_PORT}:8080"
+    command: airflow webserver
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./airflow/logs:/opt/airflow/logs
+      - ./airflow/plugins:/opt/airflow/plugins
+      - ./requirements.txt:/requirements.txt
+      - ./scripts:/opt/airflow/scripts
+      - ./data:/opt/airflow/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - sport-network
+
+  # =======================================================
+  # 3. Scheduler — Planification des DAGs
+  # =======================================================
+  sport-airflow-scheduler:
+    image: sport-airflow:latest
+    container_name: sport-airflow-scheduler
+    depends_on:
+      - sport-airflow-webserver
+    restart: unless-stopped
+    environment:
+      <<: *airflow-env
+    command: airflow scheduler
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./airflow/logs:/opt/airflow/logs
+      - ./airflow/plugins:/opt/airflow/plugins
+      - ./requirements.txt:/requirements.txt
+      - ./scripts:/opt/airflow/scripts
+      - ./data:/opt/airflow/data
+    networks:
+      - sport-network
+
+  # =======================================================
+  # 4. Worker — Exécution des tâches DAG via Celery
+  # =======================================================
+  sport-airflow-worker:
+    image: sport-airflow:latest
+    container_name: sport-airflow-worker
+    depends_on:
+      - sport-airflow-scheduler
+    restart: unless-stopped
+    environment:
+      <<: *airflow-env
+    command: airflow celery worker
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./airflow/logs:/opt/airflow/logs
+      - ./airflow/plugins:/opt/airflow/plugins
+      - ./requirements.txt:/requirements.txt
+      - ./scripts:/opt/airflow/scripts
+      - ./data:/opt/airflow/data
+    networks:
+      - sport-network
+
+  # =======================================================
+  # 5. Flower — UI de monitoring Celery
+  # =======================================================
+  sport-airflow-flower:
+    image: sport-airflow:latest
+    container_name: sport-airflow-flower
+    depends_on:
+      - sport-airflow-worker
+    restart: unless-stopped
+    environment:
+      <<: *airflow-env
+    command: airflow celery flower
+    ports:
+      - "${AIRFLOW_FLOWER_PORT}:5555"
+    volumes:
+      - ./requirements.txt:/requirements.txt
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:5555/ || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - sport-network
+
+# =======================================================
+# Réseau partagé
+# =======================================================
+networks:
+  sport-network:
+    driver: bridge

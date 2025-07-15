@@ -1,0 +1,36 @@
+version: '3.9'
+
+services:
+  # === Prometheus ===
+  sport-prometheus:
+    image: prom/prometheus:${PROMETHEUS_VERSION:-latest}
+    container_name: sport-prometheus
+    restart: always
+    volumes:
+      - prometheus_data:/prometheus
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - "${PROMETHEUS_PORT}:9090"
+    networks:
+      - sportdata_net
+
+  # === Grafana ===
+  sport-grafana:
+    image: grafana/grafana:${GRAFANA_VERSION:-latest}
+    container_name: sport-grafana
+    restart: always
+    depends_on:
+      - sport-prometheus
+    volumes:
+      - grafana_data:/var/lib/grafana
+      # optionnel : dashboards préchargés
+      - ./monitoring/dashboards:/var/lib/grafana/dashboards:ro
+    ports:
+      - "${GRAFANA_PORT}:3000"
+    networks:
+      - sportdata_net
+
+# Déclaration des volumes spécifiques monitoring
+volumes:
+  prometheus_data:
+  grafana_data:

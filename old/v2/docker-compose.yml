@@ -1,0 +1,413 @@
+# ==========================================================================================
+# Fichier    : docker-compose.yml (100% variables via .env)
+# Objectif   : Déployer la stack Sport Data Solution de manière paramétrable, sécurisée
+# Auteur     : Xavier Rousseau | Juin 2025
+#
+# Toutes les valeurs critiques (mots de passe, ports, users, clés, etc.) sont 
+# déplacées dans le fichier .env pour :
+#   - Sécurité (rien de sensible en dur)
+#   - Facilité d’adaptation par environnement (dev, test, prod, CI/CD…)
+#   - Maintenabilité et évolutivité maximale
+# ==========================================================================================
+ 
+
+# ------------------------------------------------------------------------------------------
+# Réseau partagé (virtuel) entre tous les services :
+# - Permet à chaque conteneur d’appeler les autres par leur nom de service
+# - Facilite la résolution DNS interne à Docker
+# - Isole la stack des autres stacks sur la même machine
+# ------------------------------------------------------------------------------------------
+networks:
+  sportdata_net:
+    driver: bridge
+
+# ------------------------------------------------------------------------------------------
+# Volumes persistants pour tous les services nécessitant de la donnée durable :
+# - Indispensable pour éviter toute perte de données à l’arrêt/reboot d’un conteneur
+# - Chaque volume a un nom clair, pour backup/migration/maintenance
+# ------------------------------------------------------------------------------------------
+volumes:
+  sport-postgres_data:     # Données PostgreSQL (tables, index, etc.)
+  sport-redpanda_data:     # Messages Redpanda (Kafka)
+  sport-minio_data:        # Objets/dossiers stockés sur MinIO (Data Lake)
+  sport-spark_warehouse:   # Tables et fichiers Delta Lake/Spark (Data Lakehouse)
+
+# ------------------------------------------------------------------------------------------
+# Définition des services de la stack : chaque bloc correspond à un microservice clé
+# ------------------------------------------------------------------------------------------
+services:
+ 
+  # ========================================================================================
+  # 0. Redis — Broker Celery/Airflow (messagerie temps réel)
+  #    - Utilisé par Airflow pour CeleryExecutor (tâches distribuées)
+  #    - Peut servir à d'autres microservices si besoin de cache/messaging
+  # ========================================================================================
+  sport-redis:
+    image: redis:7-alpine
+    container_name: sport-redis
+    restart: always
+    ports:
+      - "6379:6379"  # Expose Redis sur le port standard
+    networks:
+      - sportdata_net
+
+  # ========================================================================================
+  # 1. PostgreSQL — Base de données relationnelle principale
+  #    - Stocke toutes les tables métiers (RH, activités sportives, logs, etc.)
+  #    - Données persistantes sur sport-postgres_data
+  #    - Port configuré via .env pour éviter conflits (multi-projets, CI/CD…)
+  # ========================================================================================
+  sport-postgres:
+    image: postgres:15
+    container_name: sport-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}             # Utilisateur principal (via .env)
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}     # Mot de passe
+      POSTGRES_DB: ${POSTGRES_DB}                 # Nom de la base par défaut
+    ports:
+      - "${POSTGRES_PORT}:5432"                   # Redirige port conteneur → hôte
+    volumes:
+      - sport-postgres_data:/var/lib/postgresql/data
+    networks:
+      - sportdata_net
+
+  # ========================================================================================
+  # 2. Redpanda — Broker Kafka-compatible (streaming d'événements)
+  #    - Transport d’événements entre microservices (CDC, data pipeline, logs…)
+  #    - Mono-noeud optimisé pour développement, test ou POC (overprovisioned)
+  #    - Ports et configuration pilotés par .env (adaptabilité totale)
+  # ========================================================================================
+  sport-redpanda:
+    image: redpandadata/redpanda:v23.3.10                # Version stable de Redpanda (Kafka)
+    container_name: sport-redpanda
+    restart: always
+    # Lancement optimisé POC/dev : overprovisioned = bypass limites CPU/RAM pour faciliter le local
+    # --smp 1         : 1 cœur CPU
+    # --memory 1G      : 1 Go de RAM maximum
+    # --reserve-memory 0M : pas de mémoire réservée (optimisation dev)
+    # --node-id 0      : ID du nœud (unique en mono-noeud)
+    # --check=false    : désactive certains checks hardware
+    command: redpanda start --overprovisioned --smp 1 --memory 1G --reserve-memory 0M --node-id 0 --check=false
+    ports:
+      - "${REDPANDA_BROKER_PORT}:9092"   # Port API Kafka (producteurs/consommateurs, scripts)
+      - "${REDPANDA_ADMIN_PORT}:9644"    # Port API Admin (UI Redpanda, health, metrics)
+    volumes:
+      - sport-redpanda_data:/var/lib/redpanda/data       # Persistance messages Kafka
+    networks:
+      - sportdata_net                                    # Intégré au réseau partagé Docker
+
+  # ----------------------------------------------------------------------------------------
+  # Redpanda Console — UI web pour explorer les topics Kafka/Redpanda
+  #    - Permet d’inspecter en live les topics, messages, schémas, performances
+  #    - Interface d’admin simple pour debug, dev, formation ou monitoring
+  #    - Ports personnalisés via .env
+  #    - Peut être désactivée en prod si besoin (mais très utile en dev !)
+  # ----------------------------------------------------------------------------------------
+  sport-redpanda-console:
+    image: docker.redpanda.com/redpandadata/console:latest  # Image officielle console web
+    container_name: sport-redpanda-console
+    restart: always
+    environment:
+      - KAFKA_BROKERS=sport-redpanda:9092                  # Broker Kafka à monitorer
+      - REDPANDA_ADMIN_URL=http://sport-redpanda:9644      # Lien API admin Redpanda
+    ports:
+      - "${REDPANDA_CONSOLE_PORT}:8080"                    # UI web Redpanda Console (ex : 8085)
+    networks:
+      - sportdata_net
+    depends_on:
+      - sport-redpanda                                     # Attend que le broker soit démarré
+
+  # ========================================================================================
+  # 3. Debezium Connect — Capture de Changement de Données (CDC)
+  #    - Synchro en temps réel : PostgreSQL → Kafka/Redpanda
+  #    - Permet le “Change Data Capture” (data streaming, delta ingestion)
+  #    - Toutes les connexions (brokers, topics, hostnames) pilotées via .env
+  # ========================================================================================
+  sport-connect:
+    image: debezium/connect:2.4
+    container_name: sport-connect
+    restart: always
+    depends_on:
+      - sport-postgres
+      - sport-redpanda
+    ports:
+      - "${DEBEZIUM_CONNECT_PORT}:8083"           # API REST Debezium (admin connecteurs)
+    environment:
+      BOOTSTRAP_SERVERS: ${DEBEZIUM_BOOTSTRAP_SERVERS}            # Adresse broker Redpanda
+      GROUP_ID: ${DEBEZIUM_GROUP_ID}                              # ID de consumer group Kafka
+      CONFIG_STORAGE_TOPIC: ${DEBEZIUM_CONFIG_STORAGE_TOPIC}      # Topics internes Debezium
+      OFFSET_STORAGE_TOPIC: ${DEBEZIUM_OFFSET_STORAGE_TOPIC}
+      STATUS_STORAGE_TOPIC: ${DEBEZIUM_STATUS_STORAGE_TOPIC}
+      KEY_CONVERTER: org.apache.kafka.connect.json.JsonConverter   # Format JSON léger (no AVRO)
+      VALUE_CONVERTER: org.apache.kafka.connect.json.JsonConverter
+      CONNECT_KEY_CONVERTER_SCHEMAS_ENABLE: "false"
+      CONNECT_VALUE_CONVERTER_SCHEMAS_ENABLE: "false"
+      CONNECT_REST_ADVERTISED_HOST_NAME: ${DEBEZIUM_CONNECT_REST_ADVERTISED_HOST_NAME}
+      CONNECT_PLUGIN_PATH: /kafka/connect,/debezium
+    networks:
+      - sportdata_net
+
+  # ========================================================================================
+  # 4. MinIO — Stockage objet compatible S3 (Data Lake interne)
+  #    - Sauvegarde les fichiers bruts, exports, snapshots, historiques
+  #    - Admin/minio root user/password, ports API et console via .env
+  #    - Persistance sur sport-minio_data
+  # ========================================================================================
+  sport-minio:
+    image: minio/minio
+    container_name: sport-minio
+    command: server /data --console-address ":${MINIO_CONSOLE_PORT}"  # Console admin sur port dédié
+    restart: always
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}           # Admin S3 (via .env)
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    ports:
+      - "${MINIO_PORT}:9000"            # API S3 compatible (Put, Get, etc.)
+      - "${MINIO_CONSOLE_PORT}:9001"    # Console web d’admin
+    volumes:
+      - sport-minio_data:/data
+    networks:
+      - sportdata_net
+
+  # ========================================================================================
+  # 5. Apache Spark — Traitement batch & streaming (ETL, Data Lakehouse, Delta)
+  #    - Lance le master Spark pour jobs ETL, calculs, ingestion, requêtes analytiques
+  #    - Mode configurable (master/worker) via variable .env
+  #    - Expose UI pour monitoring Spark
+  #    - Jobs PySpark à placer dans ./spark/jobs
+  #    - Warehouse persistant pour Delta Lake (tables, logs, checkpoints…)
+  # ========================================================================================
+  sport-spark:
+    image: bitnami/spark:3.5
+    container_name: sport-spark
+    restart: always
+    environment:
+      SPARK_MODE: ${SPARK_MODE}                         # master ou worker (voir .env)
+    ports:
+      - "${SPARK_CLUSTER_PORT}:7077"                    # Cluster manager Spark
+      - "${SPARK_UI_PORT}:4040"                         # UI jobs Spark (web)
+    volumes:
+      - ./spark/jobs:/opt/spark/jobs                    # Monte les jobs dans le conteneur
+      - sport-spark_warehouse:/opt/spark/warehouse      # Warehouse partagé Delta Lake
+    networks:
+      - sportdata_net
+
+  # ========================================================================================
+  # 6. Ntfy — Service notifications push/REST (alertes, monitoring, dev/ops)
+  #    - Permet envoi de notifications (dev, CI, ops, Slack, incidents…)
+  #    - Expose l’API HTTP sur le port .env (NTFY_HTTP_PORT)
+  # ========================================================================================
+  sport-ntfy:
+    image: binwiederhier/ntfy
+    container_name: sport-ntfy
+    restart: always
+    command: serve
+    ports:
+      - "${NTFY_HTTP_PORT}:80"          # Expose l’API REST pour notifications (doc ntfy.sh)
+    networks:
+      - sportdata_net
+
+  # ========================================================================================
+  # 9. Application Python custom (scripts, jobs, API, ETL…)
+  #    - Build depuis le Dockerfile du projet
+  #    - Code local monté dans le conteneur pour dev/itération rapide
+  #    - Utilisé pour : ingestion, analyse, APIs, data quality, export, batch, etc.
+  #    - Peut communiquer avec tout le reste de la stack (réseau partagé)
+  #    - Démarrage après la DB pour garantir les migrations possibles
+  # ========================================================================================
+  sportdata-app:
+    build:
+      context: .                               # Racine projet
+      dockerfile: Dockerfile                   # Dockerfile custom Python
+    container_name: sportdata-app
+    volumes:
+      - .:/app                                # Monte tout le code local dans le conteneur
+    networks:
+      - sportdata_net
+    depends_on:
+      - sport-postgres
+
+
+  # ========================================================================================
+  # 10. sport-airflow-init
+  #   🛠 Service d’initialisation Airflow :
+  #      - Installe les dépendances Python (requirements.txt)
+  #      - Initialise la base (airflow db init)
+  #      - Crée le compte admin (admin user dans l’UI)
+  #   🔁 Ne tourne qu’une fois au démarrage (restart: "no")
+  #   ⚠️ Doit être relancé après un reset complet de la DB
+  # ========================================================================================
+  sport-airflow-init:
+    build:
+      context: .
+      dockerfile: Dockerfile     # Image custom basée sur Airflow officiel
+    image: sport-airflow:latest          # Nom de l’image personnalisée
+    container_name: sport-airflow-init
+    depends_on:
+      - sport-postgres                   # Attend la base de données
+      - sport-redis                      # Attend le broker Celery
+    restart: "no"
+    environment:
+      AIRFLOW__CORE__EXECUTOR: ${AIRFLOW_EXECUTOR}
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}/${POSTGRES_DB}
+      AIRFLOW__CELERY__BROKER_URL: redis://${REDIS_HOST}:${REDIS_PORT}/0
+      AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}/${POSTGRES_DB}
+      AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW__CORE__FERNET_KEY}
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./airflow/logs:/opt/airflow/logs
+      - ./airflow/plugins:/opt/airflow/plugins
+      - ./airflow/dbt:/opt/airflow/dbt
+      - ./airflow/great_expectations:/opt/airflow/great_expectations
+      - ./requirements.txt:/requirements.txt
+    entrypoint:
+      - bash
+      - -c
+      - |
+        pip install -r /requirements.txt && \
+        airflow db init && \
+        airflow users create \
+          --username ${AIRFLOW_ADMIN_USER} \
+          --firstname ${AIRFLOW_ADMIN_FIRSTNAME} \
+          --lastname ${AIRFLOW_ADMIN_LASTNAME} \
+          --role Admin \
+          --email ${AIRFLOW_ADMIN_EMAIL} \
+          --password ${AIRFLOW_ADMIN_PASSWORD}
+    networks:
+      - sportdata_net
+
+  # ========================================================================================
+  # 11. sport-airflow-webserver
+  #   🌐 UI web principale (http://localhost:${AIRFLOW_WEB_PORT})
+  #      - Visualise, lance, monitore les DAGs
+  #      - Peut être redémarré à chaud (restart: unless-stopped)
+  #   ⚠️  Dépend de l’init pour être sûr que la DB/users Airflow existent déjà
+  # ========================================================================================
+  sport-airflow-webserver:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: sport-airflow:latest
+    container_name: sport-airflow-webserver
+    restart: unless-stopped
+    depends_on:
+      - sport-airflow-init
+    environment:
+      AIRFLOW__CORE__EXECUTOR: ${AIRFLOW_EXECUTOR}
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}/${POSTGRES_DB}
+      AIRFLOW__CELERY__BROKER_URL: redis://${REDIS_HOST}:${REDIS_PORT}/0
+      AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}/${POSTGRES_DB}
+      AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW__CORE__FERNET_KEY}
+    ports:
+      - "${AIRFLOW_WEB_PORT}:8080"           # Port externe pour accès navigateur
+    command: airflow webserver
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./airflow/logs:/opt/airflow/logs
+      - ./airflow/plugins:/opt/airflow/plugins
+      - ./airflow/dbt:/opt/airflow/dbt
+      - ./airflow/great_expectations:/opt/airflow/great_expectations
+      - ./requirements.txt:/requirements.txt
+    networks:
+      - sportdata_net
+
+  # ========================================================================================
+  # 12. sport-airflow-scheduler
+  #   ⏰ Service planificateur :
+  #      - Détecte quand déclencher/exécuter les DAGs (selon leur schedule/trigger)
+  #   ⚠️  Démarre après le webserver (séquencement optimal)
+  #   ⚡️  Peut être scalé si très grosse volumétrie (rarement utile hors prod XXL)
+  # ========================================================================================
+  sport-airflow-scheduler:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: sport-airflow:latest
+    container_name: sport-airflow-scheduler
+    restart: unless-stopped
+    depends_on:
+      - sport-airflow-webserver
+      - sport-redis
+    environment:
+      AIRFLOW__CORE__EXECUTOR: ${AIRFLOW_EXECUTOR}
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}/${POSTGRES_DB}
+      AIRFLOW__CELERY__BROKER_URL: redis://${REDIS_HOST}:${REDIS_PORT}/0
+      AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}/${POSTGRES_DB}
+      AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW__CORE__FERNET_KEY}
+    command: airflow scheduler
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./airflow/logs:/opt/airflow/logs
+      - ./airflow/plugins:/opt/airflow/plugins
+      - ./airflow/dbt:/opt/airflow/dbt
+      - ./airflow/great_expectations:/opt/airflow/great_expectations
+      - ./requirements.txt:/requirements.txt
+    networks:
+      - sportdata_net
+
+  # ========================================================================================
+  # 13. sport-airflow-worker
+  #   ⚙️  Worker Celery pour exécution distribuée des tasks
+  #      - Peut être multiplié si besoin (scaling horizontal)
+  #      - Peut être monitoré par Flower
+  #   ⚠️  Démarre après le scheduler pour bonne synchronisation
+  # ========================================================================================
+  sport-airflow-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: sport-airflow:latest
+    container_name: sport-airflow-worker
+    restart: unless-stopped
+    depends_on:
+      - sport-airflow-scheduler
+      - sport-redis
+    environment:
+      AIRFLOW__CORE__EXECUTOR: ${AIRFLOW_EXECUTOR}
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}/${POSTGRES_DB}
+      AIRFLOW__CELERY__BROKER_URL: redis://${REDIS_HOST}:${REDIS_PORT}/0
+      AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}/${POSTGRES_DB}
+      AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW__CORE__FERNET_KEY}
+    command: airflow celery worker
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./airflow/logs:/opt/airflow/logs
+      - ./airflow/plugins:/opt/airflow/plugins
+      - ./airflow/dbt:/opt/airflow/dbt
+      - ./airflow/great_expectations:/opt/airflow/great_expectations
+      - ./requirements.txt:/requirements.txt
+    networks:
+      - sportdata_net
+
+  # ========================================================================================
+  # 14. sport-flower
+  #   📈 Monitoring des workers Celery via Flower (http://localhost:${AIRFLOW_FLOWER_PORT})
+  #      - Visualise l’état des workers, tasks, files d’attente, stats d’exécution
+  #      - Indispensable pour debug, monitoring ou scaling
+  #      - Peut être désactivé si usage ultra-minimaliste
+  #   ⚠️  Démarre après les workers pour collecter les stats
+  # ========================================================================================
+  sport-flower:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: sport-airflow:latest
+    container_name: sport-flower
+    restart: unless-stopped
+    depends_on:
+      - sport-airflow-worker
+      - sport-redis
+    environment:
+      AIRFLOW__CORE__EXECUTOR: ${AIRFLOW_EXECUTOR}
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}/${POSTGRES_DB}
+      AIRFLOW__CELERY__BROKER_URL: redis://${REDIS_HOST}:${REDIS_PORT}/0
+      AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW__CORE__FERNET_KEY}
+    command: airflow celery flower
+    ports:
+      - "${AIRFLOW_FLOWER_PORT}:5555"
+    volumes:
+      - ./requirements.txt:/requirements.txt
+    networks:
+      - sportdata_net
+ 

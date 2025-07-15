@@ -1,0 +1,19 @@
+{
+  "name": "sportdata-connector",
+  "config": {
+    "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+    "plugin.name": "pgoutput",
+    "database.hostname": "sport-postgres",
+    "database.port": "5432",
+    "database.user": "user",
+    "database.password": "password",
+    "database.dbname": "sportdata",
+    "database.server.name": "sportdata",
+    "slot.name": "sportdata_slot",
+    "publication.name": "debezium_publication",
+    "schema.include.list": "sportdata",
+    "table.include.list": "sportdata.employes,sportdata.activites_sportives,sportdata.beneficiaires_primes_sport",
+    "topic.prefix": "sportdata",
+    "tombstones.on.delete": "false"
+  }
+}

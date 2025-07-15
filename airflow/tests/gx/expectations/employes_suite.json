@@ -1,0 +1,36 @@
+{
+  "expectation_suite_name": "employes_suite",
+  "expectations": [
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": { "column": "id_salarie" }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_unique",
+      "kwargs": { "column": "id_salarie" }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_set",
+      "kwargs": {
+        "column": "sexe",
+        "value_set": ["H", "F"]
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_strftime_format",
+      "kwargs": {
+        "column": "date_naissance",
+        "strftime_format": "%Y-%m-%d"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "date_embauche",
+        "min_value": "2000-01-01",
+        "max_value": "today"
+      }
+    }
+  ],
+  "meta": {}
+}

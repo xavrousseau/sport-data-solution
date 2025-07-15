@@ -1,0 +1,178 @@
+# ====================================================================================
+# FICHIER : docker-compose.override.airflow.yml
+# OBJET  : Déploiement complet d'Apache Airflow avec CeleryExecutor, Flower et service d'init
+# AUTEUR : Xavier Rousseau | Juin 2025
+# ====================================================================================
+
+  # ========================================================================================
+  # 1. sport-airflow-init
+  # 🛠 Service d’initialisation unique :
+  #    - Installe les dépendances Python (requirements.txt)
+  #    - Initialise la DB (airflow db init)
+  #    - Crée le compte admin Airflow (CLI)
+  # 🔁 Redémarrage désactivé après exécution
+  # ========================================================================================
+
+services:
+
+  # =======================================================================
+  # 1. sport-airflow-init — Initialise DB, crée l’admin, installe deps
+  # =======================================================================
+  sport-airflow-init:
+    build:
+      context: .
+      dockerfile: Dockerfile.airflow
+    image: sport-airflow:latest
+    container_name: sport-airflow-init
+    depends_on:
+      sport-postgres:
+        condition: service_healthy
+      sport-redis:
+        condition: service_healthy
+    restart: "no"
+    environment:
+      AIRFLOW__CORE__DEFAULT_TIMEZONE: utc
+      AIRFLOW__CORE__EXECUTOR: ${AIRFLOW_EXECUTOR}
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: ${AIRFLOW__DATABASE__SQL_ALCHEMY_CONN}
+      AIRFLOW__CELERY__BROKER_URL: ${AIRFLOW__CELERY__BROKER_URL}
+      AIRFLOW__CELERY__RESULT_BACKEND: ${AIRFLOW__CELERY__RESULT_BACKEND}
+      AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW__CORE__FERNET_KEY}
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./airflow/logs:/opt/airflow/logs
+      - ./airflow/plugins:/opt/airflow/plugins
+      - ./requirements.txt:/requirements.txt
+      - ./scripts:/opt/airflow/scripts          # pour exécuter des scripts dans les DAGs
+      - ./data:/opt/airflow/data                # pour charger ou écrire des données
+    entrypoint:
+      - bash
+      - -c
+      - |
+        pip install -r /requirements.txt && \
+        airflow db init && \
+        airflow users create \
+          --username ${AIRFLOW_ADMIN_USER} \
+          --firstname ${AIRFLOW_ADMIN_FIRSTNAME} \
+          --lastname ${AIRFLOW_ADMIN_LASTNAME} \
+          --role Admin \
+          --email ${AIRFLOW_ADMIN_EMAIL} \
+          --password ${AIRFLOW_ADMIN_PASSWORD}
+    networks:
+      - sport-network
+
+  # =======================================================================
+  # 2. Webserver — UI Airflow
+  # =======================================================================
+  sport-airflow-webserver:
+    image: sport-airflow:latest
+    container_name: sport-airflow-webserver
+    depends_on:
+      - sport-airflow-init
+    restart: unless-stopped
+    environment:
+      AIRFLOW__CORE__DEFAULT_TIMEZONE: utc
+      AIRFLOW__CORE__EXECUTOR: ${AIRFLOW_EXECUTOR}
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: ${AIRFLOW__DATABASE__SQL_ALCHEMY_CONN}
+      AIRFLOW__CELERY__BROKER_URL: ${AIRFLOW__CELERY__BROKER_URL}
+      AIRFLOW__CELERY__RESULT_BACKEND: ${AIRFLOW__CELERY__RESULT_BACKEND}
+      AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW__CORE__FERNET_KEY}
+    ports:
+      - "${AIRFLOW_WEB_PORT}:8080"
+    command: airflow webserver
+    volumes:
+      - airflow-db:/opt/airflow    
+      - ./airflow/dags:/opt/airflow/dags
+      - ./airflow/logs:/opt/airflow/logs
+      - ./airflow/plugins:/opt/airflow/plugins
+      - ./requirements.txt:/requirements.txt
+      - ./scripts:/opt/airflow/scripts          # pour exécuter des scripts dans les DAGs
+      - ./data:/opt/airflow/data                # pour charger ou écrire des données
+    networks:
+      - sport-network
+
+  # =======================================================================
+  # 3. Scheduler — déclenche les DAGs
+  # =======================================================================
+  sport-airflow-scheduler:
+    image: sport-airflow:latest
+    container_name: sport-airflow-scheduler
+    depends_on:
+      - sport-airflow-webserver
+    restart: unless-stopped
+    environment:
+      AIRFLOW__CORE__DEFAULT_TIMEZONE: utc
+      AIRFLOW__CORE__EXECUTOR: ${AIRFLOW_EXECUTOR}
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: ${AIRFLOW__DATABASE__SQL_ALCHEMY_CONN}
+      AIRFLOW__CELERY__BROKER_URL: ${AIRFLOW__CELERY__BROKER_URL}
+      AIRFLOW__CELERY__RESULT_BACKEND: ${AIRFLOW__CELERY__RESULT_BACKEND}
+      AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW__CORE__FERNET_KEY}
+    command: airflow scheduler
+    volumes:
+      - airflow-db:/opt/airflow    
+      - ./airflow/dags:/opt/airflow/dags
+      - ./airflow/logs:/opt/airflow/logs
+      - ./airflow/plugins:/opt/airflow/plugins
+      - ./requirements.txt:/requirements.txt
+      - ./scripts:/opt/airflow/scripts          # pour exécuter des scripts dans les DAGs
+      - ./data:/opt/airflow/data                # pour charger ou écrire des données
+    networks:
+      - sport-network
+
+  # =======================================================================
+  # 4. Worker — Exécute les tâches (Celery)
+  # =======================================================================
+  sport-airflow-worker:
+    image: sport-airflow:latest
+    container_name: sport-airflow-worker
+    depends_on:
+      - sport-airflow-scheduler
+    restart: unless-stopped
+    environment:
+      AIRFLOW__CORE__DEFAULT_TIMEZONE: utc
+      AIRFLOW__CORE__EXECUTOR: ${AIRFLOW_EXECUTOR}
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: ${AIRFLOW__DATABASE__SQL_ALCHEMY_CONN}
+      AIRFLOW__CELERY__BROKER_URL: ${AIRFLOW__CELERY__BROKER_URL}
+      AIRFLOW__CELERY__RESULT_BACKEND: ${AIRFLOW__CELERY__RESULT_BACKEND}
+      AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW__CORE__FERNET_KEY}
+    command: airflow celery worker
+    volumes:
+      - airflow-db:/opt/airflow 
+      - ./airflow/dags:/opt/airflow/dags
+      - ./airflow/logs:/opt/airflow/logs
+      - ./airflow/plugins:/opt/airflow/plugins
+      - ./requirements.txt:/requirements.txt
+      - ./scripts:/opt/airflow/scripts          # pour exécuter des scripts dans les DAGs
+      - ./data:/opt/airflow/data                # pour charger ou écrire des données
+    networks:
+      - sport-network
+
+  # =======================================================================
+  # 5. Flower — Monitoring Celery (UI : http://localhost:${AIRFLOW_FLOWER_PORT})
+  # =======================================================================
+  sport-airflow-flower:
+    image: sport-airflow:latest
+    container_name: sport-airflow-flower
+    depends_on:
+      - sport-airflow-worker
+    restart: unless-stopped
+    environment:
+      AIRFLOW__CORE__DEFAULT_TIMEZONE: utc
+      AIRFLOW__CORE__EXECUTOR: ${AIRFLOW_EXECUTOR}
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: ${AIRFLOW__DATABASE__SQL_ALCHEMY_CONN}
+      AIRFLOW__CELERY__BROKER_URL: ${AIRFLOW__CELERY__BROKER_URL}
+      AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW__CORE__FERNET_KEY}
+    command: airflow celery flower
+    ports:
+      - "${AIRFLOW_FLOWER_PORT}:5555"
+    volumes:
+      - ./requirements.txt:/requirements.txt
+    networks:
+      - sport-network
+
+# Réseau partagé
+networks:
+  sport-network:
+    driver: bridge
+# Volume partagé pour persister la base Airflow initialisée
+volumes:
+  airflow-db:

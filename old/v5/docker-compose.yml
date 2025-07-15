@@ -1,0 +1,173 @@
+# ====================================================================================
+# FICHIER : docker-compose.yml
+# OBJET  : Services centraux de la stack Sport Data Solution (ingestion, traitement, stockage)
+# ====================================================================================
+
+services:
+
+  # ============================================================================
+  # 1. PostgreSQL — Base de données principale
+  # ============================================================================
+  sport-postgres:
+    image: postgres:15
+    container_name: sport-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - sport-network
+
+  # ============================================================================
+  # 2. MinIO — Stockage objet (S3 compatible)
+  # ============================================================================
+  sport-minio:
+    image: minio/minio:latest
+    container_name: sport-minio
+    command: server /data --console-address ":${MINIO_CONSOLE_PORT}"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    ports:
+      - "${MINIO_PORT}:9000"
+      - "${MINIO_CONSOLE_PORT}:9001"
+    volumes:
+      - minio_data:/data
+    restart: unless-stopped
+    networks:
+      - sport-network
+
+  # ============================================================================
+  # 3. Redpanda — Broker Kafka-compatible (streaming temps réel)
+  # ============================================================================
+  sport-redpanda:
+    image: docker.redpanda.com/redpandadata/redpanda:latest
+    container_name: sport-redpanda
+    command: redpanda start --overprovisioned --smp 1 --memory 512M --reserve-memory 0M --node-id 0 --check=false
+    ports:
+      - "${REDPANDA_BROKER_PORT}:9092"
+      - "${REDPANDA_ADMIN_PORT}:9644"
+    volumes:
+      - redpanda_data:/var/lib/redpanda/data
+    restart: unless-stopped
+    networks:
+      - sport-network
+ # ----------------------------------------------------------------------------------------
+  # Redpanda Console — UI web pour explorer les topics Kafka/Redpanda
+  #    - Permet d’inspecter en live les topics, messages, schémas, performances
+  #    - Interface d’admin simple pour debug, dev, formation ou monitoring
+  #    - Ports personnalisés via .env
+  #    - Peut être désactivée en prod si besoin (mais très utile en dev !)
+  # ----------------------------------------------------------------------------------------
+  sport-redpanda-console:
+    image: docker.redpanda.com/redpandadata/console:latest  # Image officielle console web
+    container_name: sport-redpanda-console
+    restart: always
+    environment:
+      - KAFKA_BROKERS=sport-redpanda:9092                  # Broker Kafka à monitorer
+      - REDPANDA_ADMIN_URL=http://sport-redpanda:9644      # Lien API admin Redpanda
+    ports:
+      - "${REDPANDA_CONSOLE_PORT}:8080"                    # UI web Redpanda Console (ex : 8085)
+    networks:
+      - sport-network
+    depends_on:
+      - sport-redpanda                                     # Attend que le broker soit démarré
+
+  # ============================================================================
+  # 4. Debezium Connect — CDC PostgreSQL vers Redpanda (Kafka)
+  # ============================================================================
+  sport-debezium:
+    image: debezium/connect:2.5
+    container_name: sport-debezium
+    depends_on:
+      sport-postgres:
+        condition: service_healthy
+      sport-redpanda:
+        condition: service_started
+    environment:
+      BOOTSTRAP_SERVERS: ${DEBEZIUM_BOOTSTRAP_SERVERS}
+      GROUP_ID: ${DEBEZIUM_GROUP_ID}
+      CONFIG_STORAGE_TOPIC: ${DEBEZIUM_CONFIG_STORAGE_TOPIC}
+      OFFSET_STORAGE_TOPIC: ${DEBEZIUM_OFFSET_STORAGE_TOPIC}
+      STATUS_STORAGE_TOPIC: ${DEBEZIUM_STATUS_STORAGE_TOPIC}
+      REST_ADVERTISED_HOST_NAME: ${DEBEZIUM_CONNECT_REST_ADVERTISED_HOST_NAME}
+    ports:
+      - "${DEBEZIUM_CONNECT_PORT}:8083"
+    restart: unless-stopped
+    networks:
+      - sport-network
+
+  # ============================================================================
+  # 5. Spark — Traitement batch / streaming (connectable à Delta Lake)
+  # ============================================================================
+  sport-spark:
+    image: bitnami/spark:latest
+    container_name: sport-spark
+    environment:
+      SPARK_MODE: ${SPARK_MODE}
+    ports:
+      - "${SPARK_UI_PORT}:4040"
+      - "${SPARK_CLUSTER_PORT}:7077"
+    volumes:
+      - spark_data:/bitnami/spark
+    restart: unless-stopped
+    networks:
+      - sport-network
+
+  # ============================================================================
+  # 6. Redis — Utilisé par Airflow (CeleryExecutor)
+  # ============================================================================
+  sport-redis:
+    image: redis:7
+    container_name: sport-redis
+    ports:
+      - "${REDIS_PORT}:6379"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    networks:
+      - sport-network
+
+  # ============================================================================
+  # 7. Ntfy — Notifications simples (via API REST/CLI)
+  # ============================================================================
+
+  sport-ntfy:
+    image: binwiederhier/ntfy
+    container_name: sport-ntfy
+    restart: always
+    command: serve
+    ports:
+      - "${NTFY_HTTP_PORT}:80"          # Expose l’API REST pour notifications (doc ntfy.sh)
+    networks:
+      - sport-network
+
+# ====================================================================================
+# Réseau Docker partagé entre tous les services de la stack
+# ====================================================================================
+networks:
+  sport-network:
+    name: sport-network
+    driver: bridge
+
+# ====================================================================================
+# Volumes persistants pour la stack
+# ====================================================================================
+volumes:
+  postgres_data:
+  minio_data:
+  redpanda_data:
+  spark_data:

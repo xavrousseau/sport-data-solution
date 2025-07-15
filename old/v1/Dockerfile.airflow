@@ -1,0 +1,45 @@
+# =============================================================================
+# Dockerfile — Image custom Airflow pour la stack Sport Data Solution
+# Objectif : Ajouter toutes les dépendances Python et providers nécessaires
+#            (Celery, Postgres, Redis, etc.) pour orchestrer les workflows.
+# Auteur   : Xavier Rousseau | Juin 2025
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# 1. Image de base : Airflow officiel (avec Python 3.10)
+#    - Contient déjà Airflow pré-installé avec toutes les optimisations upstream
+#    - Prend en charge la plupart des orchestrations modernes (DAG, Celery…)
+#    - Vérifier la version avec le requirements.txt du projet !
+# -----------------------------------------------------------------------------
+FROM apache/airflow:2.9.0-python3.10
+
+# -----------------------------------------------------------------------------
+# 2. Ajout des dépendances Python du projet (requirements.txt)
+#    - Permet d’intégrer librairies spécifiques (dbt, pandas, outils custom…)
+#    - Les dépendances Airflow “core” sont déjà présentes dans l’image de base
+# -----------------------------------------------------------------------------
+COPY ./requirements.txt /requirements.txt
+RUN pip install --no-cache-dir -r /requirements.txt
+
+# -----------------------------------------------------------------------------
+# 3. Installation explicite des providers Airflow essentiels à la stack
+#    - apache-airflow-providers-celery   : exécution distribuée avec CeleryExecutor
+#    - apache-airflow-providers-postgres : connexion à PostgreSQL (source ou target)
+#    - apache-airflow-providers-redis    : broker ou backend Redis pour Celery
+#    - Ajoute-en d'autres selon les besoins (ex : aws, http, slack…)
+# -----------------------------------------------------------------------------
+RUN pip install \
+      apache-airflow-providers-celery \
+      apache-airflow-providers-postgres \
+      apache-airflow-providers-redis
+
+# -----------------------------------------------------------------------------
+# 4. Répertoire de travail (workdir) : Airflow standard (/opt/airflow)
+#    - Tous les scripts, DAGs, logs, configs sont référencés ici par défaut
+#    - Inutile de changer sauf cas d’usage très avancé
+# -----------------------------------------------------------------------------
+WORKDIR /opt/airflow
+
+# =============================================================================
+# FIN DU FICHIER — Dockerfile.airflow
+# =============================================================================

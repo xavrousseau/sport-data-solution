@@ -19,3 +19,4 @@ node_modules/             # Si le projet inclut des dépendances Node.js
 secrets/                  # Répertoires contenant des fichiers sensibles
 .DS_Store                 # Fichier spécifique à macOS
 Thumbs.db                 # Fichier spécifique à Windows
+ 
