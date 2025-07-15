@@ -47,3 +47,164 @@
 [2025-07-15T08:34:13.405+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:34:13.404+0000] {dag.py:3096} INFO - Sync 1 DAGs
 [2025-07-15T08:34:13.415+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:34:13.415+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_pipeline_referentiels to None, run_after=None
 [2025-07-15T08:34:13.431+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_pipeline_referentiels.py took 0.083 seconds
+[2025-07-15T08:34:43.509+0000] {processor.py:161} INFO - Started process (PID=95) to work on /opt/airflow/dags/dag_pipeline_referentiels.py
+[2025-07-15T08:34:43.510+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_pipeline_referentiels.py for tasks to queue
+[2025-07-15T08:34:43.512+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:34:43.512+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_pipeline_referentiels.py
+[2025-07-15T08:34:43.537+0000] {processor.py:840} INFO - DAG(s) 'dag_pipeline_referentiels' retrieved from /opt/airflow/dags/dag_pipeline_referentiels.py
+[2025-07-15T08:34:43.559+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:34:43.558+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-15T08:34:43.569+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:34:43.569+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_pipeline_referentiels to None, run_after=None
+[2025-07-15T08:34:43.584+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_pipeline_referentiels.py took 0.080 seconds
+[2025-07-15T08:35:14.657+0000] {processor.py:161} INFO - Started process (PID=102) to work on /opt/airflow/dags/dag_pipeline_referentiels.py
+[2025-07-15T08:35:14.659+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_pipeline_referentiels.py for tasks to queue
+[2025-07-15T08:35:14.661+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:35:14.661+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_pipeline_referentiels.py
+[2025-07-15T08:35:14.692+0000] {processor.py:840} INFO - DAG(s) 'dag_pipeline_referentiels' retrieved from /opt/airflow/dags/dag_pipeline_referentiels.py
+[2025-07-15T08:35:14.713+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:35:14.712+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-15T08:35:14.724+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:35:14.724+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_pipeline_referentiels to None, run_after=None
+[2025-07-15T08:35:14.738+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_pipeline_referentiels.py took 0.086 seconds
+[2025-07-15T08:35:45.060+0000] {processor.py:161} INFO - Started process (PID=109) to work on /opt/airflow/dags/dag_pipeline_referentiels.py
+[2025-07-15T08:35:45.061+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_pipeline_referentiels.py for tasks to queue
+[2025-07-15T08:35:45.062+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:35:45.062+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_pipeline_referentiels.py
+[2025-07-15T08:35:45.079+0000] {processor.py:840} INFO - DAG(s) 'dag_pipeline_referentiels' retrieved from /opt/airflow/dags/dag_pipeline_referentiels.py
+[2025-07-15T08:35:45.099+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:35:45.098+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-15T08:35:45.109+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:35:45.109+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_pipeline_referentiels to None, run_after=None
+[2025-07-15T08:35:45.123+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_pipeline_referentiels.py took 0.068 seconds
+[2025-07-15T08:36:15.258+0000] {processor.py:161} INFO - Started process (PID=116) to work on /opt/airflow/dags/dag_pipeline_referentiels.py
+[2025-07-15T08:36:15.259+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_pipeline_referentiels.py for tasks to queue
+[2025-07-15T08:36:15.260+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:36:15.260+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_pipeline_referentiels.py
+[2025-07-15T08:36:15.274+0000] {processor.py:840} INFO - DAG(s) 'dag_pipeline_referentiels' retrieved from /opt/airflow/dags/dag_pipeline_referentiels.py
+[2025-07-15T08:36:15.294+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:36:15.294+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-15T08:36:15.304+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:36:15.304+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_pipeline_referentiels to None, run_after=None
+[2025-07-15T08:36:15.316+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_pipeline_referentiels.py took 0.063 seconds
+[2025-07-15T08:36:46.211+0000] {processor.py:161} INFO - Started process (PID=123) to work on /opt/airflow/dags/dag_pipeline_referentiels.py
+[2025-07-15T08:36:46.212+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_pipeline_referentiels.py for tasks to queue
+[2025-07-15T08:36:46.214+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:36:46.214+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_pipeline_referentiels.py
+[2025-07-15T08:36:46.239+0000] {processor.py:840} INFO - DAG(s) 'dag_pipeline_referentiels' retrieved from /opt/airflow/dags/dag_pipeline_referentiels.py
+[2025-07-15T08:36:46.272+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:36:46.272+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-15T08:36:46.283+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:36:46.282+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_pipeline_referentiels to None, run_after=None
+[2025-07-15T08:36:46.303+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_pipeline_referentiels.py took 0.097 seconds
+[2025-07-15T08:37:17.245+0000] {processor.py:161} INFO - Started process (PID=130) to work on /opt/airflow/dags/dag_pipeline_referentiels.py
+[2025-07-15T08:37:17.246+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_pipeline_referentiels.py for tasks to queue
+[2025-07-15T08:37:17.248+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:37:17.248+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_pipeline_referentiels.py
+[2025-07-15T08:37:17.261+0000] {processor.py:840} INFO - DAG(s) 'dag_pipeline_referentiels' retrieved from /opt/airflow/dags/dag_pipeline_referentiels.py
+[2025-07-15T08:37:17.281+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:37:17.281+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-15T08:37:17.291+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:37:17.291+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_pipeline_referentiels to None, run_after=None
+[2025-07-15T08:37:17.305+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_pipeline_referentiels.py took 0.065 seconds
+[2025-07-15T08:37:48.349+0000] {processor.py:161} INFO - Started process (PID=137) to work on /opt/airflow/dags/dag_pipeline_referentiels.py
+[2025-07-15T08:37:48.350+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_pipeline_referentiels.py for tasks to queue
+[2025-07-15T08:37:48.352+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:37:48.352+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_pipeline_referentiels.py
+[2025-07-15T08:37:48.365+0000] {processor.py:840} INFO - DAG(s) 'dag_pipeline_referentiels' retrieved from /opt/airflow/dags/dag_pipeline_referentiels.py
+[2025-07-15T08:37:48.385+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:37:48.385+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-15T08:37:48.396+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:37:48.395+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_pipeline_referentiels to None, run_after=None
+[2025-07-15T08:37:48.411+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_pipeline_referentiels.py took 0.067 seconds
+[2025-07-15T08:38:18.487+0000] {processor.py:161} INFO - Started process (PID=144) to work on /opt/airflow/dags/dag_pipeline_referentiels.py
+[2025-07-15T08:38:18.488+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_pipeline_referentiels.py for tasks to queue
+[2025-07-15T08:38:18.490+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:38:18.490+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_pipeline_referentiels.py
+[2025-07-15T08:38:18.504+0000] {processor.py:840} INFO - DAG(s) 'dag_pipeline_referentiels' retrieved from /opt/airflow/dags/dag_pipeline_referentiels.py
+[2025-07-15T08:38:18.524+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:38:18.524+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-15T08:38:18.534+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:38:18.534+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_pipeline_referentiels to None, run_after=None
+[2025-07-15T08:38:18.549+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_pipeline_referentiels.py took 0.067 seconds
+[2025-07-15T08:38:48.733+0000] {processor.py:161} INFO - Started process (PID=151) to work on /opt/airflow/dags/dag_pipeline_referentiels.py
+[2025-07-15T08:38:48.734+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_pipeline_referentiels.py for tasks to queue
+[2025-07-15T08:38:48.736+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:38:48.736+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_pipeline_referentiels.py
+[2025-07-15T08:38:48.758+0000] {processor.py:840} INFO - DAG(s) 'dag_pipeline_referentiels' retrieved from /opt/airflow/dags/dag_pipeline_referentiels.py
+[2025-07-15T08:38:48.779+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:38:48.779+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-15T08:38:48.789+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:38:48.789+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_pipeline_referentiels to None, run_after=None
+[2025-07-15T08:38:48.806+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_pipeline_referentiels.py took 0.078 seconds
+[2025-07-15T08:39:19.214+0000] {processor.py:161} INFO - Started process (PID=158) to work on /opt/airflow/dags/dag_pipeline_referentiels.py
+[2025-07-15T08:39:19.214+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_pipeline_referentiels.py for tasks to queue
+[2025-07-15T08:39:19.216+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:39:19.216+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_pipeline_referentiels.py
+[2025-07-15T08:39:19.269+0000] {processor.py:840} INFO - DAG(s) 'dag_pipeline_referentiels' retrieved from /opt/airflow/dags/dag_pipeline_referentiels.py
+[2025-07-15T08:39:19.292+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:39:19.292+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-15T08:39:19.302+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:39:19.302+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_pipeline_referentiels to None, run_after=None
+[2025-07-15T08:39:19.319+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_pipeline_referentiels.py took 0.110 seconds
+[2025-07-15T08:39:49.433+0000] {processor.py:161} INFO - Started process (PID=165) to work on /opt/airflow/dags/dag_pipeline_referentiels.py
+[2025-07-15T08:39:49.434+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_pipeline_referentiels.py for tasks to queue
+[2025-07-15T08:39:49.436+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:39:49.435+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_pipeline_referentiels.py
+[2025-07-15T08:39:49.449+0000] {processor.py:840} INFO - DAG(s) 'dag_pipeline_referentiels' retrieved from /opt/airflow/dags/dag_pipeline_referentiels.py
+[2025-07-15T08:39:49.468+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:39:49.468+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-15T08:39:49.478+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:39:49.478+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_pipeline_referentiels to None, run_after=None
+[2025-07-15T08:39:49.492+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_pipeline_referentiels.py took 0.064 seconds
+[2025-07-15T08:40:20.403+0000] {processor.py:161} INFO - Started process (PID=172) to work on /opt/airflow/dags/dag_pipeline_referentiels.py
+[2025-07-15T08:40:20.404+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_pipeline_referentiels.py for tasks to queue
+[2025-07-15T08:40:20.405+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:40:20.405+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_pipeline_referentiels.py
+[2025-07-15T08:40:20.420+0000] {processor.py:840} INFO - DAG(s) 'dag_pipeline_referentiels' retrieved from /opt/airflow/dags/dag_pipeline_referentiels.py
+[2025-07-15T08:40:20.440+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:40:20.439+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-15T08:40:20.449+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:40:20.449+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_pipeline_referentiels to None, run_after=None
+[2025-07-15T08:40:20.464+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_pipeline_referentiels.py took 0.065 seconds
+[2025-07-15T08:40:51.497+0000] {processor.py:161} INFO - Started process (PID=179) to work on /opt/airflow/dags/dag_pipeline_referentiels.py
+[2025-07-15T08:40:51.498+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_pipeline_referentiels.py for tasks to queue
+[2025-07-15T08:40:51.500+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:40:51.500+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_pipeline_referentiels.py
+[2025-07-15T08:40:51.514+0000] {processor.py:840} INFO - DAG(s) 'dag_pipeline_referentiels' retrieved from /opt/airflow/dags/dag_pipeline_referentiels.py
+[2025-07-15T08:40:51.533+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:40:51.533+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-15T08:40:51.543+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:40:51.543+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_pipeline_referentiels to None, run_after=None
+[2025-07-15T08:40:51.559+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_pipeline_referentiels.py took 0.066 seconds
+[2025-07-15T08:41:22.444+0000] {processor.py:161} INFO - Started process (PID=186) to work on /opt/airflow/dags/dag_pipeline_referentiels.py
+[2025-07-15T08:41:22.445+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_pipeline_referentiels.py for tasks to queue
+[2025-07-15T08:41:22.447+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:41:22.447+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_pipeline_referentiels.py
+[2025-07-15T08:41:22.461+0000] {processor.py:840} INFO - DAG(s) 'dag_pipeline_referentiels' retrieved from /opt/airflow/dags/dag_pipeline_referentiels.py
+[2025-07-15T08:41:22.481+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:41:22.481+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-15T08:41:22.492+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:41:22.492+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_pipeline_referentiels to None, run_after=None
+[2025-07-15T08:41:22.509+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_pipeline_referentiels.py took 0.070 seconds
+[2025-07-15T08:41:52.822+0000] {processor.py:161} INFO - Started process (PID=193) to work on /opt/airflow/dags/dag_pipeline_referentiels.py
+[2025-07-15T08:41:52.823+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_pipeline_referentiels.py for tasks to queue
+[2025-07-15T08:41:52.825+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:41:52.824+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_pipeline_referentiels.py
+[2025-07-15T08:41:52.843+0000] {processor.py:840} INFO - DAG(s) 'dag_pipeline_referentiels' retrieved from /opt/airflow/dags/dag_pipeline_referentiels.py
+[2025-07-15T08:41:52.864+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:41:52.863+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-15T08:41:52.874+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:41:52.874+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_pipeline_referentiels to None, run_after=None
+[2025-07-15T08:41:52.889+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_pipeline_referentiels.py took 0.072 seconds
+[2025-07-15T08:42:23.008+0000] {processor.py:161} INFO - Started process (PID=200) to work on /opt/airflow/dags/dag_pipeline_referentiels.py
+[2025-07-15T08:42:23.009+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_pipeline_referentiels.py for tasks to queue
+[2025-07-15T08:42:23.010+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:42:23.010+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_pipeline_referentiels.py
+[2025-07-15T08:42:23.027+0000] {processor.py:840} INFO - DAG(s) 'dag_pipeline_referentiels' retrieved from /opt/airflow/dags/dag_pipeline_referentiels.py
+[2025-07-15T08:42:23.046+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:42:23.046+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-15T08:42:23.056+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:42:23.056+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_pipeline_referentiels to None, run_after=None
+[2025-07-15T08:42:23.071+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_pipeline_referentiels.py took 0.067 seconds
+[2025-07-15T08:42:53.230+0000] {processor.py:161} INFO - Started process (PID=207) to work on /opt/airflow/dags/dag_pipeline_referentiels.py
+[2025-07-15T08:42:53.230+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_pipeline_referentiels.py for tasks to queue
+[2025-07-15T08:42:53.232+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:42:53.232+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_pipeline_referentiels.py
+[2025-07-15T08:42:53.252+0000] {processor.py:840} INFO - DAG(s) 'dag_pipeline_referentiels' retrieved from /opt/airflow/dags/dag_pipeline_referentiels.py
+[2025-07-15T08:42:53.273+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:42:53.273+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-15T08:42:53.283+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:42:53.283+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_pipeline_referentiels to None, run_after=None
+[2025-07-15T08:42:53.299+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_pipeline_referentiels.py took 0.074 seconds
+[2025-07-15T08:43:24.335+0000] {processor.py:161} INFO - Started process (PID=214) to work on /opt/airflow/dags/dag_pipeline_referentiels.py
+[2025-07-15T08:43:24.336+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_pipeline_referentiels.py for tasks to queue
+[2025-07-15T08:43:24.338+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:43:24.338+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_pipeline_referentiels.py
+[2025-07-15T08:43:24.358+0000] {processor.py:840} INFO - DAG(s) 'dag_pipeline_referentiels' retrieved from /opt/airflow/dags/dag_pipeline_referentiels.py
+[2025-07-15T08:43:24.378+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:43:24.378+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-15T08:43:24.389+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:43:24.389+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_pipeline_referentiels to None, run_after=None
+[2025-07-15T08:43:24.407+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_pipeline_referentiels.py took 0.076 seconds
+[2025-07-15T08:43:54.615+0000] {processor.py:161} INFO - Started process (PID=221) to work on /opt/airflow/dags/dag_pipeline_referentiels.py
+[2025-07-15T08:43:54.616+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_pipeline_referentiels.py for tasks to queue
+[2025-07-15T08:43:54.618+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:43:54.618+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_pipeline_referentiels.py
+[2025-07-15T08:43:54.659+0000] {processor.py:840} INFO - DAG(s) 'dag_pipeline_referentiels' retrieved from /opt/airflow/dags/dag_pipeline_referentiels.py
+[2025-07-15T08:43:54.690+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:43:54.689+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-15T08:43:54.701+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:43:54.701+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_pipeline_referentiels to None, run_after=None
+[2025-07-15T08:43:54.716+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_pipeline_referentiels.py took 0.106 seconds
+[2025-07-15T08:44:24.901+0000] {processor.py:161} INFO - Started process (PID=228) to work on /opt/airflow/dags/dag_pipeline_referentiels.py
+[2025-07-15T08:44:24.902+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_pipeline_referentiels.py for tasks to queue
+[2025-07-15T08:44:24.904+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:44:24.903+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_pipeline_referentiels.py
+[2025-07-15T08:44:24.931+0000] {processor.py:840} INFO - DAG(s) 'dag_pipeline_referentiels' retrieved from /opt/airflow/dags/dag_pipeline_referentiels.py
+[2025-07-15T08:44:24.955+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:44:24.955+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-15T08:44:24.966+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:44:24.966+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_pipeline_referentiels to None, run_after=None
+[2025-07-15T08:44:24.985+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_pipeline_referentiels.py took 0.090 seconds
+[2025-07-15T08:44:55.147+0000] {processor.py:161} INFO - Started process (PID=235) to work on /opt/airflow/dags/dag_pipeline_referentiels.py
+[2025-07-15T08:44:55.148+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_pipeline_referentiels.py for tasks to queue
+[2025-07-15T08:44:55.150+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:44:55.150+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_pipeline_referentiels.py
+[2025-07-15T08:44:55.173+0000] {processor.py:840} INFO - DAG(s) 'dag_pipeline_referentiels' retrieved from /opt/airflow/dags/dag_pipeline_referentiels.py
+[2025-07-15T08:44:55.199+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:44:55.199+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-15T08:44:55.210+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:44:55.209+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_pipeline_referentiels to None, run_after=None
+[2025-07-15T08:44:55.224+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_pipeline_referentiels.py took 0.082 seconds
+[2025-07-15T08:45:25.289+0000] {processor.py:161} INFO - Started process (PID=242) to work on /opt/airflow/dags/dag_pipeline_referentiels.py
+[2025-07-15T08:45:25.290+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_pipeline_referentiels.py for tasks to queue
+[2025-07-15T08:45:25.292+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:45:25.292+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_pipeline_referentiels.py
+[2025-07-15T08:45:25.311+0000] {processor.py:840} INFO - DAG(s) 'dag_pipeline_referentiels' retrieved from /opt/airflow/dags/dag_pipeline_referentiels.py
+[2025-07-15T08:45:25.335+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:45:25.335+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-15T08:45:25.346+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:45:25.346+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_pipeline_referentiels to None, run_after=None
+[2025-07-15T08:45:25.361+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_pipeline_referentiels.py took 0.077 seconds
+[2025-07-15T08:45:56.206+0000] {processor.py:161} INFO - Started process (PID=249) to work on /opt/airflow/dags/dag_pipeline_referentiels.py
+[2025-07-15T08:45:56.207+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_pipeline_referentiels.py for tasks to queue
+[2025-07-15T08:45:56.209+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:45:56.209+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_pipeline_referentiels.py
+[2025-07-15T08:45:56.224+0000] {processor.py:840} INFO - DAG(s) 'dag_pipeline_referentiels' retrieved from /opt/airflow/dags/dag_pipeline_referentiels.py
+[2025-07-15T08:45:56.247+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:45:56.247+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-15T08:45:56.258+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:45:56.258+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_pipeline_referentiels to None, run_after=None
+[2025-07-15T08:45:56.273+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_pipeline_referentiels.py took 0.073 seconds

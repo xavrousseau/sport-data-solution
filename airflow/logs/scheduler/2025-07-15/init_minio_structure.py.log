@@ -47,3 +47,164 @@
 [2025-07-15T08:34:13.162+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:34:13.162+0000] {dag.py:3096} INFO - Sync 1 DAGs
 [2025-07-15T08:34:13.172+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:34:13.171+0000] {dag.py:3954} INFO - Setting next_dagrun for init_minio_structure to None, run_after=None
 [2025-07-15T08:34:13.189+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/init_minio_structure.py took 0.072 seconds
+[2025-07-15T08:34:43.263+0000] {processor.py:161} INFO - Started process (PID=92) to work on /opt/airflow/dags/init_minio_structure.py
+[2025-07-15T08:34:43.264+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/init_minio_structure.py for tasks to queue
+[2025-07-15T08:34:43.266+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:34:43.266+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/init_minio_structure.py
+[2025-07-15T08:34:43.283+0000] {processor.py:840} INFO - DAG(s) 'init_minio_structure' retrieved from /opt/airflow/dags/init_minio_structure.py
+[2025-07-15T08:34:43.305+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:34:43.305+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-15T08:34:43.316+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:34:43.315+0000] {dag.py:3954} INFO - Setting next_dagrun for init_minio_structure to None, run_after=None
+[2025-07-15T08:34:43.334+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/init_minio_structure.py took 0.075 seconds
+[2025-07-15T08:35:14.399+0000] {processor.py:161} INFO - Started process (PID=99) to work on /opt/airflow/dags/init_minio_structure.py
+[2025-07-15T08:35:14.400+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/init_minio_structure.py for tasks to queue
+[2025-07-15T08:35:14.403+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:35:14.402+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/init_minio_structure.py
+[2025-07-15T08:35:14.436+0000] {processor.py:840} INFO - DAG(s) 'init_minio_structure' retrieved from /opt/airflow/dags/init_minio_structure.py
+[2025-07-15T08:35:14.456+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:35:14.456+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-15T08:35:14.466+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:35:14.465+0000] {dag.py:3954} INFO - Setting next_dagrun for init_minio_structure to None, run_after=None
+[2025-07-15T08:35:14.481+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/init_minio_structure.py took 0.087 seconds
+[2025-07-15T08:35:44.874+0000] {processor.py:161} INFO - Started process (PID=106) to work on /opt/airflow/dags/init_minio_structure.py
+[2025-07-15T08:35:44.875+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/init_minio_structure.py for tasks to queue
+[2025-07-15T08:35:44.876+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:35:44.876+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/init_minio_structure.py
+[2025-07-15T08:35:44.891+0000] {processor.py:840} INFO - DAG(s) 'init_minio_structure' retrieved from /opt/airflow/dags/init_minio_structure.py
+[2025-07-15T08:35:44.909+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:35:44.909+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-15T08:35:44.918+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:35:44.918+0000] {dag.py:3954} INFO - Setting next_dagrun for init_minio_structure to None, run_after=None
+[2025-07-15T08:35:44.934+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/init_minio_structure.py took 0.066 seconds
+[2025-07-15T08:36:15.072+0000] {processor.py:161} INFO - Started process (PID=113) to work on /opt/airflow/dags/init_minio_structure.py
+[2025-07-15T08:36:15.073+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/init_minio_structure.py for tasks to queue
+[2025-07-15T08:36:15.075+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:36:15.074+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/init_minio_structure.py
+[2025-07-15T08:36:15.089+0000] {processor.py:840} INFO - DAG(s) 'init_minio_structure' retrieved from /opt/airflow/dags/init_minio_structure.py
+[2025-07-15T08:36:15.108+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:36:15.108+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-15T08:36:15.118+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:36:15.118+0000] {dag.py:3954} INFO - Setting next_dagrun for init_minio_structure to None, run_after=None
+[2025-07-15T08:36:15.134+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/init_minio_structure.py took 0.066 seconds
+[2025-07-15T08:36:46.004+0000] {processor.py:161} INFO - Started process (PID=120) to work on /opt/airflow/dags/init_minio_structure.py
+[2025-07-15T08:36:46.005+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/init_minio_structure.py for tasks to queue
+[2025-07-15T08:36:46.007+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:36:46.006+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/init_minio_structure.py
+[2025-07-15T08:36:46.025+0000] {processor.py:840} INFO - DAG(s) 'init_minio_structure' retrieved from /opt/airflow/dags/init_minio_structure.py
+[2025-07-15T08:36:46.045+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:36:46.044+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-15T08:36:46.055+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:36:46.055+0000] {dag.py:3954} INFO - Setting next_dagrun for init_minio_structure to None, run_after=None
+[2025-07-15T08:36:46.071+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/init_minio_structure.py took 0.072 seconds
+[2025-07-15T08:37:17.070+0000] {processor.py:161} INFO - Started process (PID=127) to work on /opt/airflow/dags/init_minio_structure.py
+[2025-07-15T08:37:17.071+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/init_minio_structure.py for tasks to queue
+[2025-07-15T08:37:17.073+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:37:17.072+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/init_minio_structure.py
+[2025-07-15T08:37:17.086+0000] {processor.py:840} INFO - DAG(s) 'init_minio_structure' retrieved from /opt/airflow/dags/init_minio_structure.py
+[2025-07-15T08:37:17.105+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:37:17.105+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-15T08:37:17.115+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:37:17.115+0000] {dag.py:3954} INFO - Setting next_dagrun for init_minio_structure to None, run_after=None
+[2025-07-15T08:37:17.130+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/init_minio_structure.py took 0.064 seconds
+[2025-07-15T08:37:48.112+0000] {processor.py:161} INFO - Started process (PID=134) to work on /opt/airflow/dags/init_minio_structure.py
+[2025-07-15T08:37:48.113+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/init_minio_structure.py for tasks to queue
+[2025-07-15T08:37:48.114+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:37:48.114+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/init_minio_structure.py
+[2025-07-15T08:37:48.162+0000] {processor.py:840} INFO - DAG(s) 'init_minio_structure' retrieved from /opt/airflow/dags/init_minio_structure.py
+[2025-07-15T08:37:48.184+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:37:48.183+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-15T08:37:48.194+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:37:48.193+0000] {dag.py:3954} INFO - Setting next_dagrun for init_minio_structure to None, run_after=None
+[2025-07-15T08:37:48.214+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/init_minio_structure.py took 0.106 seconds
+[2025-07-15T08:38:18.284+0000] {processor.py:161} INFO - Started process (PID=141) to work on /opt/airflow/dags/init_minio_structure.py
+[2025-07-15T08:38:18.284+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/init_minio_structure.py for tasks to queue
+[2025-07-15T08:38:18.286+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:38:18.285+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/init_minio_structure.py
+[2025-07-15T08:38:18.304+0000] {processor.py:840} INFO - DAG(s) 'init_minio_structure' retrieved from /opt/airflow/dags/init_minio_structure.py
+[2025-07-15T08:38:18.323+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:38:18.323+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-15T08:38:18.334+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:38:18.334+0000] {dag.py:3954} INFO - Setting next_dagrun for init_minio_structure to None, run_after=None
+[2025-07-15T08:38:18.351+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/init_minio_structure.py took 0.072 seconds
+[2025-07-15T08:38:48.522+0000] {processor.py:161} INFO - Started process (PID=148) to work on /opt/airflow/dags/init_minio_structure.py
+[2025-07-15T08:38:48.523+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/init_minio_structure.py for tasks to queue
+[2025-07-15T08:38:48.524+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:38:48.524+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/init_minio_structure.py
+[2025-07-15T08:38:48.549+0000] {processor.py:840} INFO - DAG(s) 'init_minio_structure' retrieved from /opt/airflow/dags/init_minio_structure.py
+[2025-07-15T08:38:48.569+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:38:48.569+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-15T08:38:48.580+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:38:48.580+0000] {dag.py:3954} INFO - Setting next_dagrun for init_minio_structure to None, run_after=None
+[2025-07-15T08:38:48.607+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/init_minio_structure.py took 0.089 seconds
+[2025-07-15T08:39:18.941+0000] {processor.py:161} INFO - Started process (PID=155) to work on /opt/airflow/dags/init_minio_structure.py
+[2025-07-15T08:39:18.943+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/init_minio_structure.py for tasks to queue
+[2025-07-15T08:39:18.947+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:39:18.947+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/init_minio_structure.py
+[2025-07-15T08:39:18.996+0000] {processor.py:840} INFO - DAG(s) 'init_minio_structure' retrieved from /opt/airflow/dags/init_minio_structure.py
+[2025-07-15T08:39:19.022+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:39:19.022+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-15T08:39:19.034+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:39:19.034+0000] {dag.py:3954} INFO - Setting next_dagrun for init_minio_structure to None, run_after=None
+[2025-07-15T08:39:19.050+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/init_minio_structure.py took 0.113 seconds
+[2025-07-15T08:39:49.156+0000] {processor.py:161} INFO - Started process (PID=162) to work on /opt/airflow/dags/init_minio_structure.py
+[2025-07-15T08:39:49.156+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/init_minio_structure.py for tasks to queue
+[2025-07-15T08:39:49.158+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:39:49.158+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/init_minio_structure.py
+[2025-07-15T08:39:49.180+0000] {processor.py:840} INFO - DAG(s) 'init_minio_structure' retrieved from /opt/airflow/dags/init_minio_structure.py
+[2025-07-15T08:39:49.199+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:39:49.199+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-15T08:39:49.209+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:39:49.209+0000] {dag.py:3954} INFO - Setting next_dagrun for init_minio_structure to None, run_after=None
+[2025-07-15T08:39:49.224+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/init_minio_structure.py took 0.072 seconds
+[2025-07-15T08:40:20.214+0000] {processor.py:161} INFO - Started process (PID=169) to work on /opt/airflow/dags/init_minio_structure.py
+[2025-07-15T08:40:20.215+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/init_minio_structure.py for tasks to queue
+[2025-07-15T08:40:20.216+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:40:20.216+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/init_minio_structure.py
+[2025-07-15T08:40:20.232+0000] {processor.py:840} INFO - DAG(s) 'init_minio_structure' retrieved from /opt/airflow/dags/init_minio_structure.py
+[2025-07-15T08:40:20.254+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:40:20.254+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-15T08:40:20.265+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:40:20.265+0000] {dag.py:3954} INFO - Setting next_dagrun for init_minio_structure to None, run_after=None
+[2025-07-15T08:40:20.282+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/init_minio_structure.py took 0.073 seconds
+[2025-07-15T08:40:51.308+0000] {processor.py:161} INFO - Started process (PID=176) to work on /opt/airflow/dags/init_minio_structure.py
+[2025-07-15T08:40:51.309+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/init_minio_structure.py for tasks to queue
+[2025-07-15T08:40:51.310+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:40:51.310+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/init_minio_structure.py
+[2025-07-15T08:40:51.324+0000] {processor.py:840} INFO - DAG(s) 'init_minio_structure' retrieved from /opt/airflow/dags/init_minio_structure.py
+[2025-07-15T08:40:51.343+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:40:51.343+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-15T08:40:51.354+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:40:51.353+0000] {dag.py:3954} INFO - Setting next_dagrun for init_minio_structure to None, run_after=None
+[2025-07-15T08:40:51.371+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/init_minio_structure.py took 0.068 seconds
+[2025-07-15T08:41:22.235+0000] {processor.py:161} INFO - Started process (PID=183) to work on /opt/airflow/dags/init_minio_structure.py
+[2025-07-15T08:41:22.236+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/init_minio_structure.py for tasks to queue
+[2025-07-15T08:41:22.237+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:41:22.237+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/init_minio_structure.py
+[2025-07-15T08:41:22.253+0000] {processor.py:840} INFO - DAG(s) 'init_minio_structure' retrieved from /opt/airflow/dags/init_minio_structure.py
+[2025-07-15T08:41:22.272+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:41:22.272+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-15T08:41:22.282+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:41:22.282+0000] {dag.py:3954} INFO - Setting next_dagrun for init_minio_structure to None, run_after=None
+[2025-07-15T08:41:22.299+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/init_minio_structure.py took 0.069 seconds
+[2025-07-15T08:41:52.574+0000] {processor.py:161} INFO - Started process (PID=190) to work on /opt/airflow/dags/init_minio_structure.py
+[2025-07-15T08:41:52.579+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/init_minio_structure.py for tasks to queue
+[2025-07-15T08:41:52.581+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:41:52.581+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/init_minio_structure.py
+[2025-07-15T08:41:52.613+0000] {processor.py:840} INFO - DAG(s) 'init_minio_structure' retrieved from /opt/airflow/dags/init_minio_structure.py
+[2025-07-15T08:41:52.636+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:41:52.635+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-15T08:41:52.649+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:41:52.649+0000] {dag.py:3954} INFO - Setting next_dagrun for init_minio_structure to None, run_after=None
+[2025-07-15T08:41:52.665+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/init_minio_structure.py took 0.096 seconds
+[2025-07-15T08:42:22.777+0000] {processor.py:161} INFO - Started process (PID=197) to work on /opt/airflow/dags/init_minio_structure.py
+[2025-07-15T08:42:22.778+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/init_minio_structure.py for tasks to queue
+[2025-07-15T08:42:22.779+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:42:22.779+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/init_minio_structure.py
+[2025-07-15T08:42:22.797+0000] {processor.py:840} INFO - DAG(s) 'init_minio_structure' retrieved from /opt/airflow/dags/init_minio_structure.py
+[2025-07-15T08:42:22.818+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:42:22.818+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-15T08:42:22.828+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:42:22.828+0000] {dag.py:3954} INFO - Setting next_dagrun for init_minio_structure to None, run_after=None
+[2025-07-15T08:42:22.844+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/init_minio_structure.py took 0.072 seconds
+[2025-07-15T08:42:53.026+0000] {processor.py:161} INFO - Started process (PID=204) to work on /opt/airflow/dags/init_minio_structure.py
+[2025-07-15T08:42:53.027+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/init_minio_structure.py for tasks to queue
+[2025-07-15T08:42:53.028+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:42:53.028+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/init_minio_structure.py
+[2025-07-15T08:42:53.047+0000] {processor.py:840} INFO - DAG(s) 'init_minio_structure' retrieved from /opt/airflow/dags/init_minio_structure.py
+[2025-07-15T08:42:53.068+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:42:53.068+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-15T08:42:53.078+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:42:53.078+0000] {dag.py:3954} INFO - Setting next_dagrun for init_minio_structure to None, run_after=None
+[2025-07-15T08:42:53.094+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/init_minio_structure.py took 0.073 seconds
+[2025-07-15T08:43:24.126+0000] {processor.py:161} INFO - Started process (PID=211) to work on /opt/airflow/dags/init_minio_structure.py
+[2025-07-15T08:43:24.128+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/init_minio_structure.py for tasks to queue
+[2025-07-15T08:43:24.129+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:43:24.129+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/init_minio_structure.py
+[2025-07-15T08:43:24.155+0000] {processor.py:840} INFO - DAG(s) 'init_minio_structure' retrieved from /opt/airflow/dags/init_minio_structure.py
+[2025-07-15T08:43:24.175+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:43:24.175+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-15T08:43:24.186+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:43:24.186+0000] {dag.py:3954} INFO - Setting next_dagrun for init_minio_structure to None, run_after=None
+[2025-07-15T08:43:24.205+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/init_minio_structure.py took 0.084 seconds
+[2025-07-15T08:43:54.403+0000] {processor.py:161} INFO - Started process (PID=218) to work on /opt/airflow/dags/init_minio_structure.py
+[2025-07-15T08:43:54.403+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/init_minio_structure.py for tasks to queue
+[2025-07-15T08:43:54.405+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:43:54.405+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/init_minio_structure.py
+[2025-07-15T08:43:54.419+0000] {processor.py:840} INFO - DAG(s) 'init_minio_structure' retrieved from /opt/airflow/dags/init_minio_structure.py
+[2025-07-15T08:43:54.439+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:43:54.439+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-15T08:43:54.449+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:43:54.449+0000] {dag.py:3954} INFO - Setting next_dagrun for init_minio_structure to None, run_after=None
+[2025-07-15T08:43:54.464+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/init_minio_structure.py took 0.066 seconds
+[2025-07-15T08:44:24.615+0000] {processor.py:161} INFO - Started process (PID=225) to work on /opt/airflow/dags/init_minio_structure.py
+[2025-07-15T08:44:24.616+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/init_minio_structure.py for tasks to queue
+[2025-07-15T08:44:24.618+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:44:24.618+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/init_minio_structure.py
+[2025-07-15T08:44:24.644+0000] {processor.py:840} INFO - DAG(s) 'init_minio_structure' retrieved from /opt/airflow/dags/init_minio_structure.py
+[2025-07-15T08:44:24.665+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:44:24.665+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-15T08:44:24.676+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:44:24.675+0000] {dag.py:3954} INFO - Setting next_dagrun for init_minio_structure to None, run_after=None
+[2025-07-15T08:44:24.691+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/init_minio_structure.py took 0.080 seconds
+[2025-07-15T08:44:54.865+0000] {processor.py:161} INFO - Started process (PID=232) to work on /opt/airflow/dags/init_minio_structure.py
+[2025-07-15T08:44:54.866+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/init_minio_structure.py for tasks to queue
+[2025-07-15T08:44:54.868+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:44:54.868+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/init_minio_structure.py
+[2025-07-15T08:44:54.892+0000] {processor.py:840} INFO - DAG(s) 'init_minio_structure' retrieved from /opt/airflow/dags/init_minio_structure.py
+[2025-07-15T08:44:54.912+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:44:54.912+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-15T08:44:54.922+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:44:54.922+0000] {dag.py:3954} INFO - Setting next_dagrun for init_minio_structure to None, run_after=None
+[2025-07-15T08:44:54.942+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/init_minio_structure.py took 0.082 seconds
+[2025-07-15T08:45:25.059+0000] {processor.py:161} INFO - Started process (PID=239) to work on /opt/airflow/dags/init_minio_structure.py
+[2025-07-15T08:45:25.060+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/init_minio_structure.py for tasks to queue
+[2025-07-15T08:45:25.062+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:45:25.061+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/init_minio_structure.py
+[2025-07-15T08:45:25.084+0000] {processor.py:840} INFO - DAG(s) 'init_minio_structure' retrieved from /opt/airflow/dags/init_minio_structure.py
+[2025-07-15T08:45:25.106+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:45:25.106+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-15T08:45:25.118+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:45:25.118+0000] {dag.py:3954} INFO - Setting next_dagrun for init_minio_structure to None, run_after=None
+[2025-07-15T08:45:25.135+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/init_minio_structure.py took 0.081 seconds
+[2025-07-15T08:45:55.998+0000] {processor.py:161} INFO - Started process (PID=246) to work on /opt/airflow/dags/init_minio_structure.py
+[2025-07-15T08:45:55.999+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/init_minio_structure.py for tasks to queue
+[2025-07-15T08:45:56.001+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:45:56.001+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/init_minio_structure.py
+[2025-07-15T08:45:56.017+0000] {processor.py:840} INFO - DAG(s) 'init_minio_structure' retrieved from /opt/airflow/dags/init_minio_structure.py
+[2025-07-15T08:45:56.038+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:45:56.038+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-15T08:45:56.049+0000] {logging_mixin.py:188} INFO - [2025-07-15T08:45:56.048+0000] {dag.py:3954} INFO - Setting next_dagrun for init_minio_structure to None, run_after=None
+[2025-07-15T08:45:56.062+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/init_minio_structure.py took 0.068 seconds
