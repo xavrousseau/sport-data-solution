@@ -4,9 +4,9 @@
 # CONTEXTE : Stack distribuée — Redis (broker), PostgreSQL (backend), DAGs locaux
 # ====================================================================================
 
-# ------------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 # 🔁 Bloc commun à tous les services Airflow (réutilisé avec <<)
-# ------------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 x-airflow-common: &airflow-common
   build: ./airflow  # 📦 Image construite localement depuis le Dockerfile dans ./airflow
 
@@ -29,6 +29,10 @@ x-airflow-common: &airflow-common
     AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: "true"
     AIRFLOW__CORE__LOAD_EXAMPLES: "false"
 
+    # 🔔 Notifications NTFY (injectées dans tous les services Airflow)
+    NTFY_URL: http://sport-ntfy:80
+    NTFY_TOPIC: sportdata_activites
+
   volumes:
     # 📂 Dossiers locaux montés dans les conteneurs
     - ./airflow/dags:/opt/airflow/dags
@@ -38,6 +42,7 @@ x-airflow-common: &airflow-common
     - ./airflow/data:/opt/airflow/data
     - ./airflow/tests:/opt/airflow/tests
     - ./.env:/opt/airflow/.env:ro
+
   networks:
     - sport-network
 
@@ -47,41 +52,38 @@ x-airflow-common: &airflow-common
     sport-redis:
       condition: service_healthy
 
-# ------------------------------------------------------------------------------
-# 1️⃣ Webserver — UI Airflow (http://localhost:8092)
-# ------------------------------------------------------------------------------
+# --------------------------------------------------------------------------
+# 1️⃣ Webserver — Interface Web Airflow (http://localhost:8092)
+# --------------------------------------------------------------------------
 services:
   sport-airflow-webserver:
     <<: *airflow-common
     container_name: sport-airflow-webserver
     command: webserver
     ports:
-      - "8092:8080"   # UI Airflow
+      - "8092:8080"
 
-# ------------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 # 2️⃣ Scheduler — Planification des DAGs
-# ------------------------------------------------------------------------------
+# --------------------------------------------------------------------------
   sport-airflow-scheduler:
     <<: *airflow-common
     container_name: sport-airflow-scheduler
     command: scheduler
 
-# ------------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 # 3️⃣ Worker — Exécution des tâches via Celery
-# ------------------------------------------------------------------------------
+# --------------------------------------------------------------------------
   sport-airflow-worker:
     <<: *airflow-common
     container_name: sport-airflow-worker
     command: celery worker
 
-# ------------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 # 4️⃣ Flower — UI de monitoring des workers (http://localhost:5566)
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------  
-# 4️⃣ Flower — UI de monitoring des workers (http://localhost:5566)  
-# ------------------------------------------------------------------------------  
+# --------------------------------------------------------------------------
   sport-flower:
-    image: sport-airflow  # ✅ On utilise l'image personnalisée qui contient flower
+    image: sport-airflow  # ✅ On utilise l'image personnalisée qui contient Flower
     container_name: sport-flower
     entrypoint: ["celery", "--app", "airflow.executors.celery_executor.app", "flower"]
     ports:

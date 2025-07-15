@@ -3,7 +3,7 @@
 # Objectif    : Générer des activités sportives simulées (type Strava)
 #               à partir des salariés éligibles et les injecter dans PostgreSQL + MinIO.
 #               Envoie aussi des notifications ntfy simulant un Slack-like.
-# Auteur      : Xavier Rousseau | Juillet 2025
+# Auteur      : Xavier Rousseau | Mis à jour Juillet 2025
 # ==========================================================================================
 
 import pandas as pd
@@ -25,36 +25,27 @@ import uuid
 # ==========================================================================================
 load_dotenv(dotenv_path=".env", override=True)
 
-# Connexion PostgreSQL
 POSTGRES_USER = os.getenv("POSTGRES_USER")
 POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD")
 POSTGRES_HOST = os.getenv("POSTGRES_HOST")
 POSTGRES_PORT = os.getenv("POSTGRES_PORT")
 POSTGRES_DB = os.getenv("POSTGRES_DB")
-DB_CONN_STRING = (
-    f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@"
-    f"{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}"
-)
+DB_CONN_STRING = f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}"
 
-# Connexion MinIO
 MINIO_RH_KEY = "raw/donnees_rh_cleaned.xlsx"
 MINIO_XLSX_KEY = "simulation/activites_sportives.xlsx"
 TMP_DIR = "/tmp"
 
-# Notifications ntfy
 NTFY_URL = os.getenv("NTFY_URL", "http://localhost:8080")
-NTFY_TOPIC = os.getenv("NTFY_TOPIC", "sportdata.activites")
+NTFY_TOPIC = os.getenv("NTFY_TOPIC", "sportdata_activites")
 
-# Paramètres de simulation depuis .env
 NB_MOIS = int(os.getenv("SIMULATION_MONTHS", 12))
 ACTIVITES_MIN = int(os.getenv("SIMULATION_MIN_ACTIVITIES", 10))
 ACTIVITES_MAX = int(os.getenv("SIMULATION_MAX_ACTIVITIES", 100))
 
-# Fichier de sortie local
-FICHIER_EXPORT_XLSX = "simulations_activites_sportives.xlsx"
+EXPORT_XLSX_PATH = "airflow/data/outputs/simulations_activites_sportives.xlsx"
 TABLE_SQL = "activites_sportives"
 
-# Liste d'activités enrichie (déplacements + sports de loisir)
 ACTIVITES = [
     "Course à pied", "Marche", "Vélo", "Trottinette", "Roller", "Skateboard",
     "Randonnée", "Natation", "Escalade", "Fitness", "Musculation",
@@ -81,14 +72,47 @@ def charger_salaries_eligibles_minio():
     return df_rh[[col_id, "nom", "prenom"]].rename(columns={col_id: "id_salarie"})
 
 # ==========================================================================================
-# 3. Envoi d'une notification ntfy (simule un Slack-like)
+# 3. Envoi de notification ntfy avec alternance réaliste et type sport adapté
 # ==========================================================================================
 def envoyer_message_ntfy(prenom, sport, distance, temps, commentaire=""):
     km = distance / 1000
     minutes = temps // 60
-    message = f"🔥 Bravo {prenom} ! Tu viens de faire {km:.1f} km de {sport.lower()} en {minutes} min"
-    if commentaire:
-        message += f" — {commentaire}"
+
+    sports_deplacement = {
+        "Course à pied", "Marche", "Vélo", "Trottinette", "Roller", "Skateboard",
+        "Randonnée", "Natation"
+    }
+
+    is_deplacement = sport in sports_deplacement
+
+    if is_deplacement:
+        messages_motivants = [
+            f"🔥 Bravo {prenom} ! Tu viens de faire {km:.1f} km de {sport.lower()} en {minutes} min. 💪",
+            f"🏅 {prenom} vient de compléter {km:.1f} km de {sport.lower()} — impressionnant !",
+            f"🚴‍♂️ {prenom} s’est dépassé avec {km:.1f} km de {sport.lower()} aujourd’hui !",
+            f"✨ {prenom} continue sur sa lancée : {minutes} minutes de {sport.lower()}.",
+        ]
+        messages_fun = [
+            f"🔥 Bravo {prenom} ! Tu viens de faire {km:.1f} km de {sport.lower()} en {minutes} min — {commentaire}",
+            f"🎉 Activité de {prenom} : {sport.lower()} sur {km:.1f} km — {commentaire}",
+        ]
+    else:
+        messages_motivants = [
+            f"💪 {prenom} a transpiré pendant {minutes} minutes de {sport.lower()} !",
+            f"✨ {prenom} enchaîne avec {minutes} min de {sport.lower()} — respect !",
+            f"🏋️ {prenom} vient de terminer une session intense de {sport.lower()} ({minutes} min)",
+            f"🔥 {prenom} s’est donné à fond pendant {minutes} minutes de {sport.lower()}",
+        ]
+        messages_fun = [
+            f"📢 {prenom} en {sport.lower()} : {minutes} min — {commentaire}",
+            f"🎊 {prenom} vient de boucler {minutes} min de {sport.lower()} — {commentaire}"
+        ]
+
+    message = (
+        choice(messages_fun) if commentaire and randint(0, 1) == 0
+        else choice(messages_motivants)
+    )
+
     try:
         response = requests.post(f"{NTFY_URL}/{NTFY_TOPIC}", data=message.encode("utf-8"))
         if response.status_code == 200:
@@ -120,7 +144,6 @@ def simuler_activites_strava(df_salaries, nb_mois, activites_min, activites_max,
                 minutes=randint(0, 59)
             )
 
-            # Distance et temps simulés selon le sport
             if sport_type in ["Course à pied", "Running", "Marche", "Trottinette", "Roller", "Skateboard"]:
                 distance = int(uniform(2000, 15000))
                 temps = int(distance / uniform(1.8, 3.5))
@@ -161,10 +184,11 @@ def simuler_activites_strava(df_salaries, nb_mois, activites_min, activites_max,
     return df
 
 # ==========================================================================================
-# 5. Export vers Excel, MinIO et PostgreSQL
+# 5. Export Excel, PostgreSQL, MinIO
 # ==========================================================================================
 def exporter_excel(df, fichier):
     try:
+        os.makedirs(os.path.dirname(fichier), exist_ok=True)
         df.to_excel(fichier, index=False)
         logger.success(f"✅ Export Excel : {fichier}")
     except Exception as e:
@@ -201,28 +225,25 @@ if __name__ == "__main__":
         df_salaries = charger_salaries_eligibles_minio()
         df_activites = simuler_activites_strava(df_salaries, NB_MOIS, ACTIVITES_MIN, ACTIVITES_MAX)
 
-        # Récapitulatif par activité
         logger.info("📊 Récapitulatif des activités générées :")
         logger.info(f"➡️ Total d’activités simulées : {len(df_activites)}")
         for sport, count in df_activites["type_activite"].value_counts().items():
             logger.info(f" - {sport:<15} : {count} activité(s)")
 
-        # Top salariés les plus actifs
         logger.info("\n👥 Top 5 des salariés les plus actifs :")
         for id_salarie, count in df_activites["id_salarie"].value_counts().head(5).items():
             logger.info(f" - ID {id_salarie:<10} : {count} activité(s)")
 
         inserer_donnees_postgres(df_activites, TABLE_SQL, DB_CONN_STRING)
-        exporter_excel(df_activites, FICHIER_EXPORT_XLSX)
+        exporter_excel(df_activites, EXPORT_XLSX_PATH)
         helper = MinIOHelper()
-        upload_file_to_minio(FICHIER_EXPORT_XLSX, MINIO_XLSX_KEY, helper)
+        upload_file_to_minio(EXPORT_XLSX_PATH, MINIO_XLSX_KEY, helper)
 
         logger.success("🎯 Pipeline terminé : PostgreSQL + MinIO + ntfy ✅")
     except Exception as e:
         logger.error(f"❌ Erreur pipeline simulation : {e}")
         raise
 
-
 # ==========================================================================================
-# Fin du fichier – Simulation d’activités sportives avec paramètres .env et ntfy
+# Fin du fichier – Simulation d’activités sportives avec messages variés et export structuré
 # ==========================================================================================

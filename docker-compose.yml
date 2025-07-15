@@ -122,19 +122,29 @@ services:
   # 5. Spark — Traitement de données (batch, streaming)
   #    - Peut consommer des topics Kafka et écrire en Delta Lake ou PostgreSQL
   # ================================================================================
+  # ================================================================================
+  # 5. Spark — Traitement de données (batch, streaming)
+  #    - Peut consommer des topics Kafka et écrire en Delta Lake ou PostgreSQL
+  #    - 🔔 Peut aussi envoyer des notifications via NTFY si utilisé dans les scripts
+  # ================================================================================
   sport-spark:
     build:
       context: .
       dockerfile: spark/Dockerfile  # Dockerfile situé dans ./spark/
     image: sport-spark:latest
     container_name: sport-spark
-    # Mode standalone master
+
     environment:
       SPARK_MODE: master
       KAFKA_BOOTSTRAP_SERVERS: sport-redpanda:9092  # Redpanda interne Docker
+
+      # 🔔 Ajout des variables pour notifications NTFY (accessibles dans scripts Python Spark)
+      NTFY_URL: http://sport-ntfy:80
+      NTFY_TOPIC: sportdata_activites
+
     ports:
-      - "${SPARK_UI_PORT}:4040"    # UI Spark Streaming
-      - "${SPARK_CLUSTER_PORT}:7077"  # Optionnel
+      - "${SPARK_UI_PORT}:4040"         # UI Spark Streaming
+      - "${SPARK_CLUSTER_PORT}:7077"    # Port cluster Spark (optionnel)
     volumes:
       - ./spark/jobs:/opt/bitnami/spark/jobs  # Scripts Spark accessibles dans le conteneur
     networks:
@@ -168,6 +178,8 @@ services:
     command: serve
     ports:
       - "${NTFY_HTTP_PORT}:80"         # API REST et UI Web (http://localhost:<port>)
+    volumes:
+      - ./docker/ntfy:/etc/ntfy  # Montre le dossier où est ntfy.yml
     restart: always
     networks:
       - sport-network
