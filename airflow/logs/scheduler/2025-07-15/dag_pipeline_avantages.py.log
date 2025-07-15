@@ -4037,3 +4037,10 @@
 [2025-07-15T13:52:12.050+0000] {logging_mixin.py:188} INFO - [2025-07-15T13:52:12.049+0000] {dag.py:3096} INFO - Sync 1 DAGs
 [2025-07-15T13:52:12.061+0000] {logging_mixin.py:188} INFO - [2025-07-15T13:52:12.061+0000] {dag.py:3954} INFO - Setting next_dagrun for pipeline_avantages_sportifs to None, run_after=None
 [2025-07-15T13:52:12.076+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_pipeline_avantages.py took 0.075 seconds
+[2025-07-15T13:52:42.232+0000] {processor.py:161} INFO - Started process (PID=807) to work on /opt/airflow/dags/dag_pipeline_avantages.py
+[2025-07-15T13:52:42.234+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_pipeline_avantages.py for tasks to queue
+[2025-07-15T13:52:42.236+0000] {logging_mixin.py:188} INFO - [2025-07-15T13:52:42.236+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_pipeline_avantages.py
+[2025-07-15T13:52:42.300+0000] {processor.py:840} INFO - DAG(s) 'pipeline_avantages_sportifs' retrieved from /opt/airflow/dags/dag_pipeline_avantages.py
+[2025-07-15T13:52:42.325+0000] {logging_mixin.py:188} INFO - [2025-07-15T13:52:42.325+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-15T13:52:42.337+0000] {logging_mixin.py:188} INFO - [2025-07-15T13:52:42.336+0000] {dag.py:3954} INFO - Setting next_dagrun for pipeline_avantages_sportifs to None, run_after=None
+[2025-07-15T13:52:42.358+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_pipeline_avantages.py took 0.132 seconds
