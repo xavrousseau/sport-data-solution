@@ -20,6 +20,7 @@ env/
 
 docs/
 old/
+logs/
 
 # 📦 Fichiers d’archives
 *.zip
