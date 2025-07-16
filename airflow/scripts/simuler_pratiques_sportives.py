@@ -2,7 +2,7 @@
 # Script      : simuler_pratiques_sportives.py
 # Objectif    : Générer des activités sportives simulées (type Strava)
 #               à partir des salariés éligibles et les injecter dans PostgreSQL + MinIO.
-#               Envoie aussi des notifications ntfy simulant un Slack-like.
+#               Envoie aussi des notifications ntfy simulant un Slack-like + Kafka.
 # Auteur      : Xavier Rousseau | Mis à jour Juillet 2025
 # ==========================================================================================
 
@@ -14,11 +14,13 @@ from datetime import datetime, timedelta
 from sqlalchemy import create_engine
 from loguru import logger
 import os
-from dotenv import load_dotenv
-from minio_helper import MinIOHelper
+import uuid
+import json
 import tempfile
 import requests
-import uuid
+from dotenv import load_dotenv
+from minio_helper import MinIOHelper
+from kafka import KafkaProducer
 
 # ==========================================================================================
 # 1. Chargement des variables d’environnement (.env)
@@ -39,6 +41,9 @@ TMP_DIR = "/tmp"
 NTFY_URL = os.getenv("NTFY_URL", "http://localhost:8080")
 NTFY_TOPIC = os.getenv("NTFY_TOPIC", "sportdata_activites")
 
+KAFKA_TOPIC = os.getenv("KAFKA_TOPIC", "sportdata_activites")
+KAFKA_BOOTSTRAP_SERVERS = os.getenv("KAFKA_BOOTSTRAP_SERVERS", "sport-redpanda:9092")
+
 NB_MOIS = int(os.getenv("SIMULATION_MONTHS", 12))
 ACTIVITES_MIN = int(os.getenv("SIMULATION_MIN_ACTIVITIES", 10))
 ACTIVITES_MAX = int(os.getenv("SIMULATION_MAX_ACTIVITIES", 100))
@@ -56,33 +61,27 @@ ACTIVITES = [
 fake = Faker("fr_FR")
 
 # ==========================================================================================
-# 2. Chargement des salariés éligibles depuis MinIO (issus du nettoyage RH)
+# 2. Chargement des salariés éligibles depuis MinIO
 # ==========================================================================================
 def charger_salaries_eligibles_minio():
     helper = MinIOHelper()
     with tempfile.NamedTemporaryFile(suffix=".xlsx", dir=TMP_DIR) as tmpfile:
-        helper.client.download_file(
-            Bucket=helper.bucket,
-            Key=MINIO_RH_KEY,
-            Filename=tmpfile.name
-        )
+        helper.client.download_file(helper.bucket, MINIO_RH_KEY, tmpfile.name)
         logger.success(f"✅ Fichier RH nettoyé téléchargé depuis MinIO : {tmpfile.name}")
         df_rh = pd.read_excel(tmpfile.name)
     col_id = next((c for c in df_rh.columns if "id" in c.lower() and "salarie" in c.lower()), "id_salarie")
     return df_rh[[col_id, "nom", "prenom"]].rename(columns={col_id: "id_salarie"})
 
 # ==========================================================================================
-# 3. Envoi de notification ntfy avec alternance réaliste et type sport adapté
+# 3. NTFY : Message simulé de Slack-like
 # ==========================================================================================
 def envoyer_message_ntfy(prenom, sport, distance, temps, commentaire=""):
     km = distance / 1000
     minutes = temps // 60
-
     sports_deplacement = {
         "Course à pied", "Marche", "Vélo", "Trottinette", "Roller", "Skateboard",
         "Randonnée", "Natation"
     }
-
     is_deplacement = sport in sports_deplacement
 
     if is_deplacement:
@@ -108,11 +107,7 @@ def envoyer_message_ntfy(prenom, sport, distance, temps, commentaire=""):
             f"🎊 {prenom} vient de boucler {minutes} min de {sport.lower()} — {commentaire}"
         ]
 
-    message = (
-        choice(messages_fun) if commentaire and randint(0, 1) == 0
-        else choice(messages_motivants)
-    )
-
+    message = choice(messages_fun) if commentaire and randint(0, 1) == 0 else choice(messages_motivants)
     try:
         response = requests.post(f"{NTFY_URL}/{NTFY_TOPIC}", data=message.encode("utf-8"))
         if response.status_code == 200:
@@ -123,9 +118,21 @@ def envoyer_message_ntfy(prenom, sport, distance, temps, commentaire=""):
         logger.error(f"Erreur ntfy : {e}")
 
 # ==========================================================================================
-# 4. Simulation d'activités sportives
+# 4. Envoi dans Kafka (chaque message = activité JSON)
+# ==========================================================================================
+def envoyer_message_kafka(producer, topic, message_dict):
+    try:
+        json_msg = json.dumps(message_dict).encode("utf-8")
+        producer.send(topic, value=json_msg)
+        logger.debug(f"🛰️ Message Kafka envoyé : {message_dict}")
+    except Exception as e:
+        logger.error(f"Erreur Kafka : {e}")
+
+# ==========================================================================================
+# 5. Simulation des activités sportives + ntfy + kafka
 # ==========================================================================================
 def simuler_activites_strava(df_salaries, nb_mois, activites_min, activites_max, max_ntfy=10):
+    producer = KafkaProducer(bootstrap_servers=KAFKA_BOOTSTRAP_SERVERS)
     activities = []
     messages_envoyes = 0
     date_debut = datetime.now() - timedelta(days=nb_mois * 30)
@@ -162,62 +169,49 @@ def simuler_activites_strava(df_salaries, nb_mois, activites_min, activites_max,
 
             commentaire = fake.sentence(nb_words=8) if randint(0, 3) == 0 else ""
 
-            activities.append({
+            activity = {
                 "uid": str(uuid.uuid4()),
                 "id_salarie": id_salarie,
                 "nom": nom,
                 "prenom": prenom,
-                "date": date_activite,
-                "jour": date_activite.date(),
+                "date": date_activite.isoformat(),
+                "jour": date_activite.date().isoformat(),
                 "type_activite": sport_type,
                 "distance_km": round(distance / 1000, 2),
                 "temps_sec": temps,
                 "commentaire": commentaire
-            })
+            }
+
+            activities.append(activity)
+            envoyer_message_kafka(producer, KAFKA_TOPIC, activity)
 
             if messages_envoyes < max_ntfy:
                 envoyer_message_ntfy(prenom, sport_type, distance, temps, commentaire)
                 messages_envoyes += 1
 
-    df = pd.DataFrame(activities)
-    logger.info(f"Nombre total d'activités simulées : {len(df)}")
-    return df
+    producer.flush()
+    return pd.DataFrame(activities)
 
 # ==========================================================================================
-# 5. Export Excel, PostgreSQL, MinIO
+# 6. Export des résultats
 # ==========================================================================================
 def exporter_excel(df, fichier):
-    try:
-        os.makedirs(os.path.dirname(fichier), exist_ok=True)
-        df.to_excel(fichier, index=False)
-        logger.success(f"✅ Export Excel : {fichier}")
-    except Exception as e:
-        logger.error(f"Erreur export Excel : {e}")
+    os.makedirs(os.path.dirname(fichier), exist_ok=True)
+    df.to_excel(fichier, index=False)
+    logger.success(f"✅ Export Excel : {fichier}")
 
 def upload_file_to_minio(local_file, minio_key, helper):
     with open(local_file, "rb") as f:
-        file_size = os.fstat(f.fileno()).st_size
-        try:
-            helper.client.put_object(
-                Bucket=helper.bucket,
-                Key=minio_key,
-                Body=f,
-                ContentLength=file_size
-            )
-            logger.success(f"✅ Fichier uploadé sur MinIO : {minio_key}")
-        except Exception as e:
-            logger.error(f"Erreur upload MinIO : {e}")
+        helper.client.put_object(helper.bucket, minio_key, f, length=os.fstat(f.fileno()).st_size)
+        logger.success(f"✅ Fichier uploadé sur MinIO : {minio_key}")
 
 def inserer_donnees_postgres(df, table_sql, db_conn_string):
     engine = create_engine(db_conn_string)
-    try:
-        df.to_sql(table_sql, engine, if_exists="replace", index=False, schema="sportdata")
-        logger.success(f"✅ {len(df)} activités insérées dans PostgreSQL (table '{table_sql}')")
-    except Exception as e:
-        logger.error(f"Erreur PostgreSQL : {e}")
+    df.to_sql(table_sql, engine, if_exists="replace", index=False, schema="sportdata")
+    logger.success(f"✅ {len(df)} activités insérées dans PostgreSQL (table '{table_sql}')")
 
 # ==========================================================================================
-# 6. Pipeline principal
+# 7. Pipeline principal
 # ==========================================================================================
 if __name__ == "__main__":
     try:
@@ -239,7 +233,7 @@ if __name__ == "__main__":
         helper = MinIOHelper()
         upload_file_to_minio(EXPORT_XLSX_PATH, MINIO_XLSX_KEY, helper)
 
-        logger.success("🎯 Pipeline terminé : PostgreSQL + MinIO + ntfy ✅")
+        logger.success("🎯 Pipeline terminé : PostgreSQL + MinIO + ntfy + Kafka ✅")
     except Exception as e:
         logger.error(f"❌ Erreur pipeline simulation : {e}")
         raise
