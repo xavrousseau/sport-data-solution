@@ -2119,3 +2119,1018 @@
 [2025-07-16T09:22:11.905+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:22:11.905+0000] {dag.py:3096} INFO - Sync 1 DAGs
 [2025-07-16T09:22:11.917+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:22:11.917+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
 [2025-07-16T09:22:11.939+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.088 seconds
+[2025-07-16T09:22:42.848+0000] {processor.py:161} INFO - Started process (PID=2166) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:22:42.849+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T09:22:42.851+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:22:42.851+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:22:42.878+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:22:42.900+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:22:42.900+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T09:22:42.910+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:22:42.910+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T09:22:42.925+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.082 seconds
+[2025-07-16T09:23:13.784+0000] {processor.py:161} INFO - Started process (PID=2173) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:23:13.785+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T09:23:13.787+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:23:13.787+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:23:13.805+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:23:13.826+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:23:13.826+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T09:23:13.837+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:23:13.837+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T09:23:13.856+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.076 seconds
+[2025-07-16T09:23:44.666+0000] {processor.py:161} INFO - Started process (PID=2180) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:23:44.666+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T09:23:44.668+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:23:44.668+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:23:44.690+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:23:44.709+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:23:44.709+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T09:23:44.721+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:23:44.720+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T09:23:44.739+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.079 seconds
+[2025-07-16T09:24:15.581+0000] {processor.py:161} INFO - Started process (PID=2187) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:24:15.581+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T09:24:15.583+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:24:15.583+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:24:15.599+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:24:15.620+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:24:15.620+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T09:24:15.631+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:24:15.631+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T09:24:15.646+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.071 seconds
+[2025-07-16T09:24:46.302+0000] {processor.py:161} INFO - Started process (PID=2194) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:24:46.303+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T09:24:46.304+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:24:46.304+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:24:46.318+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:24:46.336+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:24:46.336+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T09:24:46.346+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:24:46.346+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T09:24:46.361+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.064 seconds
+[2025-07-16T09:25:17.113+0000] {processor.py:161} INFO - Started process (PID=2201) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:25:17.114+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T09:25:17.115+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:25:17.115+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:25:17.129+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:25:17.149+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:25:17.149+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T09:25:17.160+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:25:17.160+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T09:25:17.176+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.068 seconds
+[2025-07-16T09:25:47.290+0000] {processor.py:161} INFO - Started process (PID=2208) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:25:47.291+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T09:25:47.292+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:25:47.292+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:25:47.315+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:25:47.334+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:25:47.334+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T09:25:47.346+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:25:47.346+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T09:25:47.361+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.077 seconds
+[2025-07-16T09:26:18.206+0000] {processor.py:161} INFO - Started process (PID=2215) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:26:18.206+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T09:26:18.208+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:26:18.208+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:26:18.219+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:26:18.236+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:26:18.236+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T09:26:18.246+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:26:18.246+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T09:26:18.259+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.058 seconds
+[2025-07-16T09:26:49.211+0000] {processor.py:161} INFO - Started process (PID=2222) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:26:49.212+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T09:26:49.214+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:26:49.214+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:26:49.234+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:26:49.256+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:26:49.255+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T09:26:49.267+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:26:49.266+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T09:26:49.284+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.077 seconds
+[2025-07-16T09:27:19.415+0000] {processor.py:161} INFO - Started process (PID=2229) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:27:19.415+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T09:27:19.417+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:27:19.417+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:27:19.438+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:27:19.458+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:27:19.458+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T09:27:19.468+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:27:19.468+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T09:27:19.482+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.072 seconds
+[2025-07-16T09:27:49.585+0000] {processor.py:161} INFO - Started process (PID=2236) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:27:49.587+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T09:27:49.589+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:27:49.589+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:27:49.608+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:27:49.628+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:27:49.627+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T09:27:49.638+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:27:49.638+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T09:27:49.652+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.071 seconds
+[2025-07-16T09:28:19.784+0000] {processor.py:161} INFO - Started process (PID=2243) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:28:19.785+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T09:28:19.786+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:28:19.786+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:28:19.802+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:28:19.822+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:28:19.822+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T09:28:19.834+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:28:19.834+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T09:28:19.854+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.074 seconds
+[2025-07-16T09:28:49.982+0000] {processor.py:161} INFO - Started process (PID=2250) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:28:49.983+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T09:28:49.986+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:28:49.985+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:28:50.017+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:28:50.038+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:28:50.037+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T09:28:50.048+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:28:50.048+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T09:28:50.064+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.086 seconds
+[2025-07-16T09:29:20.970+0000] {processor.py:161} INFO - Started process (PID=2257) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:29:20.971+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T09:29:20.972+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:29:20.972+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:29:20.987+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:29:21.006+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:29:21.006+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T09:29:21.026+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:29:21.026+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T09:29:21.041+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.076 seconds
+[2025-07-16T09:29:51.319+0000] {processor.py:161} INFO - Started process (PID=2264) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:29:51.320+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T09:29:51.321+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:29:51.321+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:29:51.335+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:29:51.353+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:29:51.352+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T09:29:51.363+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:29:51.363+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T09:29:51.378+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.063 seconds
+[2025-07-16T09:30:22.364+0000] {processor.py:161} INFO - Started process (PID=2271) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:30:22.365+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T09:30:22.367+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:30:22.367+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:30:22.388+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:30:22.407+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:30:22.407+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T09:30:22.417+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:30:22.417+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T09:30:22.430+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.071 seconds
+[2025-07-16T09:30:53.472+0000] {processor.py:161} INFO - Started process (PID=2278) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:30:53.473+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T09:30:53.474+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:30:53.474+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:30:53.501+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:30:53.522+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:30:53.522+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T09:30:53.535+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:30:53.535+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T09:30:53.551+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.084 seconds
+[2025-07-16T09:31:23.699+0000] {processor.py:161} INFO - Started process (PID=2285) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:31:23.700+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T09:31:23.702+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:31:23.702+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:31:23.726+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:31:23.745+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:31:23.745+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T09:31:23.755+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:31:23.755+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T09:31:23.769+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.075 seconds
+[2025-07-16T09:31:54.654+0000] {processor.py:161} INFO - Started process (PID=2292) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:31:54.655+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T09:31:54.656+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:31:54.656+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:31:54.668+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:31:54.687+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:31:54.687+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T09:31:54.698+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:31:54.698+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T09:31:54.712+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.063 seconds
+[2025-07-16T09:32:25.673+0000] {processor.py:161} INFO - Started process (PID=2299) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:32:25.674+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T09:32:25.676+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:32:25.676+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:32:25.693+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:32:25.712+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:32:25.712+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T09:32:25.722+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:32:25.722+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T09:32:25.736+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.067 seconds
+[2025-07-16T09:32:56.647+0000] {processor.py:161} INFO - Started process (PID=2306) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:32:56.648+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T09:32:56.650+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:32:56.649+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:32:56.676+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:32:56.697+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:32:56.697+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T09:32:56.708+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:32:56.708+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T09:32:56.723+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.081 seconds
+[2025-07-16T09:33:27.608+0000] {processor.py:161} INFO - Started process (PID=2313) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:33:27.608+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T09:33:27.610+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:33:27.610+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:33:27.622+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:33:27.640+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:33:27.640+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T09:33:27.651+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:33:27.650+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T09:33:27.664+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.061 seconds
+[2025-07-16T09:33:58.496+0000] {processor.py:161} INFO - Started process (PID=2320) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:33:58.497+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T09:33:58.498+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:33:58.498+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:33:58.514+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:33:58.532+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:33:58.532+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T09:33:58.542+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:33:58.542+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T09:33:58.557+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.066 seconds
+[2025-07-16T09:34:28.715+0000] {processor.py:161} INFO - Started process (PID=2327) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:34:28.716+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T09:34:28.717+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:34:28.717+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:34:28.729+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:34:28.748+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:34:28.747+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T09:34:28.759+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:34:28.759+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T09:34:28.775+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.064 seconds
+[2025-07-16T09:34:59.696+0000] {processor.py:161} INFO - Started process (PID=2334) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:34:59.697+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T09:34:59.699+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:34:59.698+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:34:59.730+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:34:59.750+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:34:59.749+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T09:34:59.761+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:34:59.760+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T09:34:59.774+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.086 seconds
+[2025-07-16T09:35:30.837+0000] {processor.py:161} INFO - Started process (PID=2341) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:35:30.838+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T09:35:30.840+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:35:30.840+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:35:30.858+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:35:30.877+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:35:30.876+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T09:35:30.888+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:35:30.888+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T09:35:30.904+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.072 seconds
+[2025-07-16T09:36:01.866+0000] {processor.py:161} INFO - Started process (PID=2348) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:36:01.869+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T09:36:01.871+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:36:01.870+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:36:01.894+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:36:01.914+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:36:01.914+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T09:36:01.926+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:36:01.925+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T09:36:01.945+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.084 seconds
+[2025-07-16T09:36:32.221+0000] {processor.py:161} INFO - Started process (PID=2355) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:36:32.223+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T09:36:32.224+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:36:32.224+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:36:32.248+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:36:32.269+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:36:32.269+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T09:36:32.280+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:36:32.280+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T09:36:32.299+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.082 seconds
+[2025-07-16T09:37:02.437+0000] {processor.py:161} INFO - Started process (PID=2362) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:37:02.438+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T09:37:02.440+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:37:02.440+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:37:02.464+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:37:02.485+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:37:02.485+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T09:37:02.498+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:37:02.498+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T09:37:02.517+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.086 seconds
+[2025-07-16T09:37:32.847+0000] {processor.py:161} INFO - Started process (PID=2369) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:37:32.848+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T09:37:32.849+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:37:32.849+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:37:32.863+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:37:32.883+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:37:32.883+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T09:37:32.895+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:37:32.895+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T09:37:32.907+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.065 seconds
+[2025-07-16T09:38:03.792+0000] {processor.py:161} INFO - Started process (PID=2376) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:38:03.793+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T09:38:03.794+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:38:03.794+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:38:03.805+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:38:03.823+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:38:03.823+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T09:38:03.834+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:38:03.834+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T09:38:03.855+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.068 seconds
+[2025-07-16T09:38:34.001+0000] {processor.py:161} INFO - Started process (PID=2383) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:38:34.002+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T09:38:34.004+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:38:34.003+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:38:34.019+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:38:34.039+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:38:34.039+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T09:38:34.054+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:38:34.053+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T09:38:34.070+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.074 seconds
+[2025-07-16T09:39:05.026+0000] {processor.py:161} INFO - Started process (PID=2390) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:39:05.027+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T09:39:05.029+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:39:05.029+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:39:05.046+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:39:05.071+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:39:05.071+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T09:39:05.084+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:39:05.083+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T09:39:05.101+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.080 seconds
+[2025-07-16T09:39:35.234+0000] {processor.py:161} INFO - Started process (PID=2397) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:39:35.235+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T09:39:35.236+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:39:35.236+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:39:35.248+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:39:35.267+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:39:35.267+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T09:39:35.279+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:39:35.279+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T09:39:35.297+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.068 seconds
+[2025-07-16T09:40:06.171+0000] {processor.py:161} INFO - Started process (PID=2404) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:40:06.172+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T09:40:06.174+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:40:06.174+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:40:06.190+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:40:06.211+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:40:06.211+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T09:40:06.221+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:40:06.221+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T09:40:06.237+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.072 seconds
+[2025-07-16T09:40:36.415+0000] {processor.py:161} INFO - Started process (PID=2411) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:40:36.416+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T09:40:36.417+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:40:36.417+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:40:36.439+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:40:36.457+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:40:36.457+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T09:40:36.468+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:40:36.468+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T09:40:36.484+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.074 seconds
+[2025-07-16T09:41:07.231+0000] {processor.py:161} INFO - Started process (PID=2418) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:41:07.231+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T09:41:07.233+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:41:07.233+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:41:07.249+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:41:07.272+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:41:07.272+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T09:41:07.283+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:41:07.283+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T09:41:07.296+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.071 seconds
+[2025-07-16T09:41:38.176+0000] {processor.py:161} INFO - Started process (PID=2425) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:41:38.177+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T09:41:38.179+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:41:38.179+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:41:38.202+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:41:38.222+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:41:38.222+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T09:41:38.234+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:41:38.234+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T09:41:38.251+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.080 seconds
+[2025-07-16T09:42:09.220+0000] {processor.py:161} INFO - Started process (PID=2432) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:42:09.222+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T09:42:09.223+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:42:09.223+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:42:09.251+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:42:09.275+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:42:09.274+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T09:42:09.286+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:42:09.286+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T09:42:09.303+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.088 seconds
+[2025-07-16T09:42:39.459+0000] {processor.py:161} INFO - Started process (PID=2439) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:42:39.460+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T09:42:39.462+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:42:39.461+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:42:39.478+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:42:39.497+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:42:39.497+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T09:42:39.507+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:42:39.507+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T09:42:39.526+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.073 seconds
+[2025-07-16T09:43:09.715+0000] {processor.py:161} INFO - Started process (PID=2446) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:43:09.716+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T09:43:09.718+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:43:09.718+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:43:09.739+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:43:09.759+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:43:09.759+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T09:43:09.778+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:43:09.778+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T09:43:09.796+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.086 seconds
+[2025-07-16T09:43:40.015+0000] {processor.py:161} INFO - Started process (PID=2453) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:43:40.017+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T09:43:40.019+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:43:40.019+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:43:40.052+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:43:40.076+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:43:40.076+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T09:43:40.088+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:43:40.088+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T09:43:40.105+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.098 seconds
+[2025-07-16T09:44:10.269+0000] {processor.py:161} INFO - Started process (PID=2460) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:44:10.270+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T09:44:10.272+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:44:10.272+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:44:10.296+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:44:10.316+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:44:10.316+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T09:44:10.327+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:44:10.327+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T09:44:10.345+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.081 seconds
+[2025-07-16T09:44:40.391+0000] {processor.py:161} INFO - Started process (PID=2467) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:44:40.392+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T09:44:40.394+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:44:40.394+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:44:40.410+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:44:40.429+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:44:40.429+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T09:44:40.440+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:44:40.440+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T09:44:40.457+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.071 seconds
+[2025-07-16T09:45:10.579+0000] {processor.py:161} INFO - Started process (PID=2474) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:45:10.580+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T09:45:10.582+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:45:10.582+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:45:10.608+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:45:10.627+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:45:10.627+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T09:45:10.638+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:45:10.638+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T09:45:10.657+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.083 seconds
+[2025-07-16T09:45:40.733+0000] {processor.py:161} INFO - Started process (PID=2481) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:45:40.734+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T09:45:40.736+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:45:40.736+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:45:40.759+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:45:40.781+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:45:40.781+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T09:45:40.792+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:45:40.792+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T09:45:40.808+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.082 seconds
+[2025-07-16T09:46:11.030+0000] {processor.py:161} INFO - Started process (PID=2488) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:46:11.031+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T09:46:11.033+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:46:11.032+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:46:11.055+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:46:11.076+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:46:11.076+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T09:46:11.087+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:46:11.087+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T09:46:11.103+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.077 seconds
+[2025-07-16T09:46:42.308+0000] {processor.py:161} INFO - Started process (PID=2495) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:46:42.308+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T09:46:42.310+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:46:42.310+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:46:42.371+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:46:42.393+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:46:42.393+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T09:46:42.404+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:46:42.404+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T09:46:42.425+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.126 seconds
+[2025-07-16T09:47:13.328+0000] {processor.py:161} INFO - Started process (PID=2502) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:47:13.329+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T09:47:13.331+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:47:13.330+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:47:13.345+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:47:13.365+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:47:13.365+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T09:47:13.375+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:47:13.375+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T09:47:13.391+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.068 seconds
+[2025-07-16T09:47:44.338+0000] {processor.py:161} INFO - Started process (PID=2509) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:47:44.339+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T09:47:44.340+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:47:44.340+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:47:44.351+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:47:44.371+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:47:44.370+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T09:47:44.392+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:47:44.392+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T09:47:44.409+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.075 seconds
+[2025-07-16T09:48:14.561+0000] {processor.py:161} INFO - Started process (PID=2516) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:48:14.563+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T09:48:14.564+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:48:14.564+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:48:14.586+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:48:14.607+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:48:14.607+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T09:48:14.619+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:48:14.619+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T09:48:14.639+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.082 seconds
+[2025-07-16T09:48:45.431+0000] {processor.py:161} INFO - Started process (PID=2523) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:48:45.433+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T09:48:45.435+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:48:45.435+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:48:45.456+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:48:45.476+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:48:45.476+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T09:48:45.487+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:48:45.487+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T09:48:45.507+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.082 seconds
+[2025-07-16T09:49:16.352+0000] {processor.py:161} INFO - Started process (PID=2530) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:49:16.353+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T09:49:16.356+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:49:16.355+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:49:16.381+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:49:16.403+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:49:16.403+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T09:49:16.420+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:49:16.420+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T09:49:16.440+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.092 seconds
+[2025-07-16T09:49:47.235+0000] {processor.py:161} INFO - Started process (PID=2537) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:49:47.236+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T09:49:47.238+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:49:47.237+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:49:47.249+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:49:47.269+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:49:47.269+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T09:49:47.281+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:49:47.281+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T09:49:47.299+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.068 seconds
+[2025-07-16T09:50:18.154+0000] {processor.py:161} INFO - Started process (PID=2544) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:50:18.155+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T09:50:18.157+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:50:18.157+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:50:18.186+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:50:18.207+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:50:18.206+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T09:50:18.219+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:50:18.219+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T09:50:18.238+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.089 seconds
+[2025-07-16T09:50:48.979+0000] {processor.py:161} INFO - Started process (PID=2551) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:50:48.980+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T09:50:48.981+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:50:48.981+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:50:48.996+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:50:49.018+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:50:49.018+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T09:50:49.029+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:50:49.029+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T09:50:49.045+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.070 seconds
+[2025-07-16T09:51:19.881+0000] {processor.py:161} INFO - Started process (PID=2558) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:51:19.883+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T09:51:19.885+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:51:19.885+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:51:19.910+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:51:19.933+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:51:19.933+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T09:51:19.947+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:51:19.946+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T09:51:19.964+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.088 seconds
+[2025-07-16T09:51:50.121+0000] {processor.py:161} INFO - Started process (PID=2565) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:51:50.122+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T09:51:50.125+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:51:50.124+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:51:50.153+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:51:50.180+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:51:50.180+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T09:51:50.192+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:51:50.191+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T09:51:50.209+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.095 seconds
+[2025-07-16T09:52:21.127+0000] {processor.py:161} INFO - Started process (PID=2572) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:52:21.128+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T09:52:21.129+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:52:21.129+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:52:21.153+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:52:21.174+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:52:21.174+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T09:52:21.185+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:52:21.184+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T09:52:21.202+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.080 seconds
+[2025-07-16T09:52:52.048+0000] {processor.py:161} INFO - Started process (PID=2579) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:52:52.049+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T09:52:52.051+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:52:52.051+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:52:52.078+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:52:52.100+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:52:52.100+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T09:52:52.113+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:52:52.113+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T09:52:52.132+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.090 seconds
+[2025-07-16T09:53:22.616+0000] {processor.py:161} INFO - Started process (PID=2586) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:53:22.617+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T09:53:22.619+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:53:22.619+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:53:22.646+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:53:22.670+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:53:22.669+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T09:53:22.682+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:53:22.681+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T09:53:22.701+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.092 seconds
+[2025-07-16T09:53:52.778+0000] {processor.py:161} INFO - Started process (PID=2593) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:53:52.780+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T09:53:52.782+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:53:52.782+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:53:52.807+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:53:52.826+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:53:52.826+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T09:53:52.837+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:53:52.837+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T09:53:52.851+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.086 seconds
+[2025-07-16T09:54:22.940+0000] {processor.py:161} INFO - Started process (PID=2600) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:54:22.941+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T09:54:22.943+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:54:22.943+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:54:22.970+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:54:22.992+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:54:22.992+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T09:54:23.003+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:54:23.003+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T09:54:23.023+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.089 seconds
+[2025-07-16T09:54:53.091+0000] {processor.py:161} INFO - Started process (PID=2607) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:54:53.093+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T09:54:53.095+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:54:53.094+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:54:53.117+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:54:53.136+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:54:53.135+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T09:54:53.147+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:54:53.147+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T09:54:53.166+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.080 seconds
+[2025-07-16T09:55:24.022+0000] {processor.py:161} INFO - Started process (PID=2614) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:55:24.022+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T09:55:24.024+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:55:24.024+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:55:24.039+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:55:24.057+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:55:24.057+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T09:55:24.067+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:55:24.067+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T09:55:24.079+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.064 seconds
+[2025-07-16T09:55:54.210+0000] {processor.py:161} INFO - Started process (PID=2621) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:55:54.211+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T09:55:54.213+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:55:54.212+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:55:54.229+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:55:54.247+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:55:54.247+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T09:55:54.258+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:55:54.258+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T09:55:54.275+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.069 seconds
+[2025-07-16T09:56:25.040+0000] {processor.py:161} INFO - Started process (PID=2628) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:56:25.041+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T09:56:25.042+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:56:25.042+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:56:25.065+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:56:25.088+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:56:25.087+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T09:56:25.100+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:56:25.100+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T09:56:25.115+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.081 seconds
+[2025-07-16T09:56:55.923+0000] {processor.py:161} INFO - Started process (PID=2635) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:56:55.923+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T09:56:55.925+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:56:55.925+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:56:55.938+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:56:55.956+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:56:55.956+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T09:56:55.967+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:56:55.967+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T09:56:55.986+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.068 seconds
+[2025-07-16T09:57:26.800+0000] {processor.py:161} INFO - Started process (PID=2642) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:57:26.801+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T09:57:26.803+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:57:26.802+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:57:26.817+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:57:26.837+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:57:26.837+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T09:57:26.849+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:57:26.849+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T09:57:26.863+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.068 seconds
+[2025-07-16T09:57:56.979+0000] {processor.py:161} INFO - Started process (PID=2649) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:57:56.980+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T09:57:56.982+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:57:56.981+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:57:56.995+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:57:57.016+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:57:57.016+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T09:57:57.027+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:57:57.027+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T09:57:57.042+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.068 seconds
+[2025-07-16T09:58:27.137+0000] {processor.py:161} INFO - Started process (PID=2656) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:58:27.139+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T09:58:27.141+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:58:27.141+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:58:27.169+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:58:27.190+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:58:27.190+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T09:58:27.201+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:58:27.201+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T09:58:27.219+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.087 seconds
+[2025-07-16T09:58:57.291+0000] {processor.py:161} INFO - Started process (PID=2663) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:58:57.292+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T09:58:57.294+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:58:57.294+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:58:57.315+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:58:57.336+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:58:57.336+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T09:58:57.347+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:58:57.347+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T09:58:57.368+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.082 seconds
+[2025-07-16T09:59:27.537+0000] {processor.py:161} INFO - Started process (PID=2670) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:59:27.538+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T09:59:27.539+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:59:27.539+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:59:27.565+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:59:27.586+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:59:27.585+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T09:59:27.601+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:59:27.601+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T09:59:27.621+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.089 seconds
+[2025-07-16T09:59:57.769+0000] {processor.py:161} INFO - Started process (PID=2677) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:59:57.770+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T09:59:57.772+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:59:57.772+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:59:57.791+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T09:59:57.813+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:59:57.813+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T09:59:57.825+0000] {logging_mixin.py:188} INFO - [2025-07-16T09:59:57.825+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T09:59:57.842+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.077 seconds
+[2025-07-16T10:00:27.950+0000] {processor.py:161} INFO - Started process (PID=2684) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:00:27.953+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T10:00:27.955+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:00:27.955+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:00:27.990+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:00:28.016+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:00:28.016+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T10:00:28.028+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:00:28.028+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T10:00:28.048+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.104 seconds
+[2025-07-16T10:00:58.144+0000] {processor.py:161} INFO - Started process (PID=2691) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:00:58.145+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T10:00:58.146+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:00:58.146+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:00:58.158+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:00:58.176+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:00:58.176+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T10:00:58.188+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:00:58.188+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T10:00:58.201+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.062 seconds
+[2025-07-16T10:01:29.177+0000] {processor.py:161} INFO - Started process (PID=2698) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:01:29.177+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T10:01:29.179+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:01:29.179+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:01:29.190+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:01:29.208+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:01:29.208+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T10:01:29.218+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:01:29.218+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T10:01:29.231+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.059 seconds
+[2025-07-16T10:02:00.073+0000] {processor.py:161} INFO - Started process (PID=2705) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:02:00.074+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T10:02:00.075+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:02:00.075+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:02:00.093+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:02:00.112+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:02:00.112+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T10:02:00.123+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:02:00.123+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T10:02:00.138+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.070 seconds
+[2025-07-16T10:02:30.927+0000] {processor.py:161} INFO - Started process (PID=2712) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:02:30.928+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T10:02:30.929+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:02:30.929+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:02:30.954+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:02:30.977+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:02:30.977+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T10:02:30.989+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:02:30.988+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T10:02:31.005+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.083 seconds
+[2025-07-16T10:03:01.127+0000] {processor.py:161} INFO - Started process (PID=2719) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:03:01.128+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T10:03:01.130+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:03:01.129+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:03:01.146+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:03:01.165+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:03:01.165+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T10:03:01.175+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:03:01.174+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T10:03:01.189+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.067 seconds
+[2025-07-16T10:03:32.038+0000] {processor.py:161} INFO - Started process (PID=2726) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:03:32.039+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T10:03:32.040+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:03:32.040+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:03:32.056+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:03:32.076+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:03:32.075+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T10:03:32.087+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:03:32.087+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T10:03:32.101+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.068 seconds
+[2025-07-16T10:04:02.923+0000] {processor.py:161} INFO - Started process (PID=2733) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:04:02.924+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T10:04:02.925+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:04:02.925+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:04:02.939+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:04:02.957+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:04:02.957+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T10:04:02.968+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:04:02.968+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T10:04:02.983+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.064 seconds
+[2025-07-16T10:04:33.725+0000] {processor.py:161} INFO - Started process (PID=2740) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:04:33.726+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T10:04:33.728+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:04:33.728+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:04:33.751+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:04:33.770+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:04:33.770+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T10:04:33.780+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:04:33.780+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T10:04:33.797+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.077 seconds
+[2025-07-16T10:05:04.656+0000] {processor.py:161} INFO - Started process (PID=2747) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:05:04.657+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T10:05:04.658+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:05:04.658+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:05:04.674+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:05:04.693+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:05:04.693+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T10:05:04.704+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:05:04.704+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T10:05:04.721+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.070 seconds
+[2025-07-16T10:05:35.402+0000] {processor.py:161} INFO - Started process (PID=2754) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:05:35.403+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T10:05:35.404+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:05:35.404+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:05:35.416+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:05:35.437+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:05:35.437+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T10:05:35.449+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:05:35.449+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T10:05:35.464+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.066 seconds
+[2025-07-16T10:06:06.305+0000] {processor.py:161} INFO - Started process (PID=2761) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:06:06.307+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T10:06:06.308+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:06:06.308+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:06:06.330+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:06:06.351+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:06:06.351+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T10:06:06.362+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:06:06.362+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T10:06:06.380+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.080 seconds
+[2025-07-16T10:06:37.156+0000] {processor.py:161} INFO - Started process (PID=2768) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:06:37.157+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T10:06:37.159+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:06:37.159+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:06:37.186+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:06:37.208+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:06:37.208+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T10:06:37.219+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:06:37.219+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T10:06:37.237+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.086 seconds
+[2025-07-16T10:07:08.098+0000] {processor.py:161} INFO - Started process (PID=2775) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:07:08.099+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T10:07:08.101+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:07:08.100+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:07:08.117+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:07:08.137+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:07:08.137+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T10:07:08.148+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:07:08.148+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T10:07:08.165+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.071 seconds
+[2025-07-16T10:07:38.983+0000] {processor.py:161} INFO - Started process (PID=2782) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:07:38.985+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T10:07:38.986+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:07:38.986+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:07:39.000+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:07:39.018+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:07:39.018+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T10:07:39.029+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:07:39.029+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T10:07:39.043+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.064 seconds
+[2025-07-16T10:08:09.828+0000] {processor.py:161} INFO - Started process (PID=2789) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:08:09.829+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T10:08:09.830+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:08:09.830+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:08:09.843+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:08:09.861+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:08:09.861+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T10:08:09.872+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:08:09.872+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T10:08:09.886+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.063 seconds
+[2025-07-16T10:08:40.721+0000] {processor.py:161} INFO - Started process (PID=2796) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:08:40.723+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T10:08:40.725+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:08:40.724+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:08:40.749+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:08:40.770+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:08:40.770+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T10:08:40.781+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:08:40.780+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T10:08:40.797+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.081 seconds
+[2025-07-16T10:09:11.567+0000] {processor.py:161} INFO - Started process (PID=2803) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:09:11.568+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T10:09:11.570+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:09:11.570+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:09:11.591+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:09:11.612+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:09:11.612+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T10:09:11.623+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:09:11.623+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T10:09:11.642+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.080 seconds
+[2025-07-16T10:09:42.557+0000] {processor.py:161} INFO - Started process (PID=2810) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:09:42.558+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T10:09:42.560+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:09:42.560+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:09:42.588+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:09:42.612+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:09:42.611+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T10:09:42.624+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:09:42.623+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T10:09:42.639+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.087 seconds
+[2025-07-16T10:10:13.673+0000] {processor.py:161} INFO - Started process (PID=2817) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:10:13.674+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T10:10:13.676+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:10:13.676+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:10:13.702+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:10:13.723+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:10:13.723+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T10:10:13.734+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:10:13.734+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T10:10:13.752+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.083 seconds
+[2025-07-16T10:10:43.949+0000] {processor.py:161} INFO - Started process (PID=2824) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:10:43.952+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T10:10:43.956+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:10:43.956+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:10:43.999+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:10:44.035+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:10:44.034+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T10:10:44.050+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:10:44.050+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T10:10:44.069+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.135 seconds
+[2025-07-16T10:11:14.808+0000] {processor.py:161} INFO - Started process (PID=2831) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:11:14.809+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T10:11:14.811+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:11:14.811+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:11:14.821+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:11:14.841+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:11:14.841+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T10:11:14.852+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:11:14.852+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T10:11:14.868+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.064 seconds
+[2025-07-16T10:11:45.738+0000] {processor.py:161} INFO - Started process (PID=2838) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:11:45.740+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T10:11:45.741+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:11:45.741+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:11:45.752+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:11:45.771+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:11:45.771+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T10:11:45.782+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:11:45.782+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T10:11:45.796+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.063 seconds
+[2025-07-16T10:12:16.580+0000] {processor.py:161} INFO - Started process (PID=2845) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:12:16.581+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T10:12:16.582+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:12:16.582+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:12:16.603+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:12:16.623+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:12:16.623+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T10:12:16.635+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:12:16.635+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T10:12:16.651+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.076 seconds
+[2025-07-16T10:12:47.473+0000] {processor.py:161} INFO - Started process (PID=2852) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:12:47.474+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T10:12:47.475+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:12:47.475+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:12:47.492+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:12:47.513+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:12:47.513+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T10:12:47.524+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:12:47.524+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T10:12:47.539+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.071 seconds
+[2025-07-16T10:13:18.555+0000] {processor.py:161} INFO - Started process (PID=2859) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:13:18.556+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T10:13:18.557+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:13:18.557+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:13:18.574+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:13:18.597+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:13:18.597+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T10:13:18.608+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:13:18.608+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T10:13:18.625+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.075 seconds
+[2025-07-16T10:13:49.425+0000] {processor.py:161} INFO - Started process (PID=2866) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:13:49.426+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T10:13:49.428+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:13:49.427+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:13:49.439+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:13:49.458+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:13:49.457+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T10:13:49.469+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:13:49.469+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T10:13:49.487+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.067 seconds
+[2025-07-16T10:14:20.412+0000] {processor.py:161} INFO - Started process (PID=2873) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:14:20.413+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T10:14:20.415+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:14:20.415+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:14:20.427+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:14:20.445+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:14:20.445+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T10:14:20.459+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:14:20.459+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T10:14:20.476+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.068 seconds
+[2025-07-16T10:14:51.395+0000] {processor.py:161} INFO - Started process (PID=2880) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:14:51.396+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T10:14:51.398+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:14:51.398+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:14:51.419+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:14:51.440+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:14:51.440+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T10:14:51.452+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:14:51.451+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T10:14:51.467+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.077 seconds
+[2025-07-16T10:15:22.301+0000] {processor.py:161} INFO - Started process (PID=2887) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:15:22.302+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T10:15:22.304+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:15:22.304+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:15:22.332+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:15:22.353+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:15:22.353+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T10:15:22.364+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:15:22.364+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T10:15:22.380+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.085 seconds
+[2025-07-16T10:15:53.125+0000] {processor.py:161} INFO - Started process (PID=2894) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:15:53.125+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T10:15:53.127+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:15:53.127+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:15:53.140+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:15:53.162+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:15:53.162+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T10:15:53.172+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:15:53.172+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T10:15:53.188+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.068 seconds
+[2025-07-16T10:16:24.031+0000] {processor.py:161} INFO - Started process (PID=2901) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:16:24.032+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T10:16:24.033+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:16:24.033+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:16:24.048+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:16:24.066+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:16:24.066+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T10:16:24.076+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:16:24.076+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T10:16:24.090+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.064 seconds
+[2025-07-16T10:16:55.034+0000] {processor.py:161} INFO - Started process (PID=2908) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:16:55.035+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T10:16:55.037+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:16:55.037+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:16:55.060+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:16:55.084+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:16:55.084+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T10:16:55.095+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:16:55.095+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T10:16:55.113+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.083 seconds
+[2025-07-16T10:17:26.109+0000] {processor.py:161} INFO - Started process (PID=2915) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:17:26.110+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T10:17:26.111+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:17:26.111+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:17:26.146+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:17:26.169+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:17:26.168+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T10:17:26.181+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:17:26.180+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T10:17:26.199+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.094 seconds
+[2025-07-16T10:17:57.274+0000] {processor.py:161} INFO - Started process (PID=2922) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:17:57.275+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T10:17:57.276+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:17:57.276+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:17:57.294+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:17:57.314+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:17:57.314+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T10:17:57.326+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:17:57.326+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T10:17:57.342+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.075 seconds
+[2025-07-16T10:18:27.406+0000] {processor.py:161} INFO - Started process (PID=2928) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:18:27.408+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T10:18:27.409+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:18:27.409+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:18:27.434+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:18:27.456+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:18:27.456+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T10:18:27.467+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:18:27.467+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T10:18:27.490+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.089 seconds
+[2025-07-16T10:18:58.430+0000] {processor.py:161} INFO - Started process (PID=2936) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:18:58.431+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T10:18:58.432+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:18:58.432+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:18:58.449+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:18:58.469+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:18:58.469+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T10:18:58.479+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:18:58.479+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T10:18:58.495+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.070 seconds
+[2025-07-16T10:19:29.360+0000] {processor.py:161} INFO - Started process (PID=2943) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:19:29.361+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T10:19:29.362+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:19:29.362+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:19:29.373+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:19:29.392+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:19:29.392+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T10:19:29.404+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:19:29.404+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T10:19:29.417+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.062 seconds
+[2025-07-16T10:19:59.519+0000] {processor.py:161} INFO - Started process (PID=2950) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:19:59.520+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T10:19:59.521+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:19:59.521+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:19:59.534+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:19:59.553+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:19:59.553+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T10:19:59.564+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:19:59.564+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T10:19:59.579+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.064 seconds
+[2025-07-16T10:20:30.476+0000] {processor.py:161} INFO - Started process (PID=2957) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:20:30.476+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T10:20:30.478+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:20:30.478+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:20:30.491+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:20:30.510+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:20:30.510+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T10:20:30.521+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:20:30.521+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T10:20:30.534+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.063 seconds
+[2025-07-16T10:21:01.343+0000] {processor.py:161} INFO - Started process (PID=2964) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:21:01.344+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T10:21:01.345+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:21:01.345+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:21:01.364+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:21:01.388+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:21:01.388+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T10:21:01.401+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:21:01.400+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T10:21:01.417+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.080 seconds
+[2025-07-16T10:21:32.506+0000] {processor.py:161} INFO - Started process (PID=2971) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:21:32.507+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T10:21:32.509+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:21:32.509+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:21:32.533+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:21:32.554+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:21:32.554+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T10:21:32.565+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:21:32.565+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T10:21:32.580+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.079 seconds
+[2025-07-16T10:22:03.366+0000] {processor.py:161} INFO - Started process (PID=2978) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:22:03.367+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T10:22:03.369+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:22:03.369+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:22:03.395+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:22:03.417+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:22:03.416+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T10:22:03.430+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:22:03.430+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T10:22:03.448+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.086 seconds
+[2025-07-16T10:22:33.754+0000] {processor.py:161} INFO - Started process (PID=2985) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:22:33.755+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T10:22:33.757+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:22:33.757+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:22:33.784+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:22:33.805+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:22:33.805+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T10:22:33.818+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:22:33.818+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T10:22:33.834+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.085 seconds
+[2025-07-16T10:23:03.963+0000] {processor.py:161} INFO - Started process (PID=2992) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:23:03.964+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T10:23:03.965+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:23:03.965+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:23:03.992+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:23:04.012+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:23:04.012+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T10:23:04.023+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:23:04.022+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T10:23:04.037+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.080 seconds
+[2025-07-16T10:23:34.982+0000] {processor.py:161} INFO - Started process (PID=2999) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:23:34.982+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T10:23:34.984+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:23:34.984+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:23:34.997+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:23:35.017+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:23:35.016+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T10:23:35.027+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:23:35.027+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T10:23:35.042+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.065 seconds
+[2025-07-16T10:24:05.950+0000] {processor.py:161} INFO - Started process (PID=3006) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:24:05.951+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T10:24:05.953+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:24:05.953+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:24:05.982+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:24:06.008+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:24:06.007+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T10:24:06.019+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:24:06.019+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T10:24:06.036+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.091 seconds
+[2025-07-16T10:24:36.940+0000] {processor.py:161} INFO - Started process (PID=3013) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:24:36.941+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T10:24:36.943+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:24:36.943+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:24:36.956+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:24:36.975+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:24:36.975+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T10:24:36.986+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:24:36.986+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T10:24:37.007+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.071 seconds
+[2025-07-16T10:25:07.108+0000] {processor.py:161} INFO - Started process (PID=3020) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:25:07.109+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T10:25:07.111+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:25:07.110+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:25:07.125+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:25:07.144+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:25:07.143+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T10:25:07.155+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:25:07.155+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T10:25:07.171+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.068 seconds
+[2025-07-16T10:25:38.089+0000] {processor.py:161} INFO - Started process (PID=3027) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:25:38.090+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T10:25:38.092+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:25:38.092+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:25:38.113+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:25:38.134+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:25:38.134+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T10:25:38.146+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:25:38.146+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T10:25:38.163+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.079 seconds
+[2025-07-16T10:26:08.908+0000] {processor.py:161} INFO - Started process (PID=3034) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:26:08.909+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T10:26:08.911+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:26:08.911+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:26:08.922+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:26:08.940+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:26:08.940+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T10:26:08.951+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:26:08.951+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T10:26:08.966+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.063 seconds
+[2025-07-16T10:26:39.965+0000] {processor.py:161} INFO - Started process (PID=3041) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:26:39.966+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T10:26:39.967+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:26:39.967+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:26:39.978+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:26:39.996+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:26:39.996+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T10:26:40.008+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:26:40.008+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T10:26:40.022+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.061 seconds
+[2025-07-16T10:27:11.015+0000] {processor.py:161} INFO - Started process (PID=3048) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:27:11.016+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T10:27:11.022+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:27:11.021+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:27:11.034+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:27:11.061+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:27:11.060+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T10:27:11.071+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:27:11.071+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T10:27:11.090+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.080 seconds
+[2025-07-16T10:27:41.995+0000] {processor.py:161} INFO - Started process (PID=3055) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:27:41.996+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T10:27:41.998+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:27:41.998+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:27:42.031+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:27:42.051+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:27:42.051+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T10:27:42.062+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:27:42.062+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T10:27:42.078+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.088 seconds
+[2025-07-16T10:28:12.238+0000] {processor.py:161} INFO - Started process (PID=3062) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:28:12.240+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T10:28:12.241+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:28:12.241+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:28:12.263+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:28:12.282+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:28:12.282+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T10:28:12.293+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:28:12.293+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T10:28:12.310+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.077 seconds
+[2025-07-16T10:28:42.397+0000] {processor.py:161} INFO - Started process (PID=3069) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:28:42.399+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T10:28:42.401+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:28:42.401+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:28:42.417+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:28:42.437+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:28:42.436+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T10:28:42.449+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:28:42.449+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T10:28:42.464+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.073 seconds
+[2025-07-16T10:29:13.192+0000] {processor.py:161} INFO - Started process (PID=3076) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:29:13.193+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T10:29:13.195+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:29:13.195+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:29:13.221+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:29:13.241+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:29:13.241+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T10:29:13.252+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:29:13.252+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T10:29:13.268+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.080 seconds
+[2025-07-16T10:29:44.190+0000] {processor.py:161} INFO - Started process (PID=3083) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:29:44.191+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T10:29:44.193+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:29:44.193+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:29:44.222+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:29:44.244+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:29:44.244+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T10:29:44.257+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:29:44.257+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T10:29:44.274+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.089 seconds
+[2025-07-16T10:30:15.242+0000] {processor.py:161} INFO - Started process (PID=3090) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:30:15.243+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T10:30:15.244+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:30:15.244+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:30:15.277+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:30:15.300+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:30:15.300+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T10:30:15.314+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:30:15.314+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T10:30:15.340+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.103 seconds
+[2025-07-16T10:30:46.204+0000] {processor.py:161} INFO - Started process (PID=3097) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:30:46.205+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T10:30:46.206+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:30:46.206+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:30:46.219+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:30:46.238+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:30:46.238+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T10:30:46.249+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:30:46.249+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T10:30:46.263+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.064 seconds
+[2025-07-16T10:31:17.443+0000] {processor.py:161} INFO - Started process (PID=3104) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:31:17.444+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T10:31:17.445+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:31:17.445+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:31:17.457+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:31:17.477+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:31:17.477+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T10:31:17.488+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:31:17.488+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T10:31:17.510+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.072 seconds
+[2025-07-16T10:31:47.696+0000] {processor.py:161} INFO - Started process (PID=3111) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:31:47.698+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T10:31:47.700+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:31:47.699+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:31:47.721+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:31:47.741+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:31:47.741+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T10:31:47.753+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:31:47.753+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T10:31:47.771+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.081 seconds
+[2025-07-16T10:32:17.891+0000] {processor.py:161} INFO - Started process (PID=3118) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:32:17.892+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T10:32:17.894+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:32:17.893+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:32:17.973+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:32:17.999+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:32:17.999+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T10:32:18.010+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:32:18.009+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T10:32:18.025+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.139 seconds
+[2025-07-16T10:32:48.363+0000] {processor.py:161} INFO - Started process (PID=3125) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:32:48.365+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T10:32:48.366+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:32:48.366+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:32:48.381+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:32:48.402+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:32:48.401+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T10:32:48.413+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:32:48.412+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T10:32:48.427+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.068 seconds
+[2025-07-16T10:33:18.533+0000] {processor.py:161} INFO - Started process (PID=3132) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:33:18.534+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T10:33:18.535+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:33:18.535+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:33:18.551+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:33:18.570+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:33:18.570+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T10:33:18.581+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:33:18.581+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T10:33:18.595+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.067 seconds
+[2025-07-16T10:33:49.194+0000] {processor.py:161} INFO - Started process (PID=3139) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:33:49.195+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T10:33:49.197+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:33:49.197+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:33:49.218+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:33:49.239+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:33:49.239+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T10:33:49.252+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:33:49.252+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T10:33:49.271+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.082 seconds
+[2025-07-16T10:34:19.375+0000] {processor.py:161} INFO - Started process (PID=3146) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:34:19.376+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T10:34:19.379+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:34:19.378+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:34:19.414+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:34:19.435+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:34:19.434+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T10:34:19.446+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:34:19.446+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T10:34:19.463+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.093 seconds
+[2025-07-16T10:34:49.619+0000] {processor.py:161} INFO - Started process (PID=3153) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:34:49.620+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T10:34:49.622+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:34:49.622+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:34:49.656+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:34:49.677+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:34:49.677+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T10:34:49.688+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:34:49.688+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T10:34:49.705+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.091 seconds
+[2025-07-16T10:35:20.547+0000] {processor.py:161} INFO - Started process (PID=3160) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:35:20.548+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T10:35:20.549+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:35:20.549+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:35:20.561+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:35:20.579+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:35:20.579+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T10:35:20.590+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:35:20.590+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T10:35:20.605+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.063 seconds
+[2025-07-16T10:35:51.417+0000] {processor.py:161} INFO - Started process (PID=3167) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:35:51.418+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T10:35:51.420+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:35:51.419+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:35:51.449+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:35:51.470+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:35:51.469+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T10:35:51.483+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:35:51.483+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T10:35:51.501+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.089 seconds
+[2025-07-16T10:36:21.661+0000] {processor.py:161} INFO - Started process (PID=3174) to work on /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:36:21.662+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_initialisation_postgres.py for tasks to queue
+[2025-07-16T10:36:21.663+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:36:21.663+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:36:21.687+0000] {processor.py:840} INFO - DAG(s) 'dag_initialisation_postgres' retrieved from /opt/airflow/dags/dag_initialisation_postgres.py
+[2025-07-16T10:36:21.711+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:36:21.711+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T10:36:21.724+0000] {logging_mixin.py:188} INFO - [2025-07-16T10:36:21.724+0000] {dag.py:3954} INFO - Setting next_dagrun for dag_initialisation_postgres to None, run_after=None
+[2025-07-16T10:36:21.740+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_initialisation_postgres.py took 0.084 seconds
