@@ -83,3 +83,5 @@ xmltodict==0.13.0                # Parsing XML facile (API)
 
 ########## EXPORT AIRFLOW/PROMETHEUS (optionnel, monitoring Airflow) ##########
 # apache-airflow-exporter==1.8.0
+kafka-python
+requests

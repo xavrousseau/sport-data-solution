@@ -3,7 +3,7 @@
 # Objectif    : Générer des activités sportives simulées (type Strava)
 #               à partir des salariés éligibles et les injecter dans PostgreSQL + MinIO.
 #               Envoie aussi des notifications ntfy simulant un Slack-like + Kafka.
-# Auteur      : Xavier Rousseau | Mis à jour Juillet 2025
+# Auteur      : Xavier Rousseau | Juillet 2025
 # ==========================================================================================
 
 import pandas as pd
@@ -58,7 +58,76 @@ ACTIVITES = [
     "Yoga", "Pilates", "Danse", "Karaté", "Judo"
 ]
 
-fake = Faker("fr_FR")
+COMMENTAIRES_REALISTES = [
+    "Reprise en douceur après une pause.",
+    "Très bonne séance aujourd'hui ! 💪",
+    "C'était dur mais je ne regrette pas.",
+    "J'ai battu mon record perso !",
+    "Belle sortie dans la nature.",
+    "Bonne ambiance, bon rythme.",
+    "Temps idéal pour ce sport.",
+    "Encore un effort avant le week-end !",
+    "Avec quelques collègues du bureau.",
+    "Motivé(e) comme jamais aujourd’hui !",
+    "Petite séance rapide entre midi et deux.",
+    "Pas facile, mais ça fait du bien.",
+    "Objectif atteint pour aujourd’hui.",
+    "J’ai testé un nouveau parcours.",
+    "De belles sensations malgré le vent.",
+    "Un peu fatigué(e), mais satisfait(e).",
+    "Toujours un plaisir de bouger.",
+    "Je progresse petit à petit.",
+    "Une sortie plus longue que prévu.",
+    "Ça m’a vidé la tête !",
+    "Retour progressif après blessure.",
+    "Session matinale pour bien démarrer.",
+    "Bonne séance cardio aujourd’hui.",
+    "J’ai bien transpiré 😅",
+    "Toujours motivé(e) même sous la pluie.",
+    "Rien de mieux qu’un peu de sport pour décompresser.",
+    "Sortie découverte dans un nouveau coin.",
+    "Avec de la musique dans les oreilles, c’est encore mieux 🎧",
+    "Un peu raide aujourd’hui, mais content(e) d’avoir bougé.",
+    "Beaucoup de monde dehors, mais bonne ambiance.",
+    "Une belle montée, j’ai souffert mais je suis fier(e)."
+]
+
+LIEUX_POPULAIRES = [
+    # 🌍 Généraux France
+    "au bord du Lez", "sur la Promenade des Anglais", "à la plage du Prado",
+    "dans les bois de Vincennes", "au parc de la Tête d'Or", "vers Saint-Guilhem",
+    "au canal du Midi", "sur les berges de la Garonne", "dans la forêt de Fontainebleau",
+    "au bord du lac d’Annecy", "sur les quais de Bordeaux", "à la Citadelle de Lille",
+
+    # 🌊 Brest
+    "au parc de la Penfeld", "le long du vallon du Stang-Alar", "sur la promenade du Moulin Blanc",
+    "au port de plaisance du Château", "autour du Jardin des Explorateurs", "sur les quais de Recouvrance",
+
+    # 🌁 Landerneau
+    "autour de l'Élorn", "au parc de la Résistance", "près du pont de Rohan", "dans la vallée de la Ria",
+     "vers les sentiers de la Palud",
+
+    # 🌿 Rennes
+    "au parc du Thabor", "le long du canal d’Ille-et-Rance", "au parc de Gayeulles",
+    "dans les prairies Saint-Martin", "vers le parc Oberthür", "au bord de la Vilaine",
+    "dans le parc des Hautes Ourmes"
+]
+
+
+EMOJIS_SPORTIFS = ["💪", "🔥", "🌟", "🏃‍♂️", "🚴‍♀️", "🏞️", "😅", "🙌", "⛰️", "🎯"]
+
+def generer_commentaire(prenom):
+    base = choice(COMMENTAIRES_REALISTES)
+
+    # Ajout d’un lieu réaliste
+    if randint(0, 2) != 0:
+        base += f" ({choice(LIEUX_POPULAIRES)})"
+
+    # Emoji motivationnel
+    if randint(0, 1):
+        base += f" {choice(EMOJIS_SPORTIFS)}"
+
+    return base
 
 # ==========================================================================================
 # 2. Chargement des salariés éligibles depuis MinIO
@@ -131,10 +200,11 @@ def envoyer_message_kafka(producer, topic, message_dict):
 # ==========================================================================================
 # 5. Simulation des activités sportives + ntfy + kafka
 # ==========================================================================================
-def simuler_activites_strava(df_salaries, nb_mois, activites_min, activites_max, max_ntfy=10):
+def simuler_activites_strava(df_salaries, nb_mois, activites_min, activites_max, max_ntfy=30):
     producer = KafkaProducer(bootstrap_servers=KAFKA_BOOTSTRAP_SERVERS)
     activities = []
     messages_envoyes = 0
+    ids_notifies = set()
     date_debut = datetime.now() - timedelta(days=nb_mois * 30)
 
     for _, row in df_salaries.iterrows():
@@ -167,7 +237,7 @@ def simuler_activites_strava(df_salaries, nb_mois, activites_min, activites_max,
                 distance = int(uniform(1000, 8000))
                 temps = int(distance / uniform(1.5, 3.0))
 
-            commentaire = fake.sentence(nb_words=8) if randint(0, 3) == 0 else ""
+            commentaire = generer_commentaire(prenom) if randint(0, 3) == 0 else ""
 
             activity = {
                 "uid": str(uuid.uuid4()),
@@ -185,8 +255,9 @@ def simuler_activites_strava(df_salaries, nb_mois, activites_min, activites_max,
             activities.append(activity)
             envoyer_message_kafka(producer, KAFKA_TOPIC, activity)
 
-            if messages_envoyes < max_ntfy:
+            if messages_envoyes < max_ntfy and id_salarie not in ids_notifies:
                 envoyer_message_ntfy(prenom, sport_type, distance, temps, commentaire)
+                ids_notifies.add(id_salarie)
                 messages_envoyes += 1
 
     producer.flush()
@@ -202,7 +273,12 @@ def exporter_excel(df, fichier):
 
 def upload_file_to_minio(local_file, minio_key, helper):
     with open(local_file, "rb") as f:
-        helper.client.put_object(helper.bucket, minio_key, f, length=os.fstat(f.fileno()).st_size)
+        helper.client.put_object(
+            Bucket=helper.bucket,
+            Key=minio_key,
+            Body=f,
+            ContentLength=os.fstat(f.fileno()).st_size
+        )
         logger.success(f"✅ Fichier uploadé sur MinIO : {minio_key}")
 
 def inserer_donnees_postgres(df, table_sql, db_conn_string):
@@ -237,7 +313,4 @@ if __name__ == "__main__":
     except Exception as e:
         logger.error(f"❌ Erreur pipeline simulation : {e}")
         raise
-
-# ==========================================================================================
-# Fin du fichier – Simulation d’activités sportives avec messages variés et export structuré
-# ==========================================================================================
+ 

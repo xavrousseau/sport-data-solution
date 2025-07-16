@@ -1,0 +1,21 @@
+# ============================================================================
+# Fichier    : spark/requirements.txt
+# Objectif   : Dépendances Python pour les scripts Spark de la stack Sport Data Solution
+# Auteur     : Xavier Rousseau | Juillet 2025
+# ============================================================================
+
+########## NOTIFICATIONS / API HTTP ##########
+requests==2.32.2                  # Appels HTTP vers ntfy, Slack, etc.
+python-dotenv==1.0.1              # Chargement des variables d’environnement .env
+
+########## LOGGING ##########
+loguru==0.7.2                     # Logging lisible et structuré dans les jobs Spark
+
+########## SIMULATION (si besoin de tests hors Kafka) ##########
+faker==24.8.0                     # Génération de données fictives (optionnel)
+
+########## CLIENTS / KAFKA ##########
+confluent-kafka==2.3.0            # (optionnel) client Kafka hors Spark
+
+########## GESTION TEMPS ##########
+pendulum==3.0.0                   # Manipulation de dates (robuste, compatible Spark)

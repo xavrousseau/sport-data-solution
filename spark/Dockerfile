@@ -1,7 +1,8 @@
 # ============================================================================
 # Fichier : spark/Dockerfile
-# Objet   : Image Spark custom avec support Kafka
+# Objet   : Image Spark custom avec support Kafka + librairies Python utiles
 # ============================================================================
+
 FROM bitnami/spark:3.5.1
 
 USER root
@@ -9,7 +10,11 @@ USER root
 # ➕ Installer curl (via apt)
 RUN install_packages curl
 
-# 📥 Téléchargement manuel du connecteur Spark-Kafka 0.10 + Kafka client
+# Dépendances Python centralisées
+COPY ./spark/requirements_spark.txt /tmp/requirements_spark.txt
+RUN pip install -r /tmp/requirements_spark.txt
+
+# 📥 Télécharger manuellement les connecteurs Spark-Kafka (version 3.5.1)
 RUN mkdir -p /opt/bitnami/spark/jars && \
     curl -L -o /opt/bitnami/spark/jars/spark-sql-kafka-0-10_2.12-3.5.1.jar \
         https://repo1.maven.org/maven2/org/apache/spark/spark-sql-kafka-0-10_2.12/3.5.1/spark-sql-kafka-0-10_2.12-3.5.1.jar && \
