@@ -6655,3 +6655,24 @@
 [2025-07-16T15:08:21.491+0000] {logging_mixin.py:188} INFO - [2025-07-16T15:08:21.490+0000] {dag.py:3096} INFO - Sync 1 DAGs
 [2025-07-16T15:08:21.503+0000] {logging_mixin.py:188} INFO - [2025-07-16T15:08:21.502+0000] {dag.py:3954} INFO - Setting next_dagrun for global_sportdata_pipeline to None, run_after=None
 [2025-07-16T15:08:21.522+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/global_sportdata_dag.py took 0.095 seconds
+[2025-07-16T15:08:51.572+0000] {processor.py:161} INFO - Started process (PID=1393) to work on /opt/airflow/dags/global_sportdata_dag.py
+[2025-07-16T15:08:51.574+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/global_sportdata_dag.py for tasks to queue
+[2025-07-16T15:08:51.575+0000] {logging_mixin.py:188} INFO - [2025-07-16T15:08:51.575+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/global_sportdata_dag.py
+[2025-07-16T15:08:51.615+0000] {processor.py:840} INFO - DAG(s) 'global_sportdata_pipeline' retrieved from /opt/airflow/dags/global_sportdata_dag.py
+[2025-07-16T15:08:51.646+0000] {logging_mixin.py:188} INFO - [2025-07-16T15:08:51.646+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T15:08:51.658+0000] {logging_mixin.py:188} INFO - [2025-07-16T15:08:51.658+0000] {dag.py:3954} INFO - Setting next_dagrun for global_sportdata_pipeline to None, run_after=None
+[2025-07-16T15:08:51.677+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/global_sportdata_dag.py took 0.110 seconds
+[2025-07-16T15:09:21.845+0000] {processor.py:161} INFO - Started process (PID=1400) to work on /opt/airflow/dags/global_sportdata_dag.py
+[2025-07-16T15:09:21.846+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/global_sportdata_dag.py for tasks to queue
+[2025-07-16T15:09:21.848+0000] {logging_mixin.py:188} INFO - [2025-07-16T15:09:21.848+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/global_sportdata_dag.py
+[2025-07-16T15:09:21.871+0000] {processor.py:840} INFO - DAG(s) 'global_sportdata_pipeline' retrieved from /opt/airflow/dags/global_sportdata_dag.py
+[2025-07-16T15:09:21.895+0000] {logging_mixin.py:188} INFO - [2025-07-16T15:09:21.894+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T15:09:21.906+0000] {logging_mixin.py:188} INFO - [2025-07-16T15:09:21.906+0000] {dag.py:3954} INFO - Setting next_dagrun for global_sportdata_pipeline to None, run_after=None
+[2025-07-16T15:09:21.922+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/global_sportdata_dag.py took 0.084 seconds
+[2025-07-16T15:09:52.017+0000] {processor.py:161} INFO - Started process (PID=1407) to work on /opt/airflow/dags/global_sportdata_dag.py
+[2025-07-16T15:09:52.018+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/global_sportdata_dag.py for tasks to queue
+[2025-07-16T15:09:52.019+0000] {logging_mixin.py:188} INFO - [2025-07-16T15:09:52.019+0000] {dagbag.py:540} INFO - Filling up the DagBag from /opt/airflow/dags/global_sportdata_dag.py
+[2025-07-16T15:09:52.034+0000] {processor.py:840} INFO - DAG(s) 'global_sportdata_pipeline' retrieved from /opt/airflow/dags/global_sportdata_dag.py
+[2025-07-16T15:09:52.055+0000] {logging_mixin.py:188} INFO - [2025-07-16T15:09:52.055+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-07-16T15:09:52.066+0000] {logging_mixin.py:188} INFO - [2025-07-16T15:09:52.066+0000] {dag.py:3954} INFO - Setting next_dagrun for global_sportdata_pipeline to None, run_after=None
+[2025-07-16T15:09:52.081+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/global_sportdata_dag.py took 0.069 seconds

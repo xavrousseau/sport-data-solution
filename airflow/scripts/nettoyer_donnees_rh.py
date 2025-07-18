@@ -11,19 +11,30 @@ import requests
 from dotenv import load_dotenv
 from loguru import logger
 from sqlalchemy import create_engine
+
+# Import des composants pour générer un rapport HTML lisible avec Great Expectations
 import great_expectations as ge
+try:
+    from great_expectations.render.renderer import ValidationResultsPageRenderer
+    from great_expectations.render.view import DefaultJinjaPageView
+except ImportError:
+    raise ImportError("❌ Les modules pour générer le rapport HTML Great Expectations ne sont pas disponibles. Installe-les avec `pip install great_expectations`.")
+
+
+# Import utilisé pour horodater le rapport (nom de fichier)
+from datetime import datetime
 from minio_helper import MinIOHelper
 import unicodedata
 import re
 import io 
-
+import uuid
 # ==========================================================================================
 # 1. Chargement des variables d’environnement (.env global)
 # ==========================================================================================
 load_dotenv(dotenv_path=".env", override=True)
 
 # ==========================================================================================
-# 2. Chemins, constantes globales et paramètres d’éligibilité
+# 2. Variables globales et connexions
 # ==========================================================================================
 MINIO_SOURCE_KEY = "referentiels/donnees_rh.xlsx"
 MINIO_CLEANED_KEY = "raw/donnees_rh_cleaned.xlsx"
@@ -33,30 +44,23 @@ TMP_DIR = "/tmp"
 ADRESSE_TRAVAIL = "1362 Avenue des Platanes, 34970 Lattes, France"
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 
-# Paramètres personnalisables
 DISTANCE_MAX_MARCHE_KM = 15
 DISTANCE_MAX_VELO_KM = 25
 
-# Connexion PostgreSQL
+MODES_TRANSPORT = {"marche": DISTANCE_MAX_MARCHE_KM, "vélo": DISTANCE_MAX_VELO_KM}
+MAPPING_GOOGLE_API = {"marche": "walking", "vélo": "bicycling"}
+
 POSTGRES_USER = os.getenv("POSTGRES_USER")
 POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD")
 POSTGRES_HOST = os.getenv("POSTGRES_HOST")
 POSTGRES_PORT = os.getenv("POSTGRES_PORT")
 POSTGRES_DB = os.getenv("POSTGRES_DB")
-DB_CONN_STRING = (
-    f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@"
-    f"{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}"
-)
+DB_CONN_STRING = f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}"
 
- 
 
 # ==========================================================================================
 # Mapping des modes de transport (le plus exhaustif possible, toutes variantes acceptées)
 # ==========================================================================================
-MODES_TRANSPORT = {
-    "marche": 15,
-    "vélo": 25,
-}
 
 MAPPING_TRANSPORT = {
     # Modes "marche"
@@ -125,10 +129,6 @@ MAPPING_TRANSPORT = {
     # - "véhicule thermique/électrique" (voiture, moto…)
 }
 
-MAPPING_GOOGLE_API = {
-    "marche": "walking",
-    "vélo": "bicycling",
-}
 
 # ==========================================================================================
 # 3. Analyse exploratoire avancée + log mapping dynamique
@@ -202,24 +202,24 @@ def normaliser_mode_transport(mode):
 
 
 def normaliser_colonnes(df):
-    """Noms de colonnes harmonisés pour traitement ETL."""
-    df.columns = (
-        df.columns.str.strip()
-        .str.lower()
-        .str.replace(" ", "_")
-        .str.replace("'", "_")
-        .str.replace("’", "_")
-        .str.replace("é", "e")
-        .str.replace("è", "e")
-        .str.replace("ê", "e")
-        .str.replace("à", "a")
-        .str.replace("â", "a")
-        .str.replace("î", "i")
-        .str.replace("ô", "o")
-        .str.replace("ù", "u")
-        .str.replace("-", "_")
-    )
-    return df
+    """Harmonise tous les noms de colonnes pour traitement ETL"""
+    return df.rename(columns=lambda col: (
+        col.strip()                        # Suppression des espaces autour
+           .lower()                        # Minuscule
+           .replace(" ", "_")              # Espaces => underscore
+           .replace("'", "_")              # Apostrophes classiques
+           .replace("’", "_")              # Apostrophes typographiques
+           .replace("é", "e")              # Accents
+           .replace("è", "e")
+           .replace("ê", "e")
+           .replace("à", "a")
+           .replace("â", "a")
+           .replace("î", "i")
+           .replace("ô", "o")
+           .replace("ù", "u")
+           .replace("-", "_")              # Tirets => underscore
+    ))
+
 # ==========================================================================================
 # 5. Fonctions utilitaires et eligibility
 # ==========================================================================================
@@ -300,12 +300,13 @@ def pipeline_nettoyage_rh():
     analyse_exploratoire_avancee(df)
 
     # -- 4. Vérification des colonnes attendues
+    # Liste des colonnes indispensables pour le traitement RH
     champs_requis = ["id_salarie", "nom", "prenom", "adresse_du_domicile", "moyen_de_deplacement"]
-    for champ in champs_requis:
-        if champ not in df.columns:
-            logger.error(f"Colonne manquante : {champ} - Abandon.")
-            return
 
+    # Vérification que toutes sont bien présentes dans le fichier
+    if not all(col in df.columns for col in champs_requis):
+        logger.error("❌ Colonnes requises manquantes")
+        return
     # -- 5. Vérification d’éligibilité
     eligibles, exclus = [], []
     logger.info("Calcul des distances et éligibilité (API Google Maps)…")
@@ -362,58 +363,67 @@ def pipeline_nettoyage_rh():
                 max_value=pd.Timestamp.today().strftime("%Y-%m-%d")
             )))
 
-        # Lancer chaque expectation et loguer le résultat
-        all_ok = True
+        # Appliquer toutes les expectations à ge_df
         for exp_type, kwargs in expectations:
             logger.info(f"Test expectation: {exp_type} -- {kwargs}")
-            result = getattr(ge_df, exp_type)(**kwargs)
-            if not result.success:
-                all_ok = False
-                logger.error(f"❌ ECHEC: {exp_type} -- {kwargs}")
-                if hasattr(result, "unexpected_index_list"):
-                    logger.error(f"Indices en échec: {result.unexpected_index_list}")
-                if hasattr(result, "unexpected_list"):
-                    logger.error(f"Valeurs en échec: {result.unexpected_list}")
-            else:
-                logger.info(f"✅ OK: {exp_type}")
+            getattr(ge_df, exp_type)(**kwargs)
 
-        if not all_ok:
+        # ✅ Validation globale du DataFrame selon toutes les expectations définies ci-dessus
+        checkpoint_result = ge_df.validate(result_format="SUMMARY")
+
+        # Vérification du succès global
+        if not checkpoint_result.success:
+            logger.error("❌ Certaines expectations ont échoué.")
             raise Exception("Validation Great Expectations échouée, pipeline interrompu.")
         else:
             logger.success("✅ Validation Great Expectations réussie : toutes les expectations sont remplies.")
 
-        # -- Génération du rapport HTML Great Expectations
-        rendered = ValidationResultsPageRenderer().render(result)
+        # ✅ Génération du rapport HTML lisible
+        rendered = ValidationResultsPageRenderer().render(checkpoint_result)
         html = DefaultJinjaPageView().render(rendered)
-        report_name = f"validation_reports/rapport_GE_RH_{datetime.now().strftime('%Y%m%d_%H%M%S')}.html"
-        report_path = os.path.join(TMP_DIR, "rapport.html")
 
+        # Nom du rapport horodaté
+        report_name = f"validation_reports/rapport_GE_RH_{datetime.now().strftime('%Y%m%d_%H%M%S')}.html"
+        report_path = os.path.join(TMP_DIR, "rapport.html")        # Emplacement temporaire
+
+        # Sauvegarde du rapport HTML localement (dans le container)
         with open(report_path, "w", encoding="utf-8") as f:
             f.write(html)
 
+        # Upload vers MinIO dans le dossier prévu (via boto3)
         try:
-            helper.client.fput_object(
+            helper.client.upload_file(
+                Filename=report_path,
                 Bucket=helper.bucket,
-                Key=report_name,
-                Filename=report_path
+                Key=report_name
             )
             logger.success(f"📄 Rapport GE HTML uploadé dans MinIO : {report_name}")
         except Exception as e:
             logger.error(f"Erreur upload rapport GE : {e}")
 
+        # Vérification que le fichier est bien présent dans MinIO
+        if report_name in helper.list_objects("validation_reports/"):
+            logger.info(f"✅ Vérification MinIO : {report_name} est bien présent dans le bucket.")
+        else:
+            logger.warning(f"⚠️ Rapport non trouvé après upload : {report_name}")
+
     # -- 7. Export vers MinIO
-    def upload_excel(dataframe, key, label):
-        output = io.BytesIO()
-        with pd.ExcelWriter(output, engine="xlsxwriter") as writer:
-            dataframe.to_excel(writer, index=False)
-        output.seek(0)
+    def upload_excel(df, key, label):
+        """
+        Upload un DataFrame Excel dans MinIO via un buffer en mémoire (sans fichier temporaire)
+        """
+        buffer = io.BytesIO()
+        with pd.ExcelWriter(buffer, engine="xlsxwriter") as writer:
+            df.to_excel(writer, index=False)
+        buffer.seek(0)
         helper.client.put_object(
             Bucket=helper.bucket,
             Key=key,
-            Body=output,
-            ContentLength=output.getbuffer().nbytes,
+            Body=buffer,
+            ContentLength=buffer.getbuffer().nbytes
         )
         logger.success(f"✅ Fichier {label} uploadé sur MinIO : {key}")
+
 
     if not df_eligibles.empty:
         upload_excel(df_eligibles, MINIO_CLEANED_KEY, "RH éligibles")

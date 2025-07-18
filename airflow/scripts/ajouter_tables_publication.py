@@ -11,9 +11,15 @@ from dotenv import load_dotenv
 from loguru import logger
 
 # ==========================================================================================
-# 1. Chargement de l'environnement
+# 1. Chargement de l'environnement (.env Docker monté dans /opt/airflow/.env)
 # ==========================================================================================
-load_dotenv(dotenv_path=".env", override=True)
+load_dotenv(dotenv_path="/opt/airflow/.env", override=True)
+
+# Vérification défensive des variables PostgreSQL
+REQUIRED_VARS = ["POSTGRES_USER", "POSTGRES_PASSWORD", "POSTGRES_HOST", "POSTGRES_PORT", "POSTGRES_DB"]
+missing_vars = [var for var in REQUIRED_VARS if os.getenv(var) is None]
+if missing_vars:
+    raise EnvironmentError(f"❌ Variable(s) d’environnement manquante(s) : {', '.join(missing_vars)}")
 
 # Connexion PostgreSQL
 POSTGRES_USER = os.getenv("POSTGRES_USER")
@@ -27,16 +33,16 @@ DB_CONN_STRING = (
     f"{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}"
 )
 
-# Paramètres CDC
+# Paramètres de publication
 CDC_PUBLICATION = os.getenv("CDC_PUBLICATION", "debezium_publication")
 CDC_SCHEMA = os.getenv("CDC_SCHEMA", "sportdata")
 
 # ==========================================================================================
-# 2. Fonctions de publication
+# 2. Fonctions de gestion des publications
 # ==========================================================================================
 
 def get_tables_sportdata(engine):
-    """Retourne la liste des tables du schéma sportdata (hors system)."""
+    """Retourne la liste des tables du schéma sportdata (hors tables système)."""
     query = f"""
         SELECT table_name
         FROM information_schema.tables
@@ -46,6 +52,7 @@ def get_tables_sportdata(engine):
         return [row[0] for row in conn.execute(text(query)).fetchall()]
 
 def publication_exists(engine, publication_name):
+    """Vérifie si la publication PostgreSQL existe déjà."""
     query = f"""
         SELECT 1
         FROM pg_catalog.pg_publication
@@ -55,24 +62,28 @@ def publication_exists(engine, publication_name):
         return conn.execute(text(query)).fetchone() is not None
 
 def create_publication(engine, publication_name):
+    """Crée une nouvelle publication PostgreSQL."""
     query = f"CREATE PUBLICATION {publication_name};"
     with engine.connect() as conn:
         conn.execute(text(query))
         logger.success(f"✅ Publication PostgreSQL créée : {publication_name}")
 
 def set_replica_identity(engine, schema, table):
+    """Active REPLICA IDENTITY FULL pour suivre tous les changements (nécessaire pour Debezium)."""
     query = f'ALTER TABLE "{schema}"."{table}" REPLICA IDENTITY FULL;'
     with engine.connect() as conn:
         conn.execute(text(query))
         logger.info(f"🔐 REPLICA IDENTITY FULL appliqué à {schema}.{table}")
 
 def add_table_to_publication(engine, publication_name, schema, table):
+    """Ajoute une table à la publication PostgreSQL."""
     query = f'ALTER PUBLICATION {publication_name} ADD TABLE "{schema}"."{table}";'
     with engine.connect() as conn:
         conn.execute(text(query))
         logger.success(f"➕ Table ajoutée à la publication : {schema}.{table}")
 
 def get_tables_already_published(engine, publication_name):
+    """Liste les tables déjà incluses dans une publication."""
     query = f"""
         SELECT c.relname
         FROM pg_publication p
@@ -91,7 +102,7 @@ def initialiser_publication_postgres():
     logger.info("=== Initialisation de la publication PostgreSQL Debezium ===")
     engine = create_engine(DB_CONN_STRING)
 
-    # Vérification ou création de la publication
+    # Création ou vérification de la publication
     if publication_exists(engine, CDC_PUBLICATION):
         logger.info(f"📌 Publication déjà existante : {CDC_PUBLICATION}")
     else:
@@ -108,12 +119,12 @@ def initialiser_publication_postgres():
         logger.info(f"📋 Tables à publier : {nouvelles_tables}")
         for table in nouvelles_tables:
             set_replica_identity(engine, CDC_SCHEMA, table)
-            add_table_to_publication(engine, CDC_PUBLICATION, table)
+            add_table_to_publication(engine, CDC_PUBLICATION, CDC_SCHEMA, table)
 
     logger.success("🎯 Synchronisation de publication PostgreSQL terminée.")
 
 # ==========================================================================================
-# 4. Entrée script
+# 4. Entrée du script
 # ==========================================================================================
 
 if __name__ == "__main__":
