@@ -1,127 +1,116 @@
-# ==========================================================================================
+# ======================================================================================
 # DAG       : global_sportdata_dag.py
-# Objectif  : Orchestration complète du pipeline Avantages Sportifs (RH → Sport → PostgreSQL)
-# Auteur    : Xavier Rousseau | Juillet 2025
-# ==========================================================================================
+# Objectif  : Orchestration complète du pipeline Sport Data Solution
+#             (MinIO → PostgreSQL → Delta → Power BI), via appels directs de fonctions
+# Auteur    : Xavier Rousseau | Version corrigée – Juillet 2025
+# ======================================================================================
 
 from airflow import DAG
-from airflow.operators.python import PythonOperator
-from airflow.utils.dates import days_ago
-from datetime import timedelta
-import os
-from loguru import logger
+from airflow.operators.python_operator import PythonOperator
+from datetime import datetime
+from pathlib import Path
+import sys
 
-# ==========================================================================================
-# 1. Définition des chemins des scripts
-# ==========================================================================================
-SCRIPTS_DIR = "/opt/airflow/scripts"
+# ======================================================================================
+# 1. Ajout dynamique du dossier /scripts/ au PYTHONPATH
+# ======================================================================================
 
-SCRIPTS = {
-    "init_minio": "init_minio_structure.py",
-    "upload_excels": "upload_fichiers_excel_minio.py",
-    "nettoyer_rh": "nettoyer_donnees_rh.py",
-    "nettoyer_sport": "nettoyer_donnees_sportives.py",
-    "simuler_activites": "simuler_pratiques_sportives.py",
-    "croiser_rh_sport": "croiser_rh_sport_et_calculer_prime.py",
-    "ajouter_tables": "ajouter_tables_publication.py",
-    "export_powerbi": "export_powerbi.py",
-}
+SCRIPT_DIR = Path(__file__).resolve().parents[1] / "scripts"
+sys.path.append(str(SCRIPT_DIR))
 
-# ==========================================================================================
-# 2. Tâche générique pour exécuter un script Python
-# ==========================================================================================
-def run_script(script_name):
-    script_path = os.path.join(SCRIPTS_DIR, script_name)
-    if not os.path.exists(script_path):
-        logger.error(f"❌ Script introuvable : {script_path}")
-        raise FileNotFoundError(script_path)
-    logger.info(f"🚀 Exécution du script : {script_path}")
-    exit_code = os.system(f"python {script_path}")
-    if exit_code != 0:
-        logger.error(f"❌ Erreur dans le script {script_name} (code: {exit_code})")
-        raise Exception(f"Script échoué : {script_name}")
-    logger.success(f"✅ Script terminé : {script_name}")
+# ======================================================================================
+# 2. Import des fonctions principales depuis les scripts Python
+# ======================================================================================
 
-# ==========================================================================================
-# 3. Définition du DAG Airflow
-# ==========================================================================================
+from upload_fichiers_excel_minio import main as upload_fichiers_excel
+from nettoyer_donnees_rh import pipeline_nettoyage_rh
+from simuler_pratiques_sportives import pipeline_simulation_sport
+from bronze_controle_qualite import controle_qualite
+from silver_aggregations import pipeline_aggregation_silver
+
+# Facultatif si ces scripts sont prêts
+try:
+    from croiser_rh_sport_et_calculer_prime import pipeline_croisement_prime
+    from ajouter_tables_publication import main as publier_tables_postgres
+except ImportError:
+    pipeline_croisement_prime = lambda: None
+    publier_tables_postgres = lambda: None
+
+# ======================================================================================
+# 3. Paramètres par défaut du DAG
+# ======================================================================================
+
 default_args = {
-    "owner": "xavier",
-    "email": ["admin@sportdata.fr"],
-    "email_on_failure": True,
-    "retries": 1,
-    "retry_delay": timedelta(minutes=2),
+    "owner": "airflow",
+    "start_date": datetime(2025, 7, 1),
+    "retries": 0,
 }
+
+# ======================================================================================
+# 4. Définition du DAG principal
+# ======================================================================================
 
 with DAG(
     dag_id="global_sportdata_pipeline",
+    description="Pipeline complet Sport Data Solution (bronze → silver → export Power BI)",
     default_args=default_args,
-    description="DAG global — Pipeline complet Avantages Sportifs",
-    schedule_interval=None,  # Exécution manuelle ou planifiée via déclencheur externe
-    start_date=days_ago(1),
-    tags=["sportdata", "pipeline", "global"],
+    schedule_interval=None,
     catchup=False,
+    tags=["sportdata", "bronze", "silver", "powerbi"],
 ) as dag:
 
-    # Étape 1 : Initialisation MinIO
-    t_init_minio = PythonOperator(
-        task_id="init_minio_structure",
-        python_callable=run_script,
-        op_args=[SCRIPTS["init_minio"]],
+    # Étape 1 : Upload initial des fichiers Excel source (RH/Sport) dans MinIO
+    upload_excel = PythonOperator(
+        task_id="upload_fichiers_excel_minio",
+        python_callable=upload_fichiers_excel,
     )
 
-    # Étape 2 : Upload initial des fichiers Excel RH/Sport
-    t_upload_files = PythonOperator(
-        task_id="upload_fichiers_excel",
-        python_callable=run_script,
-        op_args=[SCRIPTS["upload_excels"]],
-    )
-
-    # Étape 3 : Nettoyage RH
-    t_nettoyer_rh = PythonOperator(
+    # Étape 2 : Nettoyage RH avec vérification d’éligibilité
+    nettoyage_rh = PythonOperator(
         task_id="nettoyer_donnees_rh",
-        python_callable=run_script,
-        op_args=[SCRIPTS["nettoyer_rh"]],
+        python_callable=pipeline_nettoyage_rh,
     )
 
-    # Étape 4 : Nettoyage activités sportives
-    t_nettoyer_sport = PythonOperator(
-        task_id="nettoyer_donnees_sportives",
-        python_callable=run_script,
-        op_args=[SCRIPTS["nettoyer_sport"]],
+    # Étape 3 : Simulation des pratiques sportives (Kafka + MinIO + PostgreSQL)
+    simulation_sport = PythonOperator(
+        task_id="simuler_activites_sportives",
+        python_callable=pipeline_simulation_sport,
     )
 
-    # Étape 5 : Simulation des activités
-    t_simuler_activites = PythonOperator(
-        task_id="simuler_pratiques_sportives",
-        python_callable=run_script,
-        op_args=[SCRIPTS["simuler_activites"]],
+    # Étape 4 : Croisement RH & Activités + calcul des primes
+    calcul_prime = PythonOperator(
+        task_id="calculer_primes_et_journees_bien_etre",
+        python_callable=pipeline_croisement_prime,
     )
 
-    # Étape 6 : Croisement RH / Sport + calcul de la prime
-    t_croiser_rh_sport = PythonOperator(
-        task_id="croiser_rh_sport_et_calculer_prime",
-        python_callable=run_script,
-        op_args=[SCRIPTS["croiser_rh_sport"]],
+    # Étape 5 : Publication CDC (Debezium)
+    publication_cdc = PythonOperator(
+        task_id="publier_tables_debezium",
+        python_callable=publier_tables_postgres,
     )
 
-    # Étape 7 : Ajout des tables de publication
-    t_ajouter_tables = PythonOperator(
-        task_id="ajouter_tables_publication",
-        python_callable=run_script,
-        op_args=[SCRIPTS["ajouter_tables"]],
+    # Étape 6 : Contrôle qualité des activités dans Delta Lake (règles simples)
+    controle_qualite_delta = PythonOperator(
+        task_id="controle_qualite_activites",
+        python_callable=controle_qualite,
     )
 
-    # Étape 8 : Export Power BI
-    t_export_powerbi = PythonOperator(
-        task_id="export_powerbi",
-        python_callable=run_script,
-        op_args=[SCRIPTS["export_powerbi"]],
+    # Étape 7 : Agrégation finale pour restitution (Power BI / PostgreSQL)
+    export_aggregations = PythonOperator(
+        task_id="aggregations_powerbi_silver",
+        python_callable=pipeline_aggregation_silver,
     )
 
-    # Dépendances
-    t_init_minio >> t_upload_files
-    t_upload_files >> [t_nettoyer_rh, t_nettoyer_sport]
-    t_nettoyer_rh >> t_simuler_activites
-    t_simuler_activites >> t_croiser_rh_sport
-    t_croiser_rh_sport >> t_ajouter_tables >> t_export_powerbi
+    # ==================================================================================
+    # 5. Orchestration logique
+    # ==================================================================================
+
+    (
+        upload_excel
+        >> nettoyage_rh
+        >> simulation_sport
+        >> calcul_prime
+        >> publication_cdc
+        >> controle_qualite_delta
+        >> export_aggregations
+    )

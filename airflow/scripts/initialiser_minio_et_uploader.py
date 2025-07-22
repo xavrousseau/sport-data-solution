@@ -1,5 +1,5 @@
 # ==========================================================================================
-# Script      : minio_initialisation_et_upload.py
+# Script      : initialiser_minio_et_uploader.py
 # Objectif    : Initialiser la structure MinIO + uploader les fichiers Excel de référence
 # Auteur      : Xavier Rousseau | Juillet 2025
 # ==========================================================================================
@@ -47,12 +47,16 @@ logger.add(sys.stdout, level="INFO")
 logger.add(LOGS_PATH / "minio_initialisation_et_upload.log", level="INFO", rotation="1 MB")
 
 # ==========================================================================================
-# 3. Fonction principale
+# 3. Fonction exportable : initialiser_et_uploader (Airflow-compatible)
 # ==========================================================================================
 def initialiser_et_uploader():
+    """
+    Initialise la structure MinIO (préfixes + bucket) et upload les fichiers Excel initiaux.
+    Compatible exécution manuelle et Airflow.
+    """
     logger.info("🚀 Début initialisation MinIO...")
 
-    # Connexion MinIO
+    # Connexion MinIO via boto3
     try:
         s3 = boto3.client(
             "s3",
@@ -64,7 +68,7 @@ def initialiser_et_uploader():
         logger.success("✅ Connexion à MinIO réussie.")
     except Exception as e:
         logger.error(f"❌ Connexion échouée : {e}")
-        sys.exit(1)
+        raise
 
     # Vérification/création du bucket
     try:
@@ -77,12 +81,12 @@ def initialiser_et_uploader():
                 logger.success(f"📦 Bucket créé : {MINIO_BUCKET}")
             except Exception as err:
                 logger.error(f"❌ Création bucket échouée : {err}")
-                sys.exit(1)
+                raise
         else:
             logger.error(f"❌ Erreur accès bucket : {e}")
-            sys.exit(1)
+            raise
 
-    # Création des préfixes via .keep
+    # Création des "dossiers" (via .keep)
     for prefix in PREFIXES:
         key = prefix + ".keep"
         try:
@@ -107,11 +111,15 @@ def initialiser_et_uploader():
     logger.success("🎯 Structure MinIO prête + fichiers Excel transférés.")
 
 # ==========================================================================================
-# 4. Exécution directe
+# 4. Lancement CLI (local uniquement)
 # ==========================================================================================
+def main():
+    initialiser_et_uploader()
+
 if __name__ == "__main__":
     try:
-        initialiser_et_uploader()
+        main()
     except Exception as e:
-        logger.error(f"❌ Erreur inattendue : {e}")
+        logger.error(f"❌ Erreur pipeline : {e}")
+        import sys
         sys.exit(1)
