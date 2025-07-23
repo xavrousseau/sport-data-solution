@@ -1,7 +1,7 @@
 # ======================================================================================
 # Script      : bronze_controle_qualite.py
 # Objectif    : Contrôle qualité des activités (bronze/Delta), export des erreurs et ntfy
-# Auteur      : Xavier Rousseau | Version robuste Juillet 2025
+# Auteur      : Xavier Rousseau | Version robuste corrigée – Juillet 2025
 # ======================================================================================
 
 import os
@@ -37,15 +37,21 @@ EXPORT_PATH = "/tmp/erreurs_qualite_activites.xlsx"
 def controle_qualite():
     logger.info("🚀 Initialisation SparkSession pour contrôle qualité")
 
-    spark = SparkSession.builder \
-        .appName("Contrôle Qualité Activités Sportives") \
-        .config("spark.hadoop.fs.s3a.endpoint", f"http://{MINIO_ENDPOINT}") \
-        .config("spark.hadoop.fs.s3a.access.key", MINIO_ACCESS_KEY) \
-        .config("spark.hadoop.fs.s3a.secret.key", MINIO_SECRET_KEY) \
-        .config("spark.hadoop.fs.s3a.path.style.access", "true") \
-        .config("spark.sql.extensions", "io.delta.sql.DeltaSparkSessionExtension") \
-        .config("spark.sql.catalog.spark_catalog", "org.apache.spark.sql.delta.catalog.DeltaCatalog") \
-        .getOrCreate()
+    try:
+        spark = SparkSession.builder \
+            .appName("Contrôle Qualité Activités Sportives") \
+            .master("local[*]") \
+            .config("spark.hadoop.fs.s3a.endpoint", f"http://{MINIO_ENDPOINT}") \
+            .config("spark.hadoop.fs.s3a.access.key", MINIO_ACCESS_KEY) \
+            .config("spark.hadoop.fs.s3a.secret.key", MINIO_SECRET_KEY) \
+            .config("spark.hadoop.fs.s3a.path.style.access", "true") \
+            .config("spark.sql.extensions", "io.delta.sql.DeltaSparkSessionExtension") \
+            .config("spark.sql.catalog.spark_catalog", "org.apache.spark.sql.delta.catalog.DeltaCatalog") \
+            .getOrCreate()
+        logger.info("✅ SparkSession instanciée avec succès")
+    except Exception as e:
+        logger.error(f"❌ Échec d’instanciation Spark : {e}")
+        raise
 
     spark.sparkContext.setLogLevel("WARN")
 
