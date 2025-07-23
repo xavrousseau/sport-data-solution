@@ -21,6 +21,7 @@ env/
 docs/
 old/
 logs/
+__pycache__/
 
 # 📦 Fichiers d’archives
 *.zip
