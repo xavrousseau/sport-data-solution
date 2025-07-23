@@ -116,12 +116,7 @@ services:
     restart: unless-stopped
     networks:
       - sport-network
-
-
-  # ================================================================================
-  # 5. Spark — Traitement de données (batch, streaming)
-  #    - Peut consommer des topics Kafka et écrire en Delta Lake ou PostgreSQL
-  # ================================================================================
+ 
   # ================================================================================
   # 5. Spark — Traitement de données (batch, streaming)
   #    - Peut consommer des topics Kafka et écrire en Delta Lake ou PostgreSQL
@@ -147,6 +142,7 @@ services:
       - "${SPARK_CLUSTER_PORT}:7077"    # Port cluster Spark (optionnel)
     volumes:
       - ./spark/jobs:/opt/bitnami/spark/jobs  # Scripts Spark accessibles dans le conteneur
+      - ./spark/conf/spark-defaults.conf:/opt/bitnami/spark/conf/spark-defaults.conf
     networks:
       - sport-network
     restart: unless-stopped

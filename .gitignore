@@ -22,6 +22,7 @@ docs/
 old/
 logs/
 __pycache__/
+jars/
 
 # 📦 Fichiers d’archives
 *.zip
@@ -31,7 +32,6 @@ __pycache__/
 # 🐳 Docker
 *.pid
 *.tar
-docker-compose.override.yml
 
 # 📑 Éditeurs
 .vscode/

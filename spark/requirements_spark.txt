@@ -11,11 +11,29 @@ python-dotenv==1.0.1              # Chargement des variables d’environnement .
 ########## LOGGING ##########
 loguru==0.7.2                     # Logging lisible et structuré dans les jobs Spark
 
-########## SIMULATION (si besoin de tests hors Kafka) ##########
-faker==24.8.0                     # Génération de données fictives (optionnel)
+########## MANIPULATION DE DONNÉES ##########
+pandas==2.2.2                     # Manipulation de données tabulaires (toPandas, export Excel)
+openpyxl==3.1.2                   # Export Excel depuis pandas
 
-########## CLIENTS / KAFKA ##########
-confluent-kafka==2.3.0            # (optionnel) client Kafka hors Spark
+########## MINIO ##########
+minio==7.2.5                      # Client MinIO compatible avec S3 (upload vers MinIO)
 
-########## GESTION TEMPS ##########
-pendulum==3.0.0                   # Manipulation de dates (robuste, compatible Spark)
+########## SUPPORT DELTA LAKE POUR PYSPARK ##########
+delta-spark==3.1.0                # Support Delta Lake avec Spark 3.5.x
+# Référence : https://pypi.org/project/delta-spark/
+
+########## SPARK STREAMING (optionnel) ##########
+confluent-kafka==2.3.0            # Client Kafka (si besoin en simulation ou test)
+
+########## SIMULATION / TEST ##########
+faker==24.8.0                     # Génération de données fictives
+
+########## TEMPS / DATES ##########
+pendulum==3.0.0                   # Manipulation de dates robuste, compatible avec Spark
+
+# ============================================================================
+# Notes :
+# - delta-spark installe automatiquement pyspark >= 3.5.0 si absent
+# - faker et confluent-kafka sont facultatifs, utiles en simulation
+# - veille à ce que les jars Delta + S3A soient bien présents dans /opt/bitnami/spark/jars
+# ============================================================================
