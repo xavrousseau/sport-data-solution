@@ -116,8 +116,7 @@ services:
     restart: unless-stopped
     networks:
       - sport-network
- 
-  # ================================================================================
+   # ================================================================================
   # 5. Spark — Traitement de données (batch, streaming)
   #    - Peut consommer des topics Kafka et écrire en Delta Lake ou PostgreSQL
   #    - 🔔 Peut aussi envoyer des notifications via NTFY si utilisé dans les scripts
@@ -131,18 +130,27 @@ services:
 
     environment:
       SPARK_MODE: master
-      KAFKA_BOOTSTRAP_SERVERS: sport-redpanda:9092  # Redpanda interne Docker
+      KAFKA_BOOTSTRAP_SERVERS: sport-redpanda:9092
 
-      # 🔔 Ajout des variables pour notifications NTFY (accessibles dans scripts Python Spark)
-      NTFY_URL: http://sport-ntfy:80
-      NTFY_TOPIC: sportdata_activites
+      # 🪣 Accès MinIO via S3A
+      AWS_ACCESS_KEY_ID: ${MINIO_ROOT_USER}
+      AWS_SECRET_ACCESS_KEY: ${MINIO_ROOT_PASSWORD}
+      AWS_REGION: us-east-1
+      S3_ENDPOINT: http://sport-minio:9000
+      S3_PATH_STYLE_ACCESS: true
+      PYSPARK_PYTHON: python3
+
+      # 🔔 Notifications ntfy
+      NTFY_URL: ${NTFY_URL}
+      NTFY_TOPIC: ${NTFY_TOPIC}
 
     ports:
-      - "${SPARK_UI_PORT}:4040"         # UI Spark Streaming
-      - "${SPARK_CLUSTER_PORT}:7077"    # Port cluster Spark (optionnel)
+      - "${SPARK_UI_PORT}:4040"
+      - "${SPARK_CLUSTER_PORT}:7077"
     volumes:
-      - ./spark/jobs:/opt/bitnami/spark/jobs  # Scripts Spark accessibles dans le conteneur
+      - ./spark/jobs:/opt/bitnami/spark/jobs
       - ./spark/conf/spark-defaults.conf:/opt/bitnami/spark/conf/spark-defaults.conf
+      - ./airflow/scripts:/opt/airflow/scripts:ro
     networks:
       - sport-network
     restart: unless-stopped

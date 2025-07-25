@@ -1,5 +1,5 @@
 # ==========================================================================================
-# Script      : nettoyer_donnees_rh.py
+# Script      : 02_nettoyer_donnees_rh.py
 # Objectif    : Audit exploratoire, nettoyage et filtrage d’éligibilité RH avec mapping dynamique.
 # Auteur      : Xavier Rousseau | Juillet 2025 
 # ==========================================================================================
@@ -36,9 +36,10 @@ load_dotenv(dotenv_path=".env", override=True)
 # ==========================================================================================
 # 2. Variables globales et connexions
 # ==========================================================================================
-MINIO_SOURCE_KEY = "referentiels/donnees_rh.xlsx"
-MINIO_CLEANED_KEY = "raw/donnees_rh_cleaned.xlsx"
-MINIO_EXCLUS_KEY = "raw/donnees_rh_exclus.xlsx"
+MINIO_SOURCE_KEY = "referentiels/donnees_rh.xlsx"           # RH brut
+MINIO_CLEANED_KEY = "raw/donnees_rh_cleaned.xlsx"           # RH éligibles
+MINIO_EXCLUS_KEY = "raw/donnees_rh_exclus.xlsx"             # RH exclus
+
 TMP_DIR = "/tmp"
 
 ADRESSE_TRAVAIL = "1362 Avenue des Platanes, 34970 Lattes, France"
@@ -316,20 +317,26 @@ def pipeline_nettoyage_rh():
         )
         ligne = {
             "uid": str(uuid.uuid4()),
-            "id_salarie": row["id_salarie"],
-            "nom": row["nom"],
-            "prenom": row["prenom"],
-            "adresse_du_domicile": row["adresse_du_domicile"],
-            "moyen_de_deplacement": row["moyen_de_deplacement"],
+            "id_salarie": row.get("id_salarie"),
+            "nom": row.get("nom"),
+            "prenom": row.get("prenom"),
+            "adresse_du_domicile": row.get("adresse_du_domicile"),
+            "moyen_de_deplacement": row.get("moyen_de_deplacement"),
             "mode_normalise": mode_projet,
             "distance_km": distance,
             "eligible": is_eligible,
-            "motif_exclusion": motif
+            "motif_exclusion": motif,
+            "salaire_brut_annuel": row.get("salaire_brut") 
         }
         (eligibles if is_eligible else exclus).append(ligne)
 
     df_eligibles = pd.DataFrame(eligibles)
     df_exclus = pd.DataFrame(exclus)
+    
+    # -- Ajout colonne deplacement_sportif : True si le mode est sportif
+    df_eligibles["deplacement_sportif"] = df_eligibles["mode_normalise"].isin(["marche", "vélo"])
+    df_eligibles["salaire_brut_annuel"] = pd.to_numeric(df_eligibles["salaire_brut_annuel"], errors="coerce").fillna(0).astype(int)
+
     logger.info(f"{len(df_eligibles)} éligibles / {len(df_exclus)} exclus.")
     logger.info(f"Taux d'éligibilité : {100 * len(df_eligibles)/len(df):.2f}%")
 
@@ -348,6 +355,10 @@ def pipeline_nettoyage_rh():
             ("expect_column_values_to_not_be_null", dict(column="distance_km")),
             ("expect_column_values_to_be_between", dict(column="distance_km", min_value=0, max_value=100)),
             ("expect_column_values_to_be_of_type", dict(column="distance_km", type_="float64")),
+            ("expect_column_values_to_be_of_type", dict(column="deplacement_sportif", type_="bool")),
+            ("expect_column_values_to_be_between", dict(column="salaire_brut_annuel", min_value=10000, max_value=100000)),
+            ("expect_column_values_to_be_of_type", dict(column="salaire_brut_annuel", type_="int64")),
+
         ]
         # Dates (optionnel)
         if "date_de_naissance" in df_eligibles.columns:

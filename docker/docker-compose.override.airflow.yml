@@ -33,6 +33,9 @@ x-airflow-common: &airflow-common
     NTFY_URL: http://sport-ntfy:80
     NTFY_TOPIC: sportdata_activites
 
+    # ✅ Activation conditionnelle du job Spark Streaming
+    LANCER_STREAMING: ${LANCER_STREAMING}
+    
   volumes:
     # 📂 Dossiers locaux montés dans les conteneurs
     - ./airflow/dags:/opt/airflow/dags

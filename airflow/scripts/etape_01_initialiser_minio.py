@@ -1,7 +1,7 @@
 # ==========================================================================================
-# Script      : initialiser_minio_et_uploader.py
+# Script      : 01_initialiser_minio.py
 # Objectif    : Initialiser la structure MinIO + uploader les fichiers Excel de référence
-# Auteur      : Xavier Rousseau | Juillet 2025
+# Auteur      : Xavier Rousseau | Revu par ChatGPT, Juillet 2025
 # ==========================================================================================
 
 import os
@@ -13,7 +13,7 @@ import boto3
 from botocore.exceptions import ClientError
 
 # ==========================================================================================
-# 1. Chargement du .env et configuration
+# 1. Chargement des variables d’environnement
 # ==========================================================================================
 load_dotenv(dotenv_path="/opt/airflow/.env", override=True)
 
@@ -27,13 +27,16 @@ MINIO_BUCKET = os.getenv("MINIO_BUCKET_NAME", "sportdata")
 DATA_DIR = Path("/opt/airflow/data/inputs")
 EXTENSIONS = [".xlsx", ".xls"]
 
+# Préfixes MinIO (dossiers logiques du projet)
 PREFIXES = [
-    "referentiels/",
-    "simulation/",
-    "raw/",
-    "resultats/prime_sportive/",
-    "resultats/jours_bien_etre/",
-    "exports/"
+    "referentiels/",                    # RH bruts (donnees_rh.xlsx)
+    "simulation/",                      # Activités simulées (Excel)
+    "raw/",                             # Données nettoyées (RH / sport)
+    "bronze/activites_sportives/",     # Données brutes depuis Kafka (Delta)
+    "silver/activites_valides/",       # Données filtrées après contrôle qualité
+    "final/",                           # Résultats finaux : primes, JBE
+    "exports/",                         # Exports Excel (Power BI, erreurs)
+    "validation_reports/"              # Rapports HTML Great Expectations
 ]
 
 # ==========================================================================================
@@ -47,12 +50,12 @@ logger.add(sys.stdout, level="INFO")
 logger.add(LOGS_PATH / "minio_initialisation_et_upload.log", level="INFO", rotation="1 MB")
 
 # ==========================================================================================
-# 3. Fonction exportable : initialiser_et_uploader (Airflow-compatible)
+# 3. Fonction principale (réutilisable dans Airflow ou CLI)
 # ==========================================================================================
 def initialiser_et_uploader():
     """
-    Initialise la structure MinIO (préfixes + bucket) et upload les fichiers Excel initiaux.
-    Compatible exécution manuelle et Airflow.
+    Initialise la structure MinIO (bucket, dossiers, fichiers initiaux).
+    Crée les dossiers logiques avec .keep et upload les fichiers Excel d'entrée.
     """
     logger.info("🚀 Début initialisation MinIO...")
 
@@ -70,7 +73,7 @@ def initialiser_et_uploader():
         logger.error(f"❌ Connexion échouée : {e}")
         raise
 
-    # Vérification/création du bucket
+    # Création du bucket s'il n'existe pas
     try:
         s3.head_bucket(Bucket=MINIO_BUCKET)
         logger.info(f"📦 Bucket existant : {MINIO_BUCKET}")
@@ -86,7 +89,7 @@ def initialiser_et_uploader():
             logger.error(f"❌ Erreur accès bucket : {e}")
             raise
 
-    # Création des "dossiers" (via .keep)
+    # Création des dossiers logiques avec fichier .keep
     for prefix in PREFIXES:
         key = prefix + ".keep"
         try:
@@ -95,7 +98,7 @@ def initialiser_et_uploader():
         except Exception as e:
             logger.warning(f"⚠️ Erreur création préfixe {prefix} : {e}")
 
-    # Upload des fichiers Excel vers referentiels/
+    # Upload des fichiers Excel depuis /data/inputs vers referentiels/
     fichiers_excel = [f for f in DATA_DIR.glob("*") if f.suffix in EXTENSIONS and f.is_file()]
     if not fichiers_excel:
         logger.warning("⚠️ Aucun fichier Excel trouvé dans /data/inputs.")
@@ -111,7 +114,7 @@ def initialiser_et_uploader():
     logger.success("🎯 Structure MinIO prête + fichiers Excel transférés.")
 
 # ==========================================================================================
-# 4. Lancement CLI (local uniquement)
+# 4. Point d’entrée (CLI uniquement)
 # ==========================================================================================
 def main():
     initialiser_et_uploader()
@@ -121,5 +124,4 @@ if __name__ == "__main__":
         main()
     except Exception as e:
         logger.error(f"❌ Erreur pipeline : {e}")
-        import sys
         sys.exit(1)
