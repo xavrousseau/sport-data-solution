@@ -1,5 +1,5 @@
 # ==========================================================================================
-# Script      : 05_publier_tables_postgres.py
+# Script      : etape_05_publier_tables_postgres
 # Objectif    : Créer ou mettre à jour la publication PostgreSQL pour Debezium (CDC)
 #               Inclut toutes les tables du schéma ciblé + REPLICA IDENTITY FULL
 # Auteur      : Xavier Rousseau | Juillet 2025
