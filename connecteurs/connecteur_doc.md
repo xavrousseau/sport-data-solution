@@ -1,50 +1,52 @@
 {
   // ============================================================================
-  // Fichier : sportdata-activites-connector.json
-  // Objectif : Configuration Debezium pour capture CDC des activités sportives
-  // Service cible : PostgreSQL (table public.activites_sportives)
-  // Auteur : Xavier Rousseau | Juin 2025
+  // Fichier : sportdata_connector.json
+  // Objectif : Configuration Debezium complète pour capture CDC (4 tables)
+  // Tables suivies : employes, activites_sportives, beneficiaires_primes_sport, beneficiaires_journees_bien_etre
+  // Auteur : Xavier Rousseau | Mise à jour : Juillet 2025
   // ============================================================================
-  "name": "sportdata-activites-connector",   // Nom du connecteur Debezium
+  "name": "sportdata-connector",   // Nom du connecteur Debezium (unique)
+
   "config": {
-    // --- Classe du connecteur PostgreSQL ---
+    // --- Classe de connecteur utilisée (PostgreSQL) ---
     "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
 
-    // --- Connexion à la base ---
-    "database.hostname": "sport-postgres",   // Nom du service Docker/Postgres
-    "database.port": "5432",                 // Port PostgreSQL
-    "database.user": "user",                 // Utilisateur (à sécuriser en prod)
-    "database.password": "password",         // Mot de passe (à sécuriser en prod)
-    "database.dbname": "sportdata",          // Nom de la base cible
-    "database.server.name": "dbserver1",     // Préfixe logique des topics Kafka (requis)
+    // --- Connexion à PostgreSQL ---
+    "database.hostname": "sport-postgres",         // Nom du service Docker
+    "database.port": "5432",                       // Port PostgreSQL
+    "database.user": "user",                       // Identifiants de connexion
+    "database.password": "password",
+    "database.dbname": "sportdata",                // Nom de la base
+    "database.server.name": "sportdata",           // Préfixe logique → topics = sportdata.schema.table
 
     // --- Plugin de réplication ---
-    "plugin.name": "pgoutput",               // Plugin par défaut pour PG >= 10
+    "plugin.name": "pgoutput",                     // pgoutput = plugin logique de réplication (PG ≥ 10)
 
-    // --- Tables surveillées (CDC) ---
-    "table.include.list": "public.activites_sportives", // Seule la table activités
+    // --- Slot logique & publication ---
+    "slot.name": "sportdata_slot",                 // Slot logique déjà créé
+    "publication.name": "debezium_publication",    // Publication contenant les 4 tables
 
-    // --- Replication slot & publication ---
-    "slot.name": "debezium_slot",            // Nom du slot logique PG
-    "publication.name": "debezium_pub",      // Nom de la publication PG
+    // --- Filtrage : schema + tables suivies ---
+    "schema.include.list": "sportdata",            // Nom du schema ciblé
+    "table.include.list": "sportdata.employes,sportdata.activites_sportives,sportdata.beneficiaires_primes_sport,sportdata.beneficiaires_journees_bien_etre",
 
-    // --- Sécurité (dev seulement) ---
-    "database.allowPublicKeyRetrieval": "true",
-    "database.sslmode": "disable",
+    // --- Nom des topics Kafka générés ---
+    "topic.prefix": "sportdata",                   // Chaque topic sera : sportdata.schema.table
 
-    // --- Transformation : dé-nestage des événements CDC (un seul niveau) ---
-    "transforms": "unwrap",
+    // --- Mode de sortie : données en clair, format JSON plat ---
+    "transforms": "unwrap",                        // Applique une transformation de "dénestage"
     "transforms.unwrap.type": "io.debezium.transforms.ExtractNewRecordState",
+    "transforms.unwrap.drop.tombstones": "true",   // Supprime les tombstones Kafka inutiles
 
-    // --- Conversion des clés/valeurs (JSON allégé, pas de schemas AVRO) ---
+    // --- Format JSON allégé (sans schéma AVRO) ---
     "key.converter.schemas.enable": "false",
-    "value.converter.schemas.enable": "false"
+    "value.converter.schemas.enable": "false",
+
+    // --- Gestion des décimales : utile pour Spark et BI ---
+    "decimal.handling.mode": "double",
+
+    // --- Mode dev/local uniquement ---
+    "database.sslmode": "disable",
+    "database.allowPublicKeyRetrieval": "true"
   }
 }
-
-
-
-# Invoke-WebRequest -Uri "http://localhost:8083/connectors" `
-#  -Method Post `
-# -Headers @{ "Content-Type" = "application/json" } `
-#  -InFile "F:\1.Boulot\03_Github\sport-data-solution\connecteurs\connecteur.json"

@@ -31,6 +31,8 @@ POSTGRES_DB = os.getenv("POSTGRES_DB")
 
 CDC_PUBLICATION = os.getenv("CDC_PUBLICATION", "debezium_publication")
 CDC_SCHEMA = os.getenv("CDC_SCHEMA", "sportdata")
+logger.debug(f"📁 Schéma ciblé pour publication : {CDC_SCHEMA}")
+
 
 # ==========================================================================================
 # 2. Fonctions de gestion des publications
@@ -88,18 +90,16 @@ def add_table_to_publication(engine, publication_name, schema, table):
         logger.success(f"➕ Table ajoutée à la publication : {schema}.{table}")
 
 def get_tables_already_published(engine, publication_name):
-    """
-    Liste les tables déjà incluses dans la publication.
-    """
     query = f"""
-        SELECT c.relname
+        SELECT n.nspname AS schema, c.relname AS table
         FROM pg_publication p
         JOIN pg_publication_rel pr ON p.oid = pr.prpubid
         JOIN pg_class c ON pr.prrelid = c.oid
+        JOIN pg_namespace n ON c.relnamespace = n.oid
         WHERE p.pubname = '{publication_name}';
     """
     with engine.connect() as conn:
-        return [row[0] for row in conn.execute(text(query)).fetchall()]
+        return [(row[0], row[1]) for row in conn.execute(text(query)).fetchall()]
 
 # ==========================================================================================
 # 3. Pipeline principal
@@ -110,6 +110,7 @@ def initialiser_publication_postgres():
     engine = create_engine(
         f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}"
     )
+    logger.debug(f"🧩 Connexion PostgreSQL → {POSTGRES_USER}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}")
 
     # Vérification ou création de la publication
     if publication_exists(engine, CDC_PUBLICATION):
@@ -121,15 +122,15 @@ def initialiser_publication_postgres():
     toutes_tables = get_tables_sportdata(engine)
 
     if not toutes_tables:
-        logger.warning(f"⚠️ Aucune table trouvée dans le schéma '{CDC_SCHEMA}'. Vérifiez que les tables existent.")
+        logger.warning(f"⚠️ Aucune table trouvée dans le schéma '{CDC_SCHEMA}'. Vérifiez que le schéma est bien renseigné et que les tables sont bien créées dans PostgreSQL.")
         return
 
     # Filtrage des tables non encore publiées
     deja_publiees = get_tables_already_published(engine, CDC_PUBLICATION)
-    nouvelles_tables = [t for t in toutes_tables if t not in deja_publiees]
+    nouvelles_tables = [t for t in toutes_tables if (CDC_SCHEMA, t) not in deja_publiees]
 
     if not nouvelles_tables:
-        logger.info("✅ Aucune nouvelle table à publier. Publication déjà à jour.")
+        logger.info("✅ Publication déjà à jour : toutes les tables du schéma sont déjà incluses.")
     else:
         logger.info(f"📋 Tables à publier : {nouvelles_tables}")
         for table in nouvelles_tables:
@@ -138,7 +139,9 @@ def initialiser_publication_postgres():
 
     # Résumé final
     tables_finales = get_tables_already_published(engine, CDC_PUBLICATION)
-    logger.info(f"📝 Tables actuellement publiées dans {CDC_PUBLICATION} : {tables_finales}")
+    for sch, tab in tables_finales:
+        logger.info(f"📌 Table publiée : {sch}.{tab}")
+        logger.success(f"✅ {len(tables_finales)} table(s) publiées dans la publication '{CDC_PUBLICATION}'")
     logger.success("🎯 Synchronisation de publication PostgreSQL terminée.")
 
 # ==========================================================================================
@@ -152,6 +155,8 @@ def main():
 if __name__ == "__main__":
     try:
         main()
+        logger.info("🚀 Démarrage du script de publication PostgreSQL via CDC (Debezium)")
+
     except Exception as e:
         logger.error(f"❌ Erreur publication PostgreSQL : {e}")
         raise

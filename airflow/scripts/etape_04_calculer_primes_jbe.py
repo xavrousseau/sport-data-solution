@@ -14,9 +14,9 @@ import pandas as pd
 from datetime import datetime
 from dotenv import load_dotenv
 from loguru import logger
-from sqlalchemy import create_engine
 from minio_helper import MinIOHelper
 from ntfy_helper import envoyer_resume_pipeline, envoyer_message_erreur
+from sqlalchemy import create_engine, text
 
 # ==========================================================================================
 # 1. Chargement des variables d’environnement
@@ -114,8 +114,12 @@ def pipeline_croisement_prime():
 
     # Export PostgreSQL
     engine = create_engine(DB_CONN_STRING)
-    grouped.to_sql("beneficiaires_primes_sport", engine, if_exists="replace", index=False, schema="sportdata")
-    logger.success("🗃️ Table PostgreSQL : sportdata.beneficiaires_primes_sport")
+    with engine.connect() as conn:
+        conn.execute(text("DELETE FROM sportdata.beneficiaires_primes_sport"))
+
+    grouped.to_sql("beneficiaires_primes_sport", engine, if_exists="append", index=False, schema="sportdata")
+    logger.success("🗃️ Table PostgreSQL : sportdata.beneficiaires_primes_sport (append)")
+
 
     # Journées bien-être
     logger.info("=== Calcul des bénéficiaires des journées bien-être ===")
@@ -125,8 +129,12 @@ def pipeline_croisement_prime():
 
     logger.info(f"✅ {len(df_bien_etre)} salarié(s) éligible(s) aux journées bien-être.")
 
-    df_bien_etre.to_sql("beneficiaires_journees_bien_etre", engine, if_exists="replace", index=False, schema="sportdata")
-    logger.success("🗃️ Table PostgreSQL : sportdata.beneficiaires_journees_bien_etre")
+    with engine.connect() as conn:
+        conn.execute(text("DELETE FROM sportdata.beneficiaires_journees_bien_etre"))
+
+    df_bien_etre.to_sql("beneficiaires_journees_bien_etre", engine, if_exists="append", index=False, schema="sportdata")
+    logger.success("🗃️ Table PostgreSQL : sportdata.beneficiaires_journees_bien_etre (append)")
+
 
     output_be = io.BytesIO()
     with pd.ExcelWriter(output_be, engine="xlsxwriter") as writer:

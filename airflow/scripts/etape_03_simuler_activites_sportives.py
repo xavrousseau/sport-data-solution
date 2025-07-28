@@ -16,7 +16,7 @@ from datetime import datetime, timedelta
 import pandas as pd
 from dotenv import load_dotenv
 from loguru import logger
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 from kafka import KafkaProducer
 
 from minio_helper import MinIOHelper
@@ -101,8 +101,8 @@ def inserer_donnees_postgres(df, table_sql, db_conn_string):
     Insertion des données dans PostgreSQL (schéma sportdata).
     """
     engine = create_engine(db_conn_string)
-    df.to_sql(table_sql, engine, if_exists="replace", index=False, schema="sportdata")
-    logger.success(f"✅ PostgreSQL inséré : {table_sql} ({len(df)} lignes)")
+    df.to_sql(table_sql, engine, if_exists="append", index=False, schema="sportdata")
+    logger.success(f"✅ PostgreSQL (append) : {table_sql} ({len(df)} lignes)")
 
 def envoyer_message_kafka(producer, topic, message_dict):
     """
@@ -199,6 +199,7 @@ def pipeline_simulation_sport():
             return
 
         logger.info(f"📊 {len(df_activites)} activités simulées.")
+        logger.debug(f"Exemples d'activités simulées : {df_activites[['uid', 'prenom', 'type_activite']].head(3).to_dict(orient='records')}")
         inserer_donnees_postgres(df_activites, TABLE_SQL, DB_CONN_STRING)
         exporter_excel(df_activites, EXPORT_XLSX_PATH)
 
