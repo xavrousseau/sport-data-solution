@@ -118,6 +118,13 @@ def initialiser_publication_postgres():
     else:
         create_publication(engine, CDC_PUBLICATION)
 
+    # Validation : existence du schéma
+    query_schema = f"SELECT 1 FROM information_schema.schemata WHERE schema_name = '{CDC_SCHEMA}'"
+    with engine.connect() as conn:
+        if not conn.execute(text(query_schema)).fetchone():
+            logger.error(f"❌ Le schéma '{CDC_SCHEMA}' n’existe pas dans la base PostgreSQL.")
+            return
+
     # Récupération des tables dans le schéma
     toutes_tables = get_tables_sportdata(engine)
 
@@ -134,6 +141,13 @@ def initialiser_publication_postgres():
     else:
         logger.info(f"📋 Tables à publier : {nouvelles_tables}")
         for table in nouvelles_tables:
+            # Vérification du contenu de la table (optionnel)
+            query_count = f'SELECT COUNT(*) FROM "{CDC_SCHEMA}"."{table}"'
+            with engine.connect() as conn:
+                count = conn.execute(text(query_count)).scalar()
+                if count == 0:
+                    logger.warning(f"⚠️ Table vide : {CDC_SCHEMA}.{table} (aucune ligne présente)")
+            
             set_replica_identity(engine, CDC_SCHEMA, table)
             add_table_to_publication(engine, CDC_PUBLICATION, CDC_SCHEMA, table)
 

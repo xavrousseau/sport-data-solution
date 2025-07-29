@@ -27,7 +27,8 @@ from ntfy_helper import envoyer_message_ntfy  # ✅ Appel centralisé depuis hel
 load_dotenv(dotenv_path=".env", override=True)
 
 KAFKA_BOOTSTRAP_SERVERS = os.getenv("KAFKA_BOOTSTRAP_SERVERS", "sport-redpanda:9092")
-KAFKA_TOPIC = os.getenv("KAFKA_TOPIC", "sportdata_activites")
+KAFKA_TOPIC = os.getenv("KAFKA_TOPIC", "sportdata.activites_sportives")
+
 logger.info(f"📱 Kafka Bootstrap Servers : {KAFKA_BOOTSTRAP_SERVERS}")
 logger.info(f"📱 Topic Kafka configuré     : {KAFKA_TOPIC}")
 
@@ -86,13 +87,15 @@ schema = StructType([
     StructField("id_salarie", LongType()),
     StructField("nom", StringType()),
     StructField("prenom", StringType()),
-    StructField("date", StringType()),
-    StructField("jour", StringType()),
+    StructField("date", StringType()),           # timestamp ISO complet
+    StructField("jour", StringType()),           # date YYYY-MM-DD
+    StructField("date_debut", StringType()),     # timestamp ISO (déjà dans les données)
     StructField("type_activite", StringType()),
-    StructField("distance_km", DoubleType()),
-    StructField("temps_sec", IntegerType()),
+    StructField("distance_km", DoubleType()),    # km flottant
+    StructField("temps_sec", IntegerType()),     # durée en secondes
     StructField("commentaire", StringType())
 ])
+
 
 # ==========================================================================================
 # 4. Initialisation Spark avec Delta + Kafka + S3A
@@ -138,7 +141,9 @@ df_activites = df_json.select(
     from_json(col("data.after"), schema).alias("activite")
 ).select("activite.*")
 
-df_activites = df_activites.withColumn("date_debut", col("date"))
+# ✅ Convertir date_debut en timestamp
+from pyspark.sql.functions import to_timestamp
+df_activites = df_activites.withColumn("date_debut", to_timestamp("date_debut"))
 
 df_activites.printSchema()
 if df_activites.isStreaming:
@@ -161,9 +166,20 @@ query_ntfy = df_activites.writeStream \
 # ==========================================================================================
 # 7. Écriture dans Delta Lake (bronze)
 # ==========================================================================================
+ 
+
+from delta.tables import DeltaTable
 
 logger.info(f"📂 Écriture Delta Lake : {DELTA_PATH_ACTIVITES}")
 
+# Vérification : création de la structure Delta si elle n’existe pas
+if not DeltaTable.isDeltaTable(spark, DELTA_PATH_ACTIVITES):
+    logger.warning("⚠️ Aucune table Delta trouvée à cet emplacement. Initialisation...")
+    df_empty = spark.createDataFrame([], df_activites.schema)
+    df_empty.write.format("delta").mode("overwrite").save(DELTA_PATH_ACTIVITES)
+    logger.success("✅ Table Delta Lake initialisée avec structure vide.")
+
+# Démarrage du stream vers Delta Lake (format append)
 query_delta = df_activites.writeStream \
     .format("delta") \
     .outputMode("append") \
@@ -171,13 +187,15 @@ query_delta = df_activites.writeStream \
     .option("checkpointLocation", CHECKPOINT_PATH_DELTA) \
     .start()
 
-for _ in range(10):
+# Vérification des progrès d’écriture
+for _ in range(15):
     if query_delta.lastProgress:
-        logger.info(f"🔄 Progrès Delta : {query_delta.lastProgress}")
+        logger.info(f"🔄 Progrès Delta détecté : {query_delta.lastProgress}")
         break
-    time.sleep(1)
+    time.sleep(2)
 else:
-    logger.warning("⚠️ Aucun progrès d’écriture détecté après 10 secondes")
+    logger.warning("⚠️ Aucun progrès d’écriture détecté après 30 secondes.")
+
 
 # ==========================================================================================
 # 8. Attente de terminaison des streams

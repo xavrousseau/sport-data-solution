@@ -99,7 +99,15 @@ def upload_file_to_minio(local_file, minio_key, helper):
 def inserer_donnees_postgres(df, table_sql, db_conn_string):
     """
     Insertion des données dans PostgreSQL (schéma sportdata).
+    Corrige le format de date_debut pour respecter le format ISO.
     """
+    # ✅ Conversion explicite en datetime avec jour/mois/an
+    df["date_debut"] = pd.to_datetime(df["date_debut"], errors="coerce")
+
+    # Optionnel : log de vérification
+    logger.debug(f"🔍 Exemple date_debut convertie : {df['date_debut'].dropna().iloc[0]}")
+
+    # ✅ Connexion et insertion PostgreSQL
     engine = create_engine(db_conn_string)
     df.to_sql(table_sql, engine, if_exists="append", index=False, schema="sportdata")
     logger.success(f"✅ PostgreSQL (append) : {table_sql} ({len(df)} lignes)")
@@ -151,11 +159,11 @@ def simuler_activites_strava(df_salaries, nb_mois, activites_min, activites_max,
                 "id_salarie": id_salarie,
                 "nom": nom,
                 "prenom": prenom,
-                "date": date.isoformat(),
-                "jour": date.date().isoformat(),
-                "date_debut": date.strftime("%d/%m/%Y"),  # JJ/MM/AAAA
+                "date": date.isoformat(),                 # datetime complète
+                "jour": date.date().isoformat(),          # juste la date
+                "date_debut": date.isoformat(),  # ✅ format ISO pour compatibilité Spark / SQL / Delta
                 "type_activite": sport,
-                "distance_km": round(distance / 1000, 2),
+                "distance_km": round(distance / 1000, 2), # float en km
                 "temps_sec": temps,
                 "commentaire": commentaire
             }

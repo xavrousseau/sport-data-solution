@@ -1,7 +1,7 @@
 # ======================================================================================
 # DAG       : global_sportdata_dag.py
-# Objectif  : Orchestration complète du pipeline Sport Data Solution (version corrigée)
-# Auteur    : Xavier Rousseau | Corrigé par ChatGPT – Juillet 2025
+# Objectif  : Orchestration complète du pipeline Sport Data Solution (hors streaming)
+# Auteur    : Xavier Rousseau | Version corrigée par ChatGPT – Juillet 2025
 # ======================================================================================
 
 from airflow import DAG
@@ -9,46 +9,29 @@ from airflow.operators.python_operator import PythonOperator
 from airflow.operators.dummy_operator import DummyOperator
 from datetime import datetime
 from pathlib import Path
-import os
 import sys
-import subprocess
 
 # ======================================================================================
-# 1. Ajout du dossier /scripts au PYTHONPATH pour les importations
+# 1. Ajout du dossier /scripts au PYTHONPATH
 # ======================================================================================
 
 SCRIPT_DIR = Path(__file__).resolve().parents[1] / "scripts"
 sys.path.append(str(SCRIPT_DIR))
 
 # ======================================================================================
-# 2. Import des fonctions des étapes (les scripts doivent être bien structurés)
+# 2. Import des fonctions Python appelées dans le DAG
 # ======================================================================================
 
-from etape_01_initialiser_minio import main as upload_fichiers_excel
+from etape_01_initialiser_minio import main as initialiser_minio
 from etape_02_nettoyer_donnees_rh import pipeline_nettoyage_rh
 from etape_03_simuler_activites_sportives import pipeline_simulation_sport
 from etape_04_calculer_primes_jbe import pipeline_croisement_prime
-from etape_05_publier_tables_postgres import main as publier_tables_postgres
-from etape_06_lancer_streaming_activites import main as lancer_job_streaming
+from etape_05_publier_tables_postgres import main as publier_postgres
+from etape_07_lancer_controle_qualite import main as lancer_qualite
 from etape_08_aggregations_powerbi import main as aggregation_powerbi
 
 # ======================================================================================
-# 3. Fonction spécifique pour le contrôle qualité Spark via docker exec
-# ======================================================================================
-
-def lancer_job_qualite():
-    """
-    Lancement du job Spark de contrôle qualité Delta Lake
-    via spark-submit dans le conteneur sport-spark.
-    """
-    cmd = [
-        "docker", "exec", "-i", "sport-spark",
-        "spark-submit", "/opt/bitnami/spark/jobs/bronze_controle_qualite.py"
-    ]
-    subprocess.run(cmd, check=True)
-
-# ======================================================================================
-# 4. Paramètres de base du DAG
+# 3. Paramètres de base du DAG
 # ======================================================================================
 
 default_args = {
@@ -57,82 +40,78 @@ default_args = {
     "retries": 0,
 }
 
-# ======================================================================================
-# 5. Définition du DAG
-# ======================================================================================
-
 with DAG(
     dag_id="global_sportdata_pipeline",
-    description="Pipeline complet Sport Data Solution (RH → Kafka → Delta → Power BI)",
+    description="Pipeline complet : PostgreSQL → Kafka → Delta → Power BI (hors streaming)",
     default_args=default_args,
-    schedule_interval=None,  # exécution manuelle
+    schedule_interval=None,
     catchup=False,
-    tags=["sportdata", "bronze", "silver", "spark", "powerbi"],
+    tags=["sportdata", "cdc", "spark", "minio", "ntfy", "powerbi"],
 ) as dag:
 
-    # 1. Upload des fichiers Excel vers MinIO
-    upload_excel = PythonOperator(
-        task_id="upload_fichiers_excel_minio",
-        python_callable=upload_fichiers_excel,
+    # ÉTIQUETTES DE PHASES
+    debut = DummyOperator(task_id="debut_pipeline")
+    fin = DummyOperator(task_id="fin_pipeline")
+
+    phase_donnees = DummyOperator(task_id="phase_1_donnees_sources")
+    phase_production = DummyOperator(task_id="phase_2_simulation_production")
+    phase_controle = DummyOperator(task_id="phase_3_controle_et_agregation")
+
+    # 1. Initialisation MinIO
+    t1_init_minio = PythonOperator(
+        task_id="initialiser_minio_et_fichiers",
+        python_callable=initialiser_minio,
     )
 
-    # 2. Nettoyage des données RH + calcul d’éligibilité
-    nettoyage_rh = PythonOperator(
+    # 2. Nettoyage des données RH
+    t2_nettoyage_rh = PythonOperator(
         task_id="nettoyer_donnees_rh",
         python_callable=pipeline_nettoyage_rh,
     )
 
-    # 3. Lancement du streaming Spark (doit écouter avant la simulation)
-    lancer_streaming = PythonOperator(
-        task_id="lancer_streaming_activites",
-        python_callable=lancer_job_streaming,
+    # 3. Publication initiale des tables PostgreSQL
+    t3_publier_1 = PythonOperator(
+        task_id="publier_tables_postgres_1",
+        python_callable=publier_postgres,
     )
 
-    # 4. Simulation des pratiques sportives (producteur Kafka)
-    simulation_sport = PythonOperator(
-        task_id="simuler_pratiques_sportives",
+    # 4. Simulation des pratiques sportives (Kafka producer)
+    t4_simulation = PythonOperator(
+        task_id="simuler_activites_sportives",
         python_callable=pipeline_simulation_sport,
     )
 
-    # 5. Calcul des primes et journées bien-être
-    calcul_primes = PythonOperator(
-        task_id="calculer_primes_et_journees_bien_etre",
+    # 5. Calcul des primes + journées bien-être
+    t5_primes_jbe = PythonOperator(
+        task_id="calculer_primes_et_jbe",
         python_callable=pipeline_croisement_prime,
     )
 
-    # 6. Publication des tables PostgreSQL pour Debezium (CDC)
-    publication_cdc = PythonOperator(
-        task_id="publier_tables_debezium",
-        python_callable=publier_tables_postgres,
+    # 6. Re-publication des tables PostgreSQL (post-primes)
+    t6_publier_2 = PythonOperator(
+        task_id="publier_tables_postgres_2",
+        python_callable=publier_postgres,
     )
 
-    # 7. Contrôle qualité sur Delta Lake
-    controle_qualite = PythonOperator(
-        task_id="controle_qualite_activites",
-        python_callable=lancer_job_qualite,
+    # 7. Lancer le contrôle qualité Spark (Delta)
+    t7_qualite = PythonOperator(
+        task_id="lancer_controle_qualite_spark",
+        python_callable=lancer_qualite,
     )
 
-    # 8. Agrégations Silver pour Power BI + export PostgreSQL
-    aggregation_silver = PythonOperator(
-        task_id="aggregations_powerbi_silver",
+    # 8. Aggrégations Power BI + export PostgreSQL
+    t8_agregation = PythonOperator(
+        task_id="agregation_finale_powerbi",
         python_callable=aggregation_powerbi,
     )
 
-    # Fin du pipeline
-    fin = DummyOperator(task_id="fin_pipeline")
-
     # ==================================================================================
-    # 6. Orchestration corrigée : STREAMING D'ABORD, SIMULATION APRÈS
+    # ORCHESTRATION STRUCTURÉE DU PIPELINE
     # ==================================================================================
 
-    (
-        upload_excel
-        >> nettoyage_rh
-        >> lancer_streaming
-        >> simulation_sport
-        >> calcul_primes
-        >> publication_cdc
-        >> controle_qualite
-        >> aggregation_silver
-        >> fin
-    )
+    debut >> phase_donnees
+    phase_donnees >> t1_init_minio >> t2_nettoyage_rh >> t3_publier_1
+
+    t3_publier_1 >> phase_production >> t4_simulation >> t5_primes_jbe >> t6_publier_2
+
+    t6_publier_2 >> phase_controle >> t7_qualite >> t8_agregation >> fin

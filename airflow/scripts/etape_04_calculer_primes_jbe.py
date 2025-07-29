@@ -65,11 +65,20 @@ def pipeline_croisement_prime():
     logger.info(f"📊 Salariés RH éligibles        : {len(df_rh)}")
     logger.info(f"📊 Activités sportives valides : {len(df_sport)}")
 
-    if 'date_debut' not in df_sport.columns:
+    # Vérification de la colonne date_debut dans les activités sportives
+    if "date_debut" not in df_sport.columns:
         logger.warning("⚠️ Colonne 'date_debut' absente. Utilisation de 'date' comme fallback.")
-        df_sport['date_debut'] = df_sport['date']
+        if "date" in df_sport.columns:
+            df_sport["date_debut"] = df_sport["date"]
+        else:
+            raise ValueError("❌ Aucune colonne 'date' ni 'date_debut' trouvée dans df_sport.")
     else:
         logger.info("✅ Colonne 'date_debut' disponible dans les données sportives.")
+
+    # Conversion au format datetime
+    df_sport["date_debut"] = pd.to_datetime(df_sport["date_debut"], errors="coerce")
+    logger.debug(f"🕒 Exemple date_debut : {df_sport['date_debut'].dropna().iloc[0]}")
+
 
     # Jointure RH + Sport
     df_joint = pd.merge(df_rh, df_sport, on="id_salarie", how="inner")
@@ -77,8 +86,11 @@ def pipeline_croisement_prime():
 
     df_joint = df_joint.rename(columns={"nom_x": "nom", "prenom_x": "prenom"})
 
+    # Vérification de la colonne 'deplacement_sportif' issue du fichier RH
     if "deplacement_sportif" not in df_joint.columns:
-        raise KeyError("❌ La colonne 'deplacement_sportif' est absente. Vérifiez le fichier RH nettoyé.")
+        raise KeyError("❌ La colonne 'deplacement_sportif' est absente dans la jointure. "
+                    "Assurez-vous qu'elle a été générée dans le fichier RH nettoyé (etape_02).")
+
 
     # Filtrage : ne garder que les trajets domicile-bureau déclarés comme sportifs
     df_joint = df_joint[df_joint["deplacement_sportif"] == True]
