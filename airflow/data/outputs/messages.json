@@ -1,0 +1,30 @@
+[
+    {
+        "partitionID": 0,
+        "offset": 36407,
+        "timestamp": 1753885932134,
+        "compression": "uncompressed",
+        "isTransactional": false,
+        "headers": [],
+        "key": {
+            "payload": "",
+            "encoding": "null"
+        },
+        "value": {
+            "payload": {
+                "uid": "8dec784c-5f1f-4771-a686-6c3aa31b4b47",
+                "id_salarie": 35731,
+                "nom": "Morvan",
+                "prenom": "Laurence",
+                "date": "2024-11-05T03:22:11.514507",
+                "jour": "2024-11-05",
+                "date_debut": "2024-11-05T03:22:11.514507",
+                "type_activite": "Boxe",
+                "distance_km": 11.35,
+                "temps_sec": 2868,
+                "commentaire": ""
+            },
+            "encoding": "json"
+        }
+    }
+]

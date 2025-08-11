@@ -104,7 +104,11 @@ def get_tables_already_published(engine, publication_name):
 # ==========================================================================================
 # 3. Pipeline principal : création ou mise à jour de la publication
 # ==========================================================================================
- 
+
+# ==========================================================================================
+# 3. Pipeline principal : création ou mise à jour de la publication
+# ==========================================================================================
+
 def initialiser_publication_postgres():
     logger.info("=== Initialisation de la publication PostgreSQL Debezium ===")
 

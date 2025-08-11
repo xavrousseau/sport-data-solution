@@ -1,27 +1,24 @@
 # ==========================================================================================
-# Script      : etape_03_simuler_activites_sportives.py
-# Objectif    : Générer des activités sportives simulées (type Strava)
-#               à partir des salariés éligibles, puis injecter dans PostgreSQL + MinIO.
-#               Envoie aussi des notifications ntfy réalistes et messages Kafka.
-# Auteur      : Xavier Rousseau | juillet 2025
+# Script      : etape_03_simuler_activites_sportives.py (version réaliste avec profils & saison)
+# Objectif    : Générer des activités sportives simulées réalistes à partir des employés éligibles (PostgreSQL),
+#               stocker dans PostgreSQL, MinIO (Excel), publier sur Kafka (Debezium JSON enveloppé).
+# Auteur      : Xavier Rousseau | Août 2025
 # ==========================================================================================
 
 import os
-import uuid
 import json
-import tempfile
-from random import choice, randint, uniform
+import random
+import uuid
 from datetime import datetime, timedelta
-
 import pandas as pd
+from sqlalchemy import create_engine
 from dotenv import load_dotenv
 from loguru import logger
-from sqlalchemy import create_engine, text
 from kafka import KafkaProducer
 
 from minio_helper import MinIOHelper
 from ntfy_helper import (
-    envoyer_message_ntfy,   # ✅ Appel centralisé pour ntfy
+    # envoyer_message_ntfy,   # (SUPPRIMÉ : notifications désormais côté Spark uniquement)
     ACTIVITES,
     COMMENTAIRES_REALISTES,
     LIEUX_POPULAIRES,
@@ -29,12 +26,11 @@ from ntfy_helper import (
 )
 
 # ==========================================================================================
-# 1. Chargement des variables d’environnement (.env)
+# 1. Chargement des variables d’environnement (.env global)
 # ==========================================================================================
 
 load_dotenv(dotenv_path=".env", override=True)
 
-# Connexion PostgreSQL
 POSTGRES_USER = os.getenv("POSTGRES_USER")
 POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD")
 POSTGRES_HOST = os.getenv("POSTGRES_HOST")
@@ -42,189 +38,224 @@ POSTGRES_PORT = os.getenv("POSTGRES_PORT")
 POSTGRES_DB = os.getenv("POSTGRES_DB")
 DB_CONN_STRING = f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}"
 
-# Fichiers MinIO (clé d’entrée et d’export)
-MINIO_RH_KEY = "raw/donnees_rh_cleaned.xlsx"
-MINIO_XLSX_KEY = "simulation/activites_sportives.xlsx"
-RAW_MINIO_KEY = "raw/activites_sportives_simulees.xlsx"
-EXPORT_XLSX_PATH = "exports/simulations_activites_sportives.xlsx"
-TMP_DIR = "/tmp"
+KAFKA_SERVERS = os.getenv("KAFKA_BOOTSTRAP_SERVERS", "sport-redpanda:9092")
+KAFKA_TOPIC = os.getenv("KAFKA_TOPIC", "sportdata.sportdata.activites_sportives")
 
-# Paramètres Kafka
-KAFKA_TOPIC = os.getenv("KAFKA_TOPIC", "sportdata_activites")
-KAFKA_BOOTSTRAP_SERVERS = os.getenv("KAFKA_BOOTSTRAP_SERVERS", "sport-redpanda:9092")
+MINIO_EXPORT_KEY = "clean/activites_sportives_simulees.xlsx"
 
-# Paramètres de simulation
-NB_MOIS = int(os.getenv("SIMULATION_MONTHS", 12))
-ACTIVITES_MIN = int(os.getenv("SIMULATION_MIN_ACTIVITIES", 10))
-ACTIVITES_MAX = int(os.getenv("SIMULATION_MAX_ACTIVITIES", 100))
-MAX_NTFY_MESSAGES = int(os.getenv("MAX_NTFY_MESSAGES", 30))
-TABLE_SQL = "activites_sportives"
+SIMULATION_MONTHS = int(os.getenv("SIMULATION_MONTHS", 12))
 
 # ==========================================================================================
-# 2. Fonctions utilitaires : chargement, export, PostgreSQL, Kafka
+# 2. Profils sportifs, saisonnalité & calendrier réaliste
 # ==========================================================================================
 
-def charger_salaries_eligibles_minio():
-    """
-    Télécharge le fichier RH nettoyé depuis MinIO et retourne les salariés éligibles.
-    """
-    helper = MinIOHelper()
-    with tempfile.NamedTemporaryFile(suffix=".xlsx", dir=TMP_DIR) as tmpfile:
-        helper.client.download_file(helper.bucket, MINIO_RH_KEY, tmpfile.name)
-        logger.success("✅ Données RH éligibles téléchargées depuis MinIO")
-        df_rh = pd.read_excel(tmpfile.name)
-    return df_rh[["id_salarie", "nom", "prenom"]]
+PROFILS = [
+    {"label": "Sédentaire", "proba": 0.15, "min": 5, "max": 15, "sports": ["Marche", "Yoga"]},
+    {"label": "Occasionnel", "proba": 0.40, "min": 10, "max": 30, "sports": ["Course à pied", "Randonnée", "Vélo"]},
+    {"label": "Régulier", "proba": 0.35, "min": 30, "max": 70, "sports": ["Vélo", "Course à pied", "Fitness"]},
+    {"label": "Compétiteur", "proba": 0.10, "min": 60, "max": 150, "sports": ["Triathlon", "Vélo", "Natation"]}
+]
 
-def exporter_excel(df, fichier):
-    """
-    Exporte un DataFrame en fichier Excel local.
-    """
-    os.makedirs(os.path.dirname(fichier), exist_ok=True)
-    df.to_excel(fichier, index=False)
-    logger.success(f"✅ Export Excel : {fichier}")
+SAISONNALITE = {
+    1: ["Course à pied", "Fitness", "Yoga", "Marche"],
+    2: ["Course à pied", "Fitness", "Yoga", "Marche"],
+    3: ["Course à pied", "Vélo", "Randonnée", "Escalade", "Marche"],
+    4: ["Vélo", "Randonnée", "Course à pied", "Escalade"],
+    5: ["Vélo", "Randonnée", "Natation", "Course à pied"],
+    6: ["Vélo", "Randonnée", "Natation", "Escalade"],
+    7: ["Vélo", "Randonnée", "Natation", "Surf"],
+    8: ["Vélo", "Randonnée", "Natation", "Surf"],
+    9: ["Course à pied", "Randonnée", "Vélo", "Fitness"],
+    10: ["Course à pied", "Randonnée", "Vélo"],
+    11: ["Course à pied", "Fitness", "Yoga"],
+    12: ["Course à pied", "Fitness", "Yoga", "Marche"]
+}
 
-def upload_file_to_minio(local_file, minio_key, helper):
-    """
-    Upload d’un fichier local vers MinIO à la clé donnée.
-    """
-    with open(local_file, "rb") as f:
-        helper.client.put_object(
-            Bucket=helper.bucket,
-            Key=minio_key,
-            Body=f,
-            ContentLength=os.fstat(f.fileno()).st_size
-        )
-        logger.success(f"✅ Upload MinIO : {minio_key}")
+JOURS_SEMAINE = ["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche"]
+PROBA_JOURS = [0.10, 0.12, 0.12, 0.13, 0.13, 0.20, 0.20]
 
-def inserer_donnees_postgres(df, table_sql, db_conn_string):
-    """
-    Insertion des données dans PostgreSQL (schéma sportdata).
-    Corrige le format de date_debut pour respecter le format ISO.
-    """
-    # ✅ Conversion explicite en datetime avec jour/mois/an
-    df["date_debut"] = pd.to_datetime(df["date_debut"], errors="coerce")
+# ==========================================================================================
+# 3. Génération avancée d’une activité sportive réaliste
+# ==========================================================================================
 
-    # Optionnel : log de vérification
-    logger.debug(f"🔍 Exemple date_debut convertie : {df['date_debut'].dropna().iloc[0]}")
-
-    # ✅ Connexion et insertion PostgreSQL
-    engine = create_engine(db_conn_string)
-    df.to_sql(table_sql, engine, if_exists="append", index=False, schema="sportdata")
-    logger.success(f"✅ PostgreSQL (append) : {table_sql} ({len(df)} lignes)")
-
-def envoyer_message_kafka(producer, topic, message_dict):
-    """
-    Envoie un message JSON à Kafka via un KafkaProducer.
-    """
-    try:
-        json_msg = json.dumps(message_dict).encode("utf-8")
-        producer.send(topic, value=json_msg)
-    except Exception as e:
-        logger.warning(f"⚠️ Kafka erreur : {e}")
-
-def generer_commentaire(prenom):
-    """
-    Génère un commentaire réaliste, optionnellement enrichi d’un lieu et d’un emoji.
-    """
-    texte = choice(COMMENTAIRES_REALISTES)
-    if randint(0, 2): texte += f" ({choice(LIEUX_POPULAIRES)})"
-    if randint(0, 1): texte += f" {choice(EMOJIS_SPORTIFS)}"
+def generer_commentaire_avance(prenom, type_activite, mois, special=False):
+    if special:
+        return f"🎯 {prenom} a participé à une course collective ! Un vrai défi d'équipe."
+    if type_activite in ["Vélo", "Course à pied", "Randonnée"]:
+        if mois in [5, 6, 7, 8]:
+            return f"{prenom} s'est dépassé(e) sous le soleil {random.choice(EMOJIS_SPORTIFS)}"
+    if type_activite in ["Fitness", "Yoga"]:
+        if mois in [1, 2]:
+            return f"{prenom} garde la forme en intérieur {random.choice(EMOJIS_SPORTIFS)}"
+    texte = random.choice(COMMENTAIRES_REALISTES)
+    if random.randint(0, 2): texte += f" ({random.choice(LIEUX_POPULAIRES)})"
+    if random.randint(0, 1): texte += f" {random.choice(EMOJIS_SPORTIFS)}"
     return texte
 
+def date_realiste(date_base, mois, jours_gen):
+    annee = date_base.year if mois <= date_base.month else date_base.year - 1
+    while True:
+        jour_semaine = random.choices(JOURS_SEMAINE, weights=PROBA_JOURS)[0]
+        jour = random.randint(1, 28)
+        try:
+            dt = datetime(annee, mois, jour, random.randint(6, 20), random.randint(0, 59))
+        except ValueError:
+            continue
+        if dt <= datetime.now() and dt not in jours_gen:
+            return dt
+
+def generer_activites_salarie(salarie, date_base):
+    profil = random.choices(PROFILS, weights=[p['proba'] for p in PROFILS])[0]
+    nb_activites = random.randint(profil["min"], profil["max"])
+    jours_gen = set()
+    activites = []
+
+    # Détermination de la liste des mois simulés (inchangé)
+    mois_list = sorted({(date_base.month + i - 1) % 12 + 1 for i in range(SIMULATION_MONTHS)})
+
+    # --- [Ajout] Injection d’au moins 1 activité aujourd’hui avec 50% de chance par salarié ---
+    if random.random() < 0.5:
+        dt = datetime.now()
+        type_activite = random.choice(profil["sports"])
+        distance = round(random.uniform(1.5, 6.0), 2)
+        temps_sec = random.randint(1200, 5400)
+        commentaire = f"{salarie['prenom']} a pratiqué {type_activite} aujourd'hui — notif ntfy !"
+        activites.append({
+            "uid": str(uuid.uuid4()),
+            "id_salarie": salarie["id_salarie"],
+            "nom": salarie["nom"],
+            "prenom": salarie["prenom"],
+            "date": dt.isoformat(),
+            "jour": dt.date().isoformat(),
+            "date_debut": dt.isoformat(),
+            "type_activite": type_activite,
+            "distance_km": distance,
+            "temps_sec": temps_sec,
+            "commentaire": commentaire,
+            "profil": profil["label"]
+        })
+        jours_gen.add(dt)
+
+    # --- Génération classique aléatoire ---
+    for _ in range(nb_activites):
+        mois = random.choice(mois_list)
+        dt = date_realiste(date_base, mois, jours_gen)
+        jours_gen.add(dt)
+        favoris = list(set(profil["sports"]) & set(SAISONNALITE.get(mois, profil["sports"])))
+        if favoris and random.random() < 0.7:
+            type_activite = random.choice(favoris)
+        else:
+            type_activite = random.choice(SAISONNALITE.get(mois, profil["sports"]))
+        if type_activite in ["Course à pied", "Marche", "Randonnée"]:
+            base = random.uniform(2, 6) if profil["label"] == "Sédentaire" else random.uniform(5, 15)
+            distance = int(base * random.uniform(0.8, 1.2) * 1000)
+        elif type_activite in ["Vélo", "Roller", "Trottinette"]:
+            base = random.uniform(5, 20) if profil["label"] == "Sédentaire" else random.uniform(15, 50)
+            distance = int(base * random.uniform(0.7, 1.3) * 1000)
+        elif type_activite in ["Natation"]:
+            base = random.uniform(0.5, 1.2) if profil["label"] == "Sédentaire" else random.uniform(1, 3)
+            distance = int(base * random.uniform(0.8, 1.2) * 1000)
+        else:
+            base = random.uniform(1, 4) if profil["label"] == "Sédentaire" else random.uniform(2, 10)
+            distance = int(base * random.uniform(0.7, 1.2) * 1000)
+        vitesse = random.uniform(2.0, 4.5) if type_activite in ["Course à pied", "Marche", "Randonnée"] else random.uniform(5.0, 12.0)
+        temps = max(int(distance / vitesse), 180)
+        special_event = random.random() < 0.05
+        commentaire = generer_commentaire_avance(salarie["prenom"], type_activite, mois, special=special_event)
+        uid = str(uuid.uuid4())
+        activites.append({
+            "uid": uid,
+            "id_salarie": salarie["id_salarie"],
+            "nom": salarie["nom"],
+            "prenom": salarie["prenom"],
+            "date": dt.isoformat(),
+            "jour": dt.date().isoformat(),
+            "date_debut": dt.isoformat(),
+            "type_activite": type_activite,
+            "distance_km": round(distance / 1000, 2),
+            "temps_sec": temps,
+            "commentaire": commentaire,
+            "profil": profil["label"]
+        })
+    return activites
+
 # ==========================================================================================
-# 3. Simulation des activités sportives (type Strava)
+# 4. Pipeline principal de simulation, insertion et publication
 # ==========================================================================================
 
-def simuler_activites_strava(df_salaries, nb_mois, activites_min, activites_max, max_ntfy=MAX_NTFY_MESSAGES):
+def pipeline_simulation():
     """
-    Génère des activités sportives simulées pour chaque salarié éligible.
-    Envoie aussi une notification ntfy (max une par salarié) et Kafka pour chaque activité.
+    Pipeline avancé pour simuler, historiser et publier des activités sportives réalistes.
+    Étapes :
+      1. Extraction des salariés sportifs depuis PostgreSQL (table employes)
+      2. Attribution d'un profil à chaque salarié, génération d'activités (saisonnalité, week-end…)
+      3. Insertion en base PostgreSQL (CDC Debezium)
+      4. Export Excel vers MinIO (Power BI, contrôle)
+      5. Publication dans Kafka (JSON Debezium enveloppé), logs allégés
     """
-    producer = KafkaProducer(bootstrap_servers=KAFKA_BOOTSTRAP_SERVERS)
-    activities, messages_envoyes, ids_notifies = [], 0, set()
-    date_debut = datetime.now() - timedelta(days=nb_mois * 30)
+    logger.info("🚀 Démarrage de la simulation réaliste d’activités sportives (PostgreSQL)")
 
-    for _, row in df_salaries.iterrows():
-        id_salarie, nom, prenom = row["id_salarie"], row["nom"], row["prenom"]
+    # 1. Extraction RH filtrée
+    engine = create_engine(DB_CONN_STRING)
+    df_salaries = pd.read_sql(
+        "SELECT * FROM sportdata.employes WHERE deplacement_sportif = True", engine
+    )
+    if df_salaries.empty:
+        logger.warning("⚠️ Aucun salarié sportif trouvé dans la base.")
+        return
+    logger.info(f"✅ {len(df_salaries)} salariés sportifs identifiés pour simulation (profils)")
 
-        for _ in range(randint(activites_min, activites_max)):
-            sport = choice(ACTIVITES)
-            date = date_debut + timedelta(days=randint(0, nb_mois * 30), hours=randint(6, 20), minutes=randint(0, 59))
-            distance = int(uniform(1000, 15000))  # en mètres
-            temps = int(distance / uniform(2.0, 4.0))  # en secondes
-            commentaire = generer_commentaire(prenom) if randint(0, 3) == 0 else ""
+    # 2. Génération avancée des activités
+    activites = []
+    date_base = datetime.now() - timedelta(days=SIMULATION_MONTHS * 30)
+    for _, salarie in df_salaries.iterrows():
+        activites.extend(generer_activites_salarie(salarie, date_base))
 
-            activity = {
-                "uid": str(uuid.uuid4()),
-                "id_salarie": id_salarie,
-                "nom": nom,
-                "prenom": prenom,
-                "date": date.isoformat(),                 # datetime complète
-                "jour": date.date().isoformat(),          # juste la date
-                "date_debut": date.isoformat(),  # ✅ format ISO pour compatibilité Spark / SQL / Delta
-                "type_activite": sport,
-                "distance_km": round(distance / 1000, 2), # float en km
-                "temps_sec": temps,
-                "commentaire": commentaire
+    df_activites = pd.DataFrame(activites)
+    logger.info(f"✅ {len(df_activites)} activités simulées (profils, saisonnalité, événements spéciaux inclus)")
+
+    # 3. Insertion en base PostgreSQL (append)
+    df_activites.to_sql(
+        "activites_sportives", engine, index=False, if_exists="append", schema="sportdata"
+    )
+    logger.success("📦 Données insérées dans PostgreSQL (sportdata.activites_sportives)")
+
+    # 4. Export Excel vers MinIO pour BI/contrôle
+    helper = MinIOHelper()
+    helper.upload_excel(df_activites, MINIO_EXPORT_KEY, "Activités simulées (profils + saison)")
+
+    # 5. Publication Kafka (format Debezium enveloppé, logs allégés)
+    producer = KafkaProducer(
+        bootstrap_servers=KAFKA_SERVERS,
+        value_serializer=lambda v: json.dumps(v).encode("utf-8")
+    )
+    n_total = len(df_activites)
+    logger.info(f"Début publication Kafka : {n_total} activités à envoyer")
+
+    for i, (_, row) in enumerate(df_activites.iterrows()):
+        message = {
+            "payload": {
+                "op": "c",  # 'c' = création (insert)
+                "after": row.to_dict(),
+                "ts_ms": int(datetime.utcnow().timestamp() * 1000)
             }
+        }
+        producer.send(KAFKA_TOPIC, value=message)
 
-            activities.append(activity)
-            envoyer_message_kafka(producer, KAFKA_TOPIC, activity)
-
-            # Envoi de la notification ntfy (une seule fois par salarié)
-            if messages_envoyes < max_ntfy and id_salarie not in ids_notifies:
-                envoyer_message_ntfy(prenom, sport, distance / 1000, temps // 60)  # ✅ conversion ici
-                ids_notifies.add(id_salarie)
-                messages_envoyes += 1
+        # Log les 3 premières, toutes les 500, et la dernière activité seulement
+        if i < 3 or i % 500 == 0 or i == n_total - 1:
+            logger.info(f"📤 Kafka envoyé : {row['uid']} (activité {i+1}/{n_total})")
 
     producer.flush()
-    return pd.DataFrame(activities)
+    logger.success(f"📤 {n_total} messages Kafka Debezium envoyés sur le topic {KAFKA_TOPIC}")
+    logger.success("🎯 Simulation réaliste terminée avec succès.")
 
 # ==========================================================================================
-# 4. Pipeline principal (exécutable en CLI ou via Airflow)
-# ==========================================================================================
-
-def pipeline_simulation_sport():
-    """
-    Pipeline complet de simulation :
-    - Chargement RH depuis MinIO
-    - Simulation d’activités sportives
-    - Insertion PostgreSQL
-    - Export Excel
-    - Upload MinIO (simulation + copie raw pour calcul JBE)
-    """
-    try:
-        logger.info("🚀 Simulation d'activités sportives : démarrage...")
-
-        df_salaries = charger_salaries_eligibles_minio()
-        if df_salaries.empty:
-            logger.warning("⚠️ Aucun salarié éligible. Arrêt.")
-            return
-
-        df_activites = simuler_activites_strava(df_salaries, NB_MOIS, ACTIVITES_MIN, ACTIVITES_MAX)
-        if df_activites.empty:
-            logger.warning("⚠️ Aucune activité générée.")
-            return
-
-        logger.info(f"📊 {len(df_activites)} activités simulées.")
-        logger.debug(f"Exemples d'activités simulées : {df_activites[['uid', 'prenom', 'type_activite']].head(3).to_dict(orient='records')}")
-        inserer_donnees_postgres(df_activites, TABLE_SQL, DB_CONN_STRING)
-        exporter_excel(df_activites, EXPORT_XLSX_PATH)
-
-        helper = MinIOHelper()
-        if os.path.exists(EXPORT_XLSX_PATH):
-            upload_file_to_minio(EXPORT_XLSX_PATH, MINIO_XLSX_KEY, helper)
-            upload_file_to_minio(EXPORT_XLSX_PATH, RAW_MINIO_KEY, helper)
-        else:
-            logger.error(f"❌ Fichier d’export introuvable : {EXPORT_XLSX_PATH}")
-
-    except Exception as e:
-        logger.error(f"❌ Erreur critique dans le pipeline de simulation : {e}")
-        raise
-
-# ==========================================================================================
-# 5. Point d’entrée CLI
+# 5. Point d’entrée
 # ==========================================================================================
 
 if __name__ == "__main__":
-    pipeline_simulation_sport()
+    try:
+        pipeline_simulation()
+    except Exception as e:
+        logger.error(f"❌ Erreur lors de la simulation : {e}")

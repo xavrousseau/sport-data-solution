@@ -113,9 +113,12 @@ services:
       REST_ADVERTISED_HOST_NAME: ${DEBEZIUM_CONNECT_REST_ADVERTISED_HOST_NAME}
     ports:
       - "${DEBEZIUM_CONNECT_PORT}:8083"
+    volumes:
+      - ./.env:/opt/airflow/.env:ro 
     restart: unless-stopped
     networks:
       - sport-network
+
    # ================================================================================
   # 5. Spark — Traitement de données (batch, streaming)
   #    - Peut consommer des topics Kafka et écrire en Delta Lake ou PostgreSQL
@@ -151,6 +154,7 @@ services:
       - ./spark/jobs:/opt/bitnami/spark/jobs
       - ./spark/conf/spark-defaults.conf:/opt/bitnami/spark/conf/spark-defaults.conf
       - ./airflow/scripts:/opt/airflow/scripts:ro
+      - ./.env:/opt/airflow/.env:ro 
     networks:
       - sport-network
     restart: unless-stopped

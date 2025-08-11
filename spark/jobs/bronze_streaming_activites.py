@@ -1,205 +1,182 @@
 # ==========================================================================================
-# Script      : bronze_streaming_activites.py
-# Objectif    : Lire les activités sportives depuis Kafka (Debezium),
-#               envoyer des messages ntfy enrichis pour chaque activité,
-#               et stocker les activités dans Delta Lake (bronze).
-# Auteur      : Xavier Rousseau | Juillet 2025
+# Script      : bronze_streaming_activites.py (sans filtre date)
+# Objectif    : Kafka (Debezium JSON) → Delta Lake (MinIO S3A),
+#               dédoublonnage 'uid', notifications ntfy pour toutes les lignes,
+#               fichiers Delta plus "lourds" (coalesce / maxRecordsPerFile), logs sobres.
+# Auteur      : Xavier Rousseau | Août 2025
 # ==========================================================================================
 
 import os
 import sys
-import time
 from dotenv import load_dotenv
 from loguru import logger
-from random import choice
-from pyspark.sql import SparkSession
-from pyspark.sql.functions import from_json, col
-from pyspark.sql.types import StructType, StructField, StringType, DoubleType, LongType, IntegerType
+from pyspark.sql import SparkSession, DataFrame
+from pyspark.sql.functions import from_json, col, to_timestamp
+from pyspark.sql.types import (
+    StructType, StructField, StringType, LongType, DoubleType, IntegerType
+)
 
-# ✅ Ajout du chemin contenant ntfy_helper.py
+# =============================================================================
+# 1) ENV & helpers
+# =============================================================================
+
+# Helper ntfy (exposé dans l'image Airflow)
 sys.path.append("/opt/airflow/scripts")
-from ntfy_helper import envoyer_message_ntfy  # ✅ Appel centralisé depuis helper
+from ntfy_helper import envoyer_message_ntfy  # type: ignore
 
-# ==========================================================================================
-# 1. Chargement des variables d’environnement (.env)
-# ==========================================================================================
+# Chargement .env centralisé (même chemin que vos autres scripts)
+load_dotenv(dotenv_path="/opt/airflow/.env", override=True)
 
-load_dotenv(dotenv_path=".env", override=True)
+# --- Kafka (garde bien ce topic)
+KAFKA_TOPIC     = os.getenv("KAFKA_TOPIC", "sportdata.sportdata.activites_sportives")
+KAFKA_BOOTSTRAP = os.getenv("KAFKA_BOOTSTRAP_SERVERS", "sport-redpanda:9092")
+MAX_OFFSETS     = int(os.getenv("KAFKA_MAX_OFFSETS_PER_TRIGGER", "20000"))
 
-KAFKA_BOOTSTRAP_SERVERS = os.getenv("KAFKA_BOOTSTRAP_SERVERS", "sport-redpanda:9092")
-KAFKA_TOPIC = os.getenv("KAFKA_TOPIC", "sportdata.activites_sportives")
+# --- Delta / MinIO
+DELTA_PATH      = os.getenv("DELTA_PATH_ACTIVITES", "s3a://sportdata/bronze/")
+CHECKPOINT_PATH = os.getenv("CHECKPOINT_PATH_DELTA", "/tmp/checkpoints/bronze_activites_sportives")
+MINIO_ENDPOINT  = os.getenv("MINIO_ENDPOINT", "http://sport-minio:9000")
+MINIO_ACCESS    = os.getenv("MINIO_ROOT_USER", "minio")
+MINIO_SECRET    = os.getenv("MINIO_ROOT_PASSWORD", "minio123")
 
-logger.info(f"📱 Kafka Bootstrap Servers : {KAFKA_BOOTSTRAP_SERVERS}")
-logger.info(f"📱 Topic Kafka configuré     : {KAFKA_TOPIC}")
+# --- Tuning écriture/partitionnement
+COALESCE_N      = int(os.getenv("DELTA_COALESCE_TARGET", "1"))          # 1 = un gros fichier par micro-batch
+MAX_RECS_FILE   = int(os.getenv("DELTA_MAX_RECORDS_PER_FILE", "500000")) # cible d’enregistrements par fichier
+SHUFFLE_PARTS   = int(os.getenv("SPARK_SQL_SHUFFLE_PARTITIONS", "2"))    # dev: 2-4
+TRIGGER_SECONDS = int(os.getenv("STREAM_TRIGGER_SECONDS", "30"))         # fréquence micro-batch (s)
 
-NTFY_URL = os.getenv("NTFY_URL", "http://sport-ntfy")
-NTFY_TOPIC = os.getenv("NTFY_TOPIC", "sportdata_activites")
-logger.info(f"🔔 URL ntfy                  : {NTFY_URL}")
-logger.info(f"🔔 Topic ntfy configuré      : {NTFY_TOPIC}")
+# Logs sobres
+logger.remove()
+logger.add(sys.stdout, level="INFO")
 
-DELTA_PATH_ACTIVITES = os.getenv("DELTA_PATH_ACTIVITES", "s3a://sportdata/bronze/activites_sportives")
-logger.info(f"📁 Chemin Delta Lake         : {DELTA_PATH_ACTIVITES}")
+# =============================================================================
+# 2) Spark minimal (Delta + S3A)
+# =============================================================================
 
-CHECKPOINT_PATH_DELTA = os.getenv("CHECKPOINT_PATH_DELTA", "/tmp/checkpoints/bronze_activites_sportives")
-CHECKPOINT_PATH_NTFY = os.getenv("CHECKPOINT_PATH_NTFY", "/tmp/checkpoints/ntfy_activites")
-logger.info(f"🗒️ Checkpoint Delta          : {CHECKPOINT_PATH_DELTA}")
-logger.info(f"🗒️ Checkpoint NTFY           : {CHECKPOINT_PATH_NTFY}")
+spark = (
+    SparkSession.builder
+    .appName("StreamingActivitesSportives")
+    .config("spark.sql.extensions", "io.delta.sql.DeltaSparkSessionExtension")
+    .config("spark.sql.catalog.spark_catalog", "org.apache.spark.sql.delta.catalog.DeltaCatalog")
+    # MinIO (S3A)
+    .config("spark.hadoop.fs.s3a.endpoint", MINIO_ENDPOINT)
+    .config("spark.hadoop.fs.s3a.access.key", MINIO_ACCESS)
+    .config("spark.hadoop.fs.s3a.secret.key", MINIO_SECRET)
+    .config("spark.hadoop.fs.s3a.path.style.access", "true")
+    .config("spark.hadoop.fs.s3a.impl", "org.apache.hadoop.fs.s3a.S3AFileSystem")
+    # Tuning
+    .config("spark.sql.shuffle.partitions", str(SHUFFLE_PARTS))
+    .config("spark.sql.session.timeZone", "Europe/Paris")
+    .getOrCreate()
+)
+spark.sparkContext.setLogLevel("WARN")
 
-MINIO_ENDPOINT = os.getenv("MINIO_ENDPOINT", "http://sport-minio:9000")
-MINIO_ACCESS_KEY = os.getenv("MINIO_ROOT_USER", "minio")
-MINIO_SECRET_KEY = os.getenv("MINIO_ROOT_PASSWORD", "minio123")
-logger.info(f"🪣 MinIO endpoint            : {MINIO_ENDPOINT}")
-logger.info(f"🪣 MinIO access key          : {MINIO_ACCESS_KEY}")
+logger.info(f"Delta path  = {DELTA_PATH}")
+logger.info(f"Kafka topic = {KAFKA_TOPIC}")
+logger.info(f"Coalesce={COALESCE_N} | maxRecordsPerFile={MAX_RECS_FILE} | maxOffsetsPerTrigger={MAX_OFFSETS}")
 
-if not KAFKA_BOOTSTRAP_SERVERS or not KAFKA_TOPIC:
-    logger.warning("⚠️ Configuration Kafka incomplète. Vérifie les variables .env.")
-if not NTFY_URL or not NTFY_TOPIC:
-    logger.warning("⚠️ Configuration ntfy incomplète. Vérifie les variables .env.")
-if not DELTA_PATH_ACTIVITES:
-    logger.warning("⚠️ Chemin Delta Lake non défini.")
-if not MINIO_ENDPOINT or not MINIO_ACCESS_KEY or not MINIO_SECRET_KEY:
-    logger.warning("⚠️ Configuration MinIO incomplète. Vérifie les variables .env.")
+# =============================================================================
+# 3) Schémas (Debezium enveloppé → payload.after.*)
+# =============================================================================
 
-# ==========================================================================================
-# 2. Fonction de traitement par microbatch : notification pour chaque activité
-# ==========================================================================================
-
-def traiter_batch(df, epoch_id):
-    logger.info(f"📦 Batch {epoch_id} reçu avec {df.count()} lignes")
-    if df.isEmpty():
-        logger.info(f"[Batch {epoch_id}] Aucun événement à traiter.")
-        return
-
-    lignes = df.select("prenom", "type_activite", "distance_km", "temps_sec").collect()
-    for row in lignes:
-        try:
-            envoyer_message_ntfy(row.prenom, row.type_activite, row.distance_km, row.temps_sec // 60)
-        except Exception as e:
-            logger.warning(f"⚠️ Erreur traitement activité : {e}")
-    df.select("prenom", "type_activite", "distance_km", "temps_sec").show(truncate=False)
-
-# ==========================================================================================
-# 3. Schéma JSON attendu (champ "after" de Debezium)
-# ==========================================================================================
-
-schema = StructType([
-    StructField("uid", StringType()),
-    StructField("id_salarie", LongType()),
-    StructField("nom", StringType()),
-    StructField("prenom", StringType()),
-    StructField("date", StringType()),           # timestamp ISO complet
-    StructField("jour", StringType()),           # date YYYY-MM-DD
-    StructField("date_debut", StringType()),     # timestamp ISO (déjà dans les données)
+schema_after = StructType([
+    StructField("uid",           StringType()),
+    StructField("id_salarie",    LongType()),
+    StructField("nom",           StringType()),
+    StructField("prenom",        StringType()),
+    StructField("date",          StringType()),
+    StructField("jour",          StringType()),
+    StructField("date_debut",    StringType()),
     StructField("type_activite", StringType()),
-    StructField("distance_km", DoubleType()),    # km flottant
-    StructField("temps_sec", IntegerType()),     # durée en secondes
-    StructField("commentaire", StringType())
+    StructField("distance_km",   DoubleType()),
+    StructField("temps_sec",     IntegerType()),
+    StructField("commentaire",   StringType()),
 ])
 
+schema_debezium = StructType().add("payload", StructType([
+    StructField("op",    StringType()),
+    StructField("after", schema_after),
+    StructField("ts_ms", LongType())
+]))
 
-# ==========================================================================================
-# 4. Initialisation Spark avec Delta + Kafka + S3A
-# ==========================================================================================
+# =============================================================================
+# 4) Lecture Kafka → parse Debezium → nettoyer → dedup
+#     ⚠️ Pas de filtre de dates ici.
+# =============================================================================
 
-logger.info("🚀 Initialisation SparkSession pour Kafka + Delta + S3A")
-
-spark = SparkSession.builder \
-    .appName("StreamingActivitesSportives") \
-    .config("spark.jars.packages", "io.delta:delta-core_2.12:2.4.0,org.apache.spark:spark-sql-kafka-0-10_2.12:3.4.0") \
-    .config("spark.sql.extensions", "io.delta.sql.DeltaSparkSessionExtension") \
-    .config("spark.sql.catalog.spark_catalog", "org.apache.spark.sql.delta.catalog.DeltaCatalog") \
-    .config("spark.hadoop.fs.s3a.endpoint", MINIO_ENDPOINT) \
-    .config("spark.hadoop.fs.s3a.access.key", MINIO_ACCESS_KEY) \
-    .config("spark.hadoop.fs.s3a.secret.key", MINIO_SECRET_KEY) \
-    .config("spark.hadoop.fs.s3a.path.style.access", "true") \
-    .config("spark.hadoop.fs.s3a.impl", "org.apache.hadoop.fs.s3a.S3AFileSystem") \
-    .getOrCreate()
-
-spark.sparkContext.setLogLevel("WARN")
-logger.info("✅ SparkSession initialisée")
-
-# ==========================================================================================
-# 5. Lecture Kafka, parsing JSON, enrichissement
-# ==========================================================================================
-
-logger.info(f"📱 Lecture Kafka : topic = {KAFKA_TOPIC}")
-
-kafka_df = spark.readStream \
-    .format("kafka") \
-    .option("kafka.bootstrap.servers", KAFKA_BOOTSTRAP_SERVERS) \
-    .option("subscribe", KAFKA_TOPIC) \
-    .option("startingOffsets", "latest") \
+raw = (
+    spark.readStream.format("kafka")
+    .option("kafka.bootstrap.servers", KAFKA_BOOTSTRAP)
+    .option("subscribe", KAFKA_TOPIC)
+    .option("startingOffsets", "latest")     # évite la lecture d’offsets périmés
+    .option("failOnDataLoss", "false")
+    .option("maxOffsetsPerTrigger", MAX_OFFSETS)
     .load()
+)
 
-df_valeurs = kafka_df.selectExpr("CAST(value AS STRING)")
+parsed = raw.select(from_json(col("value").cast("string"), schema_debezium).alias("r"))
 
-df_json = df_valeurs.select(
-    from_json(col("value"), StructType().add("after", StringType())).alias("data")
-).filter("data.after IS NOT NULL")
+clean = (
+    parsed
+    .filter(col("r.payload").isNotNull())
+    .filter(col("r.payload.op").isin("c", "u"))   # insert/update
+    .select("r.payload.after.*")
+    .withColumn("date_debut", to_timestamp("date_debut"))  # normalise timestamp
+)
 
-df_activites = df_json.select(
-    from_json(col("data.after"), schema).alias("activite")
-).select("activite.*")
+# Dédoublonnage streaming sur uid (watermark sur date_debut)
+dedup = clean.withWatermark("date_debut", "1 hour").dropDuplicates(["uid"])
 
-# ✅ Convertir date_debut en timestamp
-from pyspark.sql.functions import to_timestamp
-df_activites = df_activites.withColumn("date_debut", to_timestamp("date_debut"))
+# =============================================================================
+# 5) Notifications ntfy (toutes les lignes du batch)
+# =============================================================================
 
-df_activites.printSchema()
-if df_activites.isStreaming:
-    logger.info("✅ DataFrame en streaming actif")
-else:
-    logger.warning("❌ DataFrame n'est pas en streaming")
+def notifier_toutes_lignes(df: DataFrame, epoch_id: int) -> None:
+    a_notifier = df.select("prenom", "type_activite", "distance_km", "temps_sec")
+    rows = a_notifier.collect()
+    if not rows:
+        logger.info(f"[{epoch_id}] aucune notification à envoyer (batch vide).")
+        return
 
-# ==========================================================================================
-# 6. Notifications via foreachBatch
-# ==========================================================================================
+    erreurs = 0
+    for r in rows:
+        try:
+            duree_min = int(r.temps_sec or 0) // 60
+            envoyer_message_ntfy(r.prenom, r.type_activite, r.distance_km, duree_min)
+        except Exception as e:
+            erreurs += 1
+            logger.warning(f"[{epoch_id}] ntfy erreur pour {r.prenom}: {e}")
 
-logger.info("🔔 Activation du flux NTFY")
+    ok = len(rows) - erreurs
+    logger.info(f"[{epoch_id}] ntfy envoyées: {ok} | erreurs: {erreurs}")
 
-query_ntfy = df_activites.writeStream \
-    .foreachBatch(traiter_batch) \
-    .outputMode("append") \
-    .option("checkpointLocation", CHECKPOINT_PATH_NTFY) \
+# =============================================================================
+# 6) foreachBatch : append Delta (coalesce + maxRecordsPerFile) → notifications
+# =============================================================================
+
+def ecrire_delta_et_notifier(batch_df: DataFrame, epoch_id: int) -> None:
+    if batch_df.rdd.isEmpty():
+        return
+
+    out = batch_df.coalesce(COALESCE_N)  # moins de fichiers → plus gros
+
+    (out.write.format("delta")
+        .mode("append")
+        .option("mergeSchema", "true")
+        .option("maxRecordsPerFile", str(MAX_RECS_FILE))
+        .save(DELTA_PATH))
+
+    logger.info(f"[{epoch_id}] batch écrit dans Delta (coalesce={COALESCE_N}, maxRecordsPerFile={MAX_RECS_FILE}).")
+    notifier_toutes_lignes(out, epoch_id)
+
+query = (
+    dedup.writeStream
+    .outputMode("append")
+    .option("checkpointLocation", CHECKPOINT_PATH)
+    .trigger(processingTime=f"{TRIGGER_SECONDS} seconds")
+    .foreachBatch(ecrire_delta_et_notifier)
     .start()
+)
 
-# ==========================================================================================
-# 7. Écriture dans Delta Lake (bronze)
-# ==========================================================================================
- 
-
-from delta.tables import DeltaTable
-
-logger.info(f"📂 Écriture Delta Lake : {DELTA_PATH_ACTIVITES}")
-
-# Vérification : création de la structure Delta si elle n’existe pas
-if not DeltaTable.isDeltaTable(spark, DELTA_PATH_ACTIVITES):
-    logger.warning("⚠️ Aucune table Delta trouvée à cet emplacement. Initialisation...")
-    df_empty = spark.createDataFrame([], df_activites.schema)
-    df_empty.write.format("delta").mode("overwrite").save(DELTA_PATH_ACTIVITES)
-    logger.success("✅ Table Delta Lake initialisée avec structure vide.")
-
-# Démarrage du stream vers Delta Lake (format append)
-query_delta = df_activites.writeStream \
-    .format("delta") \
-    .outputMode("append") \
-    .option("path", DELTA_PATH_ACTIVITES) \
-    .option("checkpointLocation", CHECKPOINT_PATH_DELTA) \
-    .start()
-
-# Vérification des progrès d’écriture
-for _ in range(15):
-    if query_delta.lastProgress:
-        logger.info(f"🔄 Progrès Delta détecté : {query_delta.lastProgress}")
-        break
-    time.sleep(2)
-else:
-    logger.warning("⚠️ Aucun progrès d’écriture détecté après 30 secondes.")
-
-
-# ==========================================================================================
-# 8. Attente de terminaison des streams
-# ==========================================================================================
-
-query_ntfy.awaitTermination()
-query_delta.awaitTermination()
+logger.info("Streaming démarré (dedup uid → Delta coalescé → ntfy toutes lignes).")
+query.awaitTermination()

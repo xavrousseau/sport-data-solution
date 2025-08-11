@@ -1,217 +1,263 @@
 # ==========================================================================================
 # Script      : etape_04_calculer_primes_jbe.py
-# Objectif    : Croiser RH + activités sportives pour :
-#               - calculer les primes sportives (5% du salaire annuel brut si déplacement sportif)
-#               - identifier les bénéficiaires des journées bien-être (≥15 activités)
-#               - exporter vers MinIO, PostgreSQL, notifier via ntfy, valider via GE
-# Auteur      : Xavier Rousseau | Juillet 2025
+# Objectif    : Calculer primes & JBE (MinIO → pandas), exporter Excel, insérer Postgres (modèle sans "periode"),
+#               publier Kafka (1 msg / bénéficiaire). AUCUNE notification NTFY ici.
+# Auteur      : Xavier Rousseau | Août 2025
 # ==========================================================================================
 
 import os
 import io
-import tempfile
+import sys
+import json
+import uuid
+from datetime import datetime, date
+
 import pandas as pd
-from datetime import datetime
+from sqlalchemy import create_engine, text, bindparam
 from dotenv import load_dotenv
 from loguru import logger
-from minio_helper import MinIOHelper
-from ntfy_helper import envoyer_resume_pipeline, envoyer_message_erreur
-from sqlalchemy import create_engine, text
+import great_expectations as ge
+from kafka import KafkaProducer
+
+# Helpers montés dans /opt/airflow/scripts
+sys.path.append("/opt/airflow/scripts")
+from minio_helper import MinIOHelper  # type: ignore
 
 # ==========================================================================================
-# 1. Chargement des variables d’environnement
+# 0) Logs & ENV
 # ==========================================================================================
+logger.remove()
+logger.add(sys.stdout, level="INFO")
 
+# Charger d'abord l'.env Airflow puis l'.env local
+load_dotenv(dotenv_path="/opt/airflow/.env", override=True)
 load_dotenv(dotenv_path=".env", override=True)
 
-MINIO_RH_KEY = "raw/donnees_rh_cleaned.xlsx"
-MINIO_SPORT_KEY = "raw/activites_sportives_simulees.xlsx"
-MINIO_EXPORT_KEY = "final/beneficiaires_primes_sportives.xlsx"
-MINIO_EXPORT_BE_KEY = "final/beneficiaires_journees_bien_etre.xlsx"
-TMP_DIR = "/tmp"
+# PostgreSQL
+POSTGRES_USER = os.getenv("POSTGRES_USER", "user")
+POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD", "password")
+POSTGRES_HOST = os.getenv("POSTGRES_HOST", "sport-postgres")
+POSTGRES_PORT = os.getenv("POSTGRES_PORT", "5432")
+POSTGRES_DB = os.getenv("POSTGRES_DB", "sportdata")
+DB_CONN_STRING = f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}"
 
-POSTGRES_USER = os.getenv("POSTGRES_USER")
-POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD")
-POSTGRES_HOST = os.getenv("POSTGRES_HOST")
-POSTGRES_PORT = os.getenv("POSTGRES_PORT")
-POSTGRES_DB = os.getenv("POSTGRES_DB")
+# MinIO
+MINIO_BUCKET = os.getenv("MINIO_BUCKET_NAME", "sportdata")
+MINIO_RH_KEY = os.getenv("MINIO_RH_KEY", "clean/donnees_rh_cleaned.xlsx")
+MINIO_SPORT_KEY = os.getenv("MINIO_SPORT_KEY", "clean/activites_sportives_simulees.xlsx")
 
-DB_CONN_STRING = (
-    f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@"
-    f"{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}"
-)
+# Exports Excel
+MINIO_EXPORT_PRIMES = os.getenv("MINIO_EXPORT_PRIMES", "gold/beneficiaires_primes_sportives.xlsx")
+MINIO_EXPORT_BE = os.getenv("MINIO_EXPORT_BE", "gold/beneficiaires_journees_bien_etre.xlsx")
+
+# Métier
+SEUIL_ACTIVITES_PRIME = int(os.getenv("SEUIL_ACTIVITES_PRIME", 10))
+POURCENTAGE_PRIME = float(os.getenv("POURCENTAGE_PRIME", 0.05))
+JOURNEES_BIEN_ETRE = int(os.getenv("NB_JOURNEES_BIEN_ETRE", 5))
+DATE_DU_JOUR = date.today()  # pour la colonne date_prime
+
+# Kafka
+KAFKA_BOOTSTRAP = os.getenv("KAFKA_BOOTSTRAP_SERVERS", "sport-redpanda:9092")
+KAFKA_TOPIC_PRIMES = os.getenv("KAFKA_TOPIC_PRIMES", "sportdata.sportdata.beneficiaires_primes_sport")
+KAFKA_TOPIC_JBE = os.getenv("KAFKA_TOPIC_JBE", "sportdata.sportdata.beneficiaires_journees_bien_etre")
 
 # ==========================================================================================
-# 2. Fonction : téléchargement d’un fichier depuis MinIO
+# 1) Utils : Kafka & GE
 # ==========================================================================================
-
-def charger_fichier_minio(helper, key):
-    with tempfile.NamedTemporaryFile(suffix=".xlsx", dir=TMP_DIR) as tmpfile:
-        helper.client.download_file(Bucket=helper.bucket, Key=key, Filename=tmpfile.name)
-        logger.success(f"📥 Fichier téléchargé depuis MinIO : {key}")
-        return pd.read_excel(tmpfile.name)
-
-# ==========================================================================================
-# 3. Pipeline principal : calcul des primes et journées bien-être
-# ==========================================================================================
-
-def pipeline_croisement_prime():
-    logger.info("=== DÉMARRAGE DU PIPELINE : Prime + Journées Bien-Être ===")
-    helper = MinIOHelper()
-
-    df_rh = charger_fichier_minio(helper, MINIO_RH_KEY)
-    df_sport = charger_fichier_minio(helper, MINIO_SPORT_KEY)
-
-    logger.info(f"📊 Salariés RH éligibles        : {len(df_rh)}")
-    logger.info(f"📊 Activités sportives valides : {len(df_sport)}")
-
-    # Vérification de la colonne date_debut dans les activités sportives
-    if "date_debut" not in df_sport.columns:
-        logger.warning("⚠️ Colonne 'date_debut' absente. Utilisation de 'date' comme fallback.")
-        if "date" in df_sport.columns:
-            df_sport["date_debut"] = df_sport["date"]
-        else:
-            raise ValueError("❌ Aucune colonne 'date' ni 'date_debut' trouvée dans df_sport.")
-    else:
-        logger.info("✅ Colonne 'date_debut' disponible dans les données sportives.")
-
-    # Conversion au format datetime
-    df_sport["date_debut"] = pd.to_datetime(df_sport["date_debut"], errors="coerce")
-    logger.debug(f"🕒 Exemple date_debut : {df_sport['date_debut'].dropna().iloc[0]}")
-
-
-    # Jointure RH + Sport
-    df_joint = pd.merge(df_rh, df_sport, on="id_salarie", how="inner")
-    logger.info(f"🔗 Bénéficiaires potentiels     : {len(df_joint)}")
-
-    df_joint = df_joint.rename(columns={"nom_x": "nom", "prenom_x": "prenom"})
-
-    # Vérification de la colonne 'deplacement_sportif' issue du fichier RH
-    if "deplacement_sportif" not in df_joint.columns:
-        raise KeyError("❌ La colonne 'deplacement_sportif' est absente dans la jointure. "
-                    "Assurez-vous qu'elle a été générée dans le fichier RH nettoyé (etape_02).")
-
-
-    # Filtrage : ne garder que les trajets domicile-bureau déclarés comme sportifs
-    df_joint = df_joint[df_joint["deplacement_sportif"] == True]
-    logger.info(f"🚲 Déplacements sportifs retenus : {len(df_joint)}")
-
-    # Calcul de la prime : 5% du salaire annuel brut
-    grouped = df_joint.groupby(["id_salarie", "nom", "prenom", "salaire_brut_annuel"]).agg(
-        nb_activites=("date_debut", "count")
-    ).reset_index()
-
-    grouped["prime_eligible"] = True
-    grouped["prime_montant_eur"] = (grouped["salaire_brut_annuel"] * 0.05).round(2)
-    grouped["date_prime"] = datetime.today().strftime("%Y-%m-%d")
-
-    logger.info("--- Synthèse Primes Sportives ---")
-    logger.info(f"🎯 Nb bénéficiaires     : {len(grouped)}")
-    logger.info(f"💶 Montant total primes : {grouped['prime_montant_eur'].sum():.2f} €")
-    logger.info(f"📈 Activités moyennes   : {grouped['nb_activites'].mean():.2f}")
-
-    # Export MinIO
-    output = io.BytesIO()
-    with pd.ExcelWriter(output, engine="xlsxwriter") as writer:
-        grouped.to_excel(writer, index=False)
-    output.seek(0)
-
-    helper.client.put_object(
-        Bucket=helper.bucket,
-        Key=MINIO_EXPORT_KEY,
-        Body=output,
-        ContentLength=output.getbuffer().nbytes,
+def _producer() -> KafkaProducer:
+    return KafkaProducer(
+        bootstrap_servers=KAFKA_BOOTSTRAP,
+        value_serializer=lambda v: json.dumps(v).encode("utf-8"),
+        linger_ms=50,
+        acks=1,
     )
-    logger.success(f"📤 Exporté vers MinIO : {MINIO_EXPORT_KEY}")
 
-    # Export PostgreSQL
-    engine = create_engine(DB_CONN_STRING)
-    with engine.connect() as conn:
-        conn.execute(text("DELETE FROM sportdata.beneficiaires_primes_sport"))
-
-    grouped.to_sql("beneficiaires_primes_sport", engine, if_exists="append", index=False, schema="sportdata")
-    logger.success("🗃️ Table PostgreSQL : sportdata.beneficiaires_primes_sport (append)")
-
-
-    # Journées bien-être
-    logger.info("=== Calcul des bénéficiaires des journées bien-être ===")
-    df_nb_activites = df_sport.groupby("id_salarie").agg(nb_activites=('date_debut', 'count')).reset_index()
-    df_bien_etre = df_nb_activites[df_nb_activites["nb_activites"] >= 15].copy()
-    df_bien_etre["nb_journees_bien_etre"] = 5
-
-    logger.info(f"✅ {len(df_bien_etre)} salarié(s) éligible(s) aux journées bien-être.")
-
-    with engine.connect() as conn:
-        conn.execute(text("DELETE FROM sportdata.beneficiaires_journees_bien_etre"))
-
-    df_bien_etre.to_sql("beneficiaires_journees_bien_etre", engine, if_exists="append", index=False, schema="sportdata")
-    logger.success("🗃️ Table PostgreSQL : sportdata.beneficiaires_journees_bien_etre (append)")
-
-
-    output_be = io.BytesIO()
-    with pd.ExcelWriter(output_be, engine="xlsxwriter") as writer:
-        df_bien_etre.to_excel(writer, index=False)
-    output_be.seek(0)
-
-    helper.client.put_object(
-        Bucket=helper.bucket,
-        Key=MINIO_EXPORT_BE_KEY,
-        Body=output_be,
-        ContentLength=output_be.getbuffer().nbytes,
-    )
-    logger.success(f"📤 Export MinIO : {MINIO_EXPORT_BE_KEY}")
-
-    # Validation GE + rapport
-    from great_expectations.dataset import PandasDataset
-    from great_expectations.render.renderer import ValidationResultsPageRenderer
-    from great_expectations.render.view import DefaultJinjaPageView
-
-    ge_df = PandasDataset(grouped)
-    ge_df.expect_column_values_to_not_be_null("id_salarie")
-    ge_df.expect_column_values_to_not_be_null("nom")
-    ge_df.expect_column_values_to_not_be_null("prenom")
-    ge_df.expect_column_values_to_be_between("nb_activites", min_value=1)
-    ge_df.expect_column_values_to_be_of_type("prime_montant_eur", "float")
-    ge_df.expect_column_values_to_be_between("prime_montant_eur", 1, 10000)
-
-    checkpoint_result = ge_df.validate(result_format="SUMMARY")
-    if not checkpoint_result.success:
-        raise Exception("Échec de validation Great Expectations – pipeline interrompu.")
-    logger.success("✅ Toutes les validations Great Expectations sont passées.")
-
-    # Génération du rapport GE HTML directement en mémoire (sans fichier local)
-    rendered = ValidationResultsPageRenderer().render(checkpoint_result)
-    html = DefaultJinjaPageView().render(rendered)
-
-    # Construction du nom de fichier MinIO
-    report_name = f"validation_reports/rapport_GE_primes_{datetime.now().strftime('%Y%m%d_%H%M%S')}.html"
-
-    # Encodage en bytes et upload dans MinIO
-    html_bytes = html.encode("utf-8")
-    helper.client.put_object(
-        Bucket=helper.bucket,
-        Key=report_name,
-        Body=io.BytesIO(html_bytes),
-        ContentLength=len(html_bytes),
-        ContentType="text/html"
-    )
-    logger.success(f"📄 Rapport GE HTML exporté dans MinIO : {report_name}")
-
-    # Construction de l’URL web pour accès via navigateur
-    rapport_ge_url = f"http://localhost:9001/browser/sportdata/{report_name.replace('/', '%2F')}"
-    logger.info(f"🔗 Rapport accessible ici : {rapport_ge_url}")
-
-    # Envoi de la notification finale avec lien réel
-    envoyer_resume_pipeline(grouped, df_bien_etre, rapport_ge_url)
-
-# ==========================================================================================
-# 4. Point d’entrée principal avec gestion d’erreurs
-# ==========================================================================================
-
-if __name__ == "__main__":
+def ge_validate_primes(df: pd.DataFrame) -> None:
+    """Contrôle GE minimal non bloquant sur df_primes."""
     try:
-        pipeline_croisement_prime()
+        if df is None or df.empty:
+            logger.info("GE: aucun contrôle (df_primes vide).\n")
+            return
+        ge_df = ge.from_pandas(df)
+        ge_df.expect_column_values_to_not_be_null("id_salarie")
+        ge_df.expect_column_values_to_be_between("nb_activites", min_value=SEUIL_ACTIVITES_PRIME)
+        ge_df.expect_column_values_to_be_between("prime_montant_eur", min_value=0)
+        result = ge_df.validate(result_format="SUMMARY")
+        logger.info(f"GE: success={bool(result.get('success', False))}\n")
     except Exception as e:
-        logger.error(f"❌ Pipeline interrompu : {e}")
-        envoyer_message_erreur("avantages_sportifs", f"🚨 Échec du pipeline avantages RH ❌\n⛔ Erreur : {str(e)}\n📋 Consultez les logs Airflow pour plus de détails.")
-        raise
+        logger.warning(f"GE ignoré (non bloquant) : {e}\n")
+
+# ==========================================================================================
+# 2) I/O : charger données sources + exporter Excel
+# ==========================================================================================
+def charger_donnees() -> tuple[pd.DataFrame, pd.DataFrame]:
+    helper = MinIOHelper()
+    logger.info("📥 Lecture RH & activités depuis MinIO…\n")
+    df_rh = helper.read_excel(MINIO_RH_KEY)
+    df_act = helper.read_excel(MINIO_SPORT_KEY)
+    logger.success(f"RH: {len(df_rh)} | Activités: {len(df_act)}\n")
+    return df_rh, df_act
+
+def exporter_minio_excel(df: pd.DataFrame, key: str, label: str):
+    helper = MinIOHelper()
+    buf = io.BytesIO()
+    with pd.ExcelWriter(buf, engine="xlsxwriter") as writer:
+        df.to_excel(writer, index=False, sheet_name="export")
+    buf.seek(0)
+    helper.client.put_object(
+        Bucket=MINIO_BUCKET,
+        Key=key,
+        Body=buf,
+        ContentLength=buf.getbuffer().nbytes,
+    )
+    logger.success(f"📤 Export {label} → s3://{MINIO_BUCKET}/{key}\n")
+
+# ==========================================================================================
+# 3) Calcul métier (conforme aux tables)
+# ==========================================================================================
+def calculer_beneficiaires(df_rh: pd.DataFrame, df_act: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
+    # Nb activités / salarié
+    df_agg = (
+        df_act.groupby(["id_salarie", "nom", "prenom"])
+        .agg(nb_activites=pd.NamedAgg(column="uid", aggfunc="count"))
+        .reset_index()
+    )
+    # Jointure salaire
+    df_agg = df_agg.merge(df_rh[["id_salarie", "salaire_brut_annuel"]], on="id_salarie", how="left")
+
+    # Primes
+    elig = df_agg[df_agg["nb_activites"] >= SEUIL_ACTIVITES_PRIME].copy()
+    df_primes = elig.copy()
+    df_primes["prime_eligible"] = True
+    df_primes["prime_montant_eur"] = (df_primes["salaire_brut_annuel"].astype(float) * POURCENTAGE_PRIME).round(2)
+    df_primes["date_prime"] = pd.to_datetime(DATE_DU_JOUR)
+    df_primes = df_primes[
+        ["id_salarie", "nom", "prenom", "salaire_brut_annuel", "nb_activites",
+         "prime_eligible", "prime_montant_eur", "date_prime"]
+    ]
+
+    # JBE
+    df_be = elig[["id_salarie", "nb_activites"]].copy()
+    df_be["nb_journees_bien_etre"] = int(JOURNEES_BIEN_ETRE)
+    df_be = df_be[["id_salarie", "nb_activites", "nb_journees_bien_etre"]]
+
+    logger.success(f"Eligibles → primes: {len(df_primes)} | JBE: {len(df_be)}\n")
+    return df_primes, df_be
+
+# ==========================================================================================
+# 4) Persistance Postgres (sans 'periode')
+# ==========================================================================================
+def persist_postgres(df_primes: pd.DataFrame, df_be: pd.DataFrame):
+    engine = create_engine(DB_CONN_STRING)
+    with engine.begin() as conn:
+        # PRIMES — suppression des lignes du jour
+        conn.execute(
+            text("DELETE FROM sportdata.beneficiaires_primes_sport WHERE date_prime = :d"),
+            {"d": DATE_DU_JOUR}
+        )
+        if not df_primes.empty:
+            df_primes.to_sql(
+                "beneficiaires_primes_sport",
+                con=conn,
+                schema="sportdata",
+                if_exists="append",
+                index=False,
+            )
+            logger.success(f"Postgres: primes insérées ({len(df_primes)})\n")
+        else:
+            logger.info("Postgres: aucune prime à insérer\n")
+
+        # JBE — suppression ciblée (pas de date dans la table)
+        if not df_be.empty:
+            ids = df_be["id_salarie"].dropna().astype(int).unique().tolist()
+            del_stmt = text("""
+                DELETE FROM sportdata.beneficiaires_journees_bien_etre
+                WHERE id_salarie IN :ids
+            """).bindparams(bindparam("ids", expanding=True))
+            conn.execute(del_stmt, {"ids": ids})
+
+            df_be.to_sql(
+                "beneficiaires_journees_bien_etre",
+                con=conn,
+                schema="sportdata",
+                if_exists="append",
+                index=False,
+            )
+            logger.success(f"Postgres: JBE insérées ({len(df_be)})\n")
+        else:
+            logger.info("Postgres: aucune JBE à insérer\n")
+
+# ==========================================================================================
+# 5) Publication Kafka — 1 message par bénéficiaire (sans 'periode')
+# ==========================================================================================
+def publier_kafka(df_primes: pd.DataFrame, df_be: pd.DataFrame):
+    if df_primes.empty and df_be.empty:
+        logger.info("Kafka: aucun message à publier.\n")
+        return
+
+    prod = _producer()
+    now_ms = lambda: int(datetime.utcnow().timestamp() * 1000)
+    n1 = n2 = 0
+
+    # Primes
+    for r in df_primes.itertuples(index=False):
+        payload = {
+            "uid": str(uuid.uuid4()),
+            "event_type": "prime",
+            "id_salarie": int(r.id_salarie),
+            "nom": str(r.nom),
+            "prenom": str(r.prenom),
+            "nb_activites": int(r.nb_activites),
+            "prime_montant_eur": float(r.prime_montant_eur),
+            "date_prime": str(pd.to_datetime(r.date_prime).date()),
+        }
+        prod.send(KAFKA_TOPIC_PRIMES, value={"payload": {"op": "c", "after": payload, "ts_ms": now_ms()}})
+        n1 += 1
+
+    # JBE
+    for r in df_be.itertuples(index=False):
+        payload = {
+            "uid": str(uuid.uuid4()),
+            "event_type": "jbe",
+            "id_salarie": int(r.id_salarie),
+            "nb_activites": int(r.nb_activites),
+            "nb_journees_bien_etre": int(r.nb_journees_bien_etre),
+        }
+        prod.send(KAFKA_TOPIC_JBE, value={"payload": {"op": "c", "after": payload, "ts_ms": now_ms()}})
+        n2 += 1
+
+    prod.flush()
+    logger.success(f"Kafka publié → primes: {n1} | jbe: {n2}\n")
+
+# ==========================================================================================
+# 6) Pipeline
+# ==========================================================================================
+def pipeline():
+    df_rh, df_act = charger_donnees()
+    df_primes, df_be = calculer_beneficiaires(df_rh, df_act)
+
+    # Exports Excel
+    if not df_primes.empty:
+        exporter_minio_excel(df_primes, MINIO_EXPORT_PRIMES, "Primes")
+        ge_validate_primes(df_primes)
+    else:
+        logger.warning("⚠️ Aucune prime à attribuer.\n")
+
+    if not df_be.empty:
+        exporter_minio_excel(df_be, MINIO_EXPORT_BE, "JBE")
+    else:
+        logger.warning("⚠️ Aucune JBE à attribuer.\n")
+
+    # Postgres
+    persist_postgres(df_primes, df_be)
+
+    # Kafka (consommé par Spark → notifications unitaires)
+    publier_kafka(df_primes, df_be)
+
+    logger.success("🎯 Pipeline terminé.\n")
+
+# ==========================================================================================
+# 7) Main
+# ==========================================================================================
+if __name__ == "__main__":
+    pipeline()

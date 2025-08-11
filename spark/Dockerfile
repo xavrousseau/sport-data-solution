@@ -42,6 +42,8 @@ RUN curl -L -o /opt/bitnami/spark/jars/delta-core_2.12-3.1.0.jar \
     curl -L -o /opt/bitnami/spark/jars/commons-configuration2-2.7.jar \
         https://repo1.maven.org/maven2/org/apache/commons/commons-configuration2/2.7/commons-configuration2-2.7.jar && \
     curl -L -o /opt/bitnami/spark/jars/commons-lang3-3.12.0.jar \
-        https://repo1.maven.org/maven2/org/apache/commons/commons-lang3/3.12.0/commons-lang3-3.12.0.jar
+        https://repo1.maven.org/maven2/org/apache/commons/commons-lang3/3.12.0/commons-lang3-3.12.0.jar && \
+    curl -L -o /opt/bitnami/spark/jars/commons-pool2-2.11.1.jar \
+    	https://repo1.maven.org/maven2/org/apache/commons/commons-pool2/2.11.1/commons-pool2-2.11.1.jar
 
 USER 1001

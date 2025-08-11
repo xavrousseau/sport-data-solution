@@ -1,0 +1,120 @@
+[
+    {
+        "partitionID": 0,
+        "offset": 0,
+        "timestamp": 1753968436514,
+        "compression": "uncompressed",
+        "isTransactional": false,
+        "headers": [],
+        "key": {
+            "payload": {
+                "schema": {
+                    "type": "struct",
+                    "fields": [
+                        {
+                            "type": "string",
+                            "optional": false,
+                            "name": "io.debezium.data.Uuid",
+                            "version": 1,
+                            "field": "uid"
+                        }
+                    ],
+                    "optional": false,
+                    "name": "sportdata.sportdata.activites_sportives.Key"
+                },
+                "payload": {
+                    "uid": "00000000-0000-0000-0000-00000000cafe"
+                }
+            },
+            "encoding": "json"
+        },
+        "value": {
+            "payload": {
+                "schema": {
+                    "type": "struct",
+                    "fields": [
+                        {
+                            "type": "string",
+                            "optional": false,
+                            "name": "io.debezium.data.Uuid",
+                            "version": 1,
+                            "field": "uid"
+                        },
+                        {
+                            "type": "int32",
+                            "optional": true,
+                            "field": "id_salarie"
+                        },
+                        {
+                            "type": "string",
+                            "optional": true,
+                            "field": "nom"
+                        },
+                        {
+                            "type": "string",
+                            "optional": true,
+                            "field": "prenom"
+                        },
+                        {
+                            "type": "int64",
+                            "optional": true,
+                            "name": "io.debezium.time.MicroTimestamp",
+                            "version": 1,
+                            "field": "date"
+                        },
+                        {
+                            "type": "int32",
+                            "optional": true,
+                            "name": "io.debezium.time.Date",
+                            "version": 1,
+                            "field": "jour"
+                        },
+                        {
+                            "type": "int64",
+                            "optional": true,
+                            "name": "io.debezium.time.MicroTimestamp",
+                            "version": 1,
+                            "field": "date_debut"
+                        },
+                        {
+                            "type": "string",
+                            "optional": true,
+                            "field": "type_activite"
+                        },
+                        {
+                            "type": "double",
+                            "optional": true,
+                            "field": "distance_km"
+                        },
+                        {
+                            "type": "int32",
+                            "optional": true,
+                            "field": "temps_sec"
+                        },
+                        {
+                            "type": "string",
+                            "optional": true,
+                            "field": "commentaire"
+                        }
+                    ],
+                    "optional": false,
+                    "name": "sportdata.sportdata.activites_sportives.Value"
+                },
+                "payload": {
+                    "uid": "00000000-0000-0000-0000-00000000cafe",
+                    "id_salarie": 999,
+                    "nom": "Kafka",
+                    "prenom": "Jean",
+                    "date": 1753693200000000,
+                    "jour": 20297,
+                    "date_debut": 1753693200000000,
+                    "type_activite": "course",
+                    "distance_km": 5,
+                    "temps_sec": 1600,
+                    "commentaire": "Test CDC Kafka OK"
+                }
+            },
+            "encoding": "json"
+        }
+    }
+]

@@ -24,11 +24,11 @@ INSERT INTO sportdata.employes (
 -- 🏃‍♂️ Table activites_sportives
 INSERT INTO sportdata.activites_sportives (
     uid, id_salarie, nom, prenom, date, jour, date_debut,
-    type_activite, distance_km, temps_sec, commentaire
+    type_activite, distance_km, temps_sec, commentaire, profil
 ) VALUES (
     '00000000-0000-0000-0000-00000000cafe', 999, 'Kafka', 'Jean',
     '2025-07-28 09:00:00', '2025-07-28', '2025-07-28 09:00:00',
-    'course', 5.0, 1600, 'Test CDC Kafka OK'
+    'course', 5.0, 1600, 'Test CDC Kafka OK', 'Régulier'
 );
 
 -- 💰 Table beneficiaires_primes_sport

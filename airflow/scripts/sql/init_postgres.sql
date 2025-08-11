@@ -41,7 +41,8 @@ CREATE TABLE IF NOT EXISTS sportdata.activites_sportives (
     type_activite TEXT,
     distance_km FLOAT,            -- Exprimé en kilomètres
     temps_sec INT,                -- Durée en secondes
-    commentaire TEXT
+    commentaire TEXT,
+    profil TEXT                   -- Nouveau : profil sportif (Sédentaire, Occasionnel, etc.)
 );
 
 -- ==========================================================================================

@@ -1,56 +1,49 @@
 # ==========================================================================================
 # Script      : 02_nettoyer_donnees_rh.py
-# Objectif    : Audit exploratoire, nettoyage et filtrage d’éligibilité RH avec mapping dynamique.
-# Auteur      : Xavier Rousseau | Juillet 2025 
+# Objectif    : Audit exploratoire, nettoyage RH, filtrage éligibilité via Google Maps API,
+#               validation qualité Great Expectations, export vers MinIO & PostgreSQL.
+# Auteur      : Xavier Rousseau | Juillet 2025
 # ==========================================================================================
 
 import os
+import sys
+import io
+import re
+import uuid
+import requests
+import unicodedata
 import tempfile
 import pandas as pd
-import requests
+from datetime import datetime
 from dotenv import load_dotenv
 from loguru import logger
 from sqlalchemy import create_engine
-
-# Import des composants pour générer un rapport HTML lisible avec Great Expectations
-import great_expectations as ge
-try:
-    from great_expectations.render.renderer import ValidationResultsPageRenderer
-    from great_expectations.render.view import DefaultJinjaPageView
-except ImportError:
-    raise ImportError("❌ Les modules pour générer le rapport HTML Great Expectations ne sont pas disponibles. Installe-les avec `pip install great_expectations`.")
-
-
-# Import utilisé pour horodater le rapport (nom de fichier)
-from datetime import datetime
 from minio_helper import MinIOHelper
-import unicodedata
-import re
-import io 
-import uuid
+
+# Great Expectations
+import great_expectations as ge
+from great_expectations.render.renderer import ValidationResultsPageRenderer
+from great_expectations.render.view import DefaultJinjaPageView
+
 # ==========================================================================================
-# 1. Chargement des variables d’environnement (.env global)
+# 1. Chargement des variables d’environnement
 # ==========================================================================================
+
 load_dotenv(dotenv_path=".env", override=True)
 
-# ==========================================================================================
-# 2. Variables globales et connexions
-# ==========================================================================================
-MINIO_SOURCE_KEY = "referentiels/donnees_rh.xlsx"           # RH brut
-MINIO_CLEANED_KEY = "raw/donnees_rh_cleaned.xlsx"           # RH éligibles
-MINIO_EXCLUS_KEY = "raw/donnees_rh_exclus.xlsx"             # RH exclus
-
+# MinIO (chemins unifiés)
+MINIO_SOURCE_KEY = "inputs/donnees_rh.xlsx"
+MINIO_CLEANED_KEY = "clean/donnees_rh_cleaned.xlsx"
+MINIO_EXCLUS_KEY = "clean/donnees_rh_exclus.xlsx"
 TMP_DIR = "/tmp"
 
+# Google Maps
 ADRESSE_TRAVAIL = "1362 Avenue des Platanes, 34970 Lattes, France"
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
+if not GOOGLE_API_KEY:
+    raise ValueError("❌ GOOGLE_API_KEY manquante dans .env")
 
-DISTANCE_MAX_MARCHE_KM = 15
-DISTANCE_MAX_VELO_KM = 25
-
-MODES_TRANSPORT = {"marche": DISTANCE_MAX_MARCHE_KM, "vélo": DISTANCE_MAX_VELO_KM}
-MAPPING_GOOGLE_API = {"marche": "walking", "vélo": "bicycling"}
-
+# PostgreSQL
 POSTGRES_USER = os.getenv("POSTGRES_USER")
 POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD")
 POSTGRES_HOST = os.getenv("POSTGRES_HOST")
@@ -58,9 +51,14 @@ POSTGRES_PORT = os.getenv("POSTGRES_PORT")
 POSTGRES_DB = os.getenv("POSTGRES_DB")
 DB_CONN_STRING = f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}"
 
+# Seuils d’éligibilité RH
+DISTANCE_MAX_MARCHE_KM = 15
+DISTANCE_MAX_VELO_KM = 25
+MODES_TRANSPORT = {"marche": DISTANCE_MAX_MARCHE_KM, "vélo": DISTANCE_MAX_VELO_KM}
+MAPPING_GOOGLE_API = {"marche": "walking", "vélo": "bicycling"}
 
 # ==========================================================================================
-# Mapping des modes de transport (le plus exhaustif possible, toutes variantes acceptées)
+# 2. Mapping modes de transport autorisés
 # ==========================================================================================
 
 MAPPING_TRANSPORT = {
@@ -113,9 +111,6 @@ MAPPING_TRANSPORT = {
     "vélo trottinette autres": "vélo",
     "velo trottinette": "vélo",
     "vélo trottinette": "vélo",
-    "velo trottinette autres": "vélo",
-    "vélo trottinette autres": "vélo",
-    "velo trottinette autres": "vélo",
 
     # Synonymes internationaux/anglais
     "scooter": "vélo",       # usage trottinette seulement !
@@ -124,15 +119,77 @@ MAPPING_TRANSPORT = {
     "e-bike": "vélo",
     "kick scooter": "vélo",
     "push scooter": "vélo"
-    # tout le reste : non éligible
-    # Les modes suivants sont non éligibles et NE DOIVENT PAS figurer dans le mapping :
-    # - "Transports en commun" (tram, bus, métro…)
-    # - "véhicule thermique/électrique" (voiture, moto…)
 }
 
+# ==========================================================================================
+# 3. Fonctions de normalisation et eligibility
+# ==========================================================================================
+
+def normaliser_mode_transport(mode):
+    """Normalise une chaîne : accents, ponctuation, casse, etc."""
+    if not isinstance(mode, str):
+        return None
+    txt = unicodedata.normalize('NFD', mode).encode('ascii', 'ignore').decode('utf-8').lower()
+    txt = re.sub(r"[-_/]", " ", txt)
+    txt = re.sub(r"[^\w\s]", "", txt)
+    txt = re.sub(r"\s+", " ", txt).strip()
+    return MAPPING_TRANSPORT.get(txt)
+
+def normaliser_colonnes(df):
+    """Nettoie les noms de colonnes pour ETL"""
+    return df.rename(columns=lambda col: unicodedata.normalize('NFD', col)
+                     .encode('ascii', 'ignore').decode()
+                     .lower().strip()
+                     .replace(" ", "_")
+                     .replace("-", "_")
+                     .replace("'", "_")
+                     .replace("’", "_"))
+
+def get_mode_api(mode_projet):
+    return MAPPING_GOOGLE_API.get(mode_projet)
+
+def calculer_distance_km(adresse_depart, mode_projet):
+    """Appel Google API pour calculer la distance à pied ou vélo"""
+    if not adresse_depart or not mode_projet:
+        return None
+    mode_api = get_mode_api(mode_projet)
+    if not mode_api:
+        return None
+    params = {
+        "origins": adresse_depart,
+        "destinations": ADRESSE_TRAVAIL,
+        "key": GOOGLE_API_KEY,
+        "mode": mode_api
+    }
+    try:
+        response = requests.get("https://maps.googleapis.com/maps/api/distancematrix/json", params=params, timeout=10)
+        data = response.json()
+        if data["rows"][0]["elements"][0]["status"] != "OK":
+            return None
+        distance_m = data["rows"][0]["elements"][0]["distance"]["value"]
+        return distance_m / 1000
+    except Exception as e:
+        logger.warning(f"⚠️ Erreur Google Maps : {e}")
+        return None
+
+def verifier_eligibilite(adresse, mode):
+    """Retourne (bool, motif, distance_km, mode_normalisé)"""
+    if not adresse:
+        return False, "Adresse manquante", None, None
+    if not mode:
+        return False, "Mode manquant", None, None
+    mode_proj = normaliser_mode_transport(mode)
+    if not mode_proj:
+        return False, f"Mode non reconnu ({mode})", None, None
+    distance = calculer_distance_km(adresse, mode_proj)
+    if distance is None:
+        return False, "Distance inconnue", None, mode_proj
+    if distance > MODES_TRANSPORT[mode_proj]:
+        return False, f"{distance:.1f} km > seuil", distance, mode_proj
+    return True, "", distance, mode_proj
 
 # ==========================================================================================
-# 3. Analyse exploratoire avancée + log mapping dynamique
+# 4. Analyse exploratoire RH
 # ==========================================================================================
 
 def analyse_exploratoire_avancee(df, description="Analyse exploratoire RH"):
@@ -175,146 +232,30 @@ def analyse_exploratoire_avancee(df, description="Analyse exploratoire RH"):
             logger.warning(f"Modes non reconnus à compléter dans le mapping: {modes_non_reconnus}")
         logger.info(f"Répartition des modes de transport:\n{df['moyen_de_deplacement'].value_counts(dropna=False).to_string()}")
 
-# ==========================================================================================
-# 4. Fonction de normalisation robuste des modes de transport
-# ==========================================================================================
-
-def normaliser_mode_transport(mode):
-    """
-    Nettoie et uniformise un mode de transport pour le mapping.
-    - Accents supprimés, tout en minuscules
-    - Tous séparateurs / - _ deviennent des espaces
-    - Ponctuation supprimée
-    - Plusieurs espaces réduits à un seul
-    - Mapping exact dans MAPPING_TRANSPORT
-    """
-    if not isinstance(mode, str):
-        return None
-    mode_clean = (
-        unicodedata.normalize('NFD', mode)
-        .encode('ascii', 'ignore')
-        .decode('utf-8')
-        .lower()
-    )
-    mode_clean = re.sub(r"[-_/]", " ", mode_clean)
-    mode_clean = re.sub(r"\s+", " ", mode_clean)
-    mode_clean = re.sub(r"[^\w\s]", "", mode_clean).strip()
-    return MAPPING_TRANSPORT.get(mode_clean)
-
-
-def normaliser_colonnes(df):
-    """Harmonise tous les noms de colonnes pour traitement ETL"""
-    return df.rename(columns=lambda col: (
-        col.strip()                        # Suppression des espaces autour
-           .lower()                        # Minuscule
-           .replace(" ", "_")              # Espaces => underscore
-           .replace("'", "_")              # Apostrophes classiques
-           .replace("’", "_")              # Apostrophes typographiques
-           .replace("é", "e")              # Accents
-           .replace("è", "e")
-           .replace("ê", "e")
-           .replace("à", "a")
-           .replace("â", "a")
-           .replace("î", "i")
-           .replace("ô", "o")
-           .replace("ù", "u")
-           .replace("-", "_")              # Tirets => underscore
-    ))
 
 # ==========================================================================================
-# 5. Fonctions utilitaires et eligibility
-# ==========================================================================================
-
-def get_mode_api(mode_projet):
-    """Mode projet -> mode Google API (pour Distance Matrix)."""
-    return MAPPING_GOOGLE_API.get(mode_projet)
-
-def calculer_distance_km(adresse_depart, mode_projet):
-    """Distance Google Maps (km) selon mode projet."""
-    if not adresse_depart or pd.isna(adresse_depart) or not mode_projet:
-        return None
-    mode_api = get_mode_api(mode_projet)
-    if not mode_api:
-        return None
-    url = "https://maps.googleapis.com/maps/api/distancematrix/json"
-    params = {
-        "origins": adresse_depart,
-        "destinations": ADRESSE_TRAVAIL,
-        "key": GOOGLE_API_KEY,
-        "mode": mode_api
-    }
-    try:
-        response = requests.get(url, params=params, timeout=10)
-        data = response.json()
-        status = data["rows"][0]["elements"][0]["status"]
-        if status != "OK":
-            return None
-        distance_m = data["rows"][0]["elements"][0]["distance"]["value"]
-        return distance_m / 1000
-    except Exception as e:
-        logger.warning(f"Erreur API Google Maps pour '{adresse_depart}' : {e}")
-        return None
-
-def verifier_eligibilite(adresse, mode):
-    """Retourne (is_eligible: bool, motif: str, distance: float, mode_normalise: str)"""
-    if not adresse or pd.isna(adresse):
-        return False, "Adresse manquante", None, None
-    if not mode or pd.isna(mode):
-        return False, "Mode de transport manquant", None, None
-    mode_projet = normaliser_mode_transport(mode)
-    if not mode_projet:
-        return False, f"Mode non éligible ({mode})", None, None
-    distance = calculer_distance_km(adresse, mode_projet)
-    if distance is None:
-        return False, "Distance non calculable", None, mode_projet
-    if distance > MODES_TRANSPORT[mode_projet]:
-        return False, f"Distance {distance:.1f} km > seuil ({MODES_TRANSPORT[mode_projet]} km)", distance, mode_projet
-    return True, "", distance, mode_projet
-
-# ==========================================================================================
-# 6. Pipeline principal
+# 5. Pipeline complet
 # ==========================================================================================
 
 def pipeline_nettoyage_rh():
-    logger.info("=== Démarrage du pipeline de nettoyage RH ===")
+    logger.info("🚀 Début pipeline RH")
     helper = MinIOHelper()
 
-    # -- 1. Téléchargement du fichier source MinIO
+    # Téléchargement Excel RH
     with tempfile.NamedTemporaryFile(suffix=".xlsx", dir=TMP_DIR) as tmpfile:
-        try:
-            helper.client.download_file(
-                Bucket=helper.bucket,
-                Key=MINIO_SOURCE_KEY,
-                Filename=tmpfile.name
-            )
-            logger.success(f"✅ Fichier RH téléchargé : {MINIO_SOURCE_KEY}")
-        except Exception as e:
-            logger.error(f"❌ Echec téléchargement fichier source : {e}")
-            return
+        helper.client.download_file(helper.bucket, MINIO_SOURCE_KEY, tmpfile.name)
         df = pd.read_excel(tmpfile.name)
-
-    # -- 2. Nettoyage/normalisation des colonnes
     df = normaliser_colonnes(df)
-    logger.info(f"Fichier RH chargé ({len(df)} lignes)")
-
-    # -- 3. Analyse exploratoire
     analyse_exploratoire_avancee(df)
 
-    # -- 4. Vérification des colonnes attendues
-    # Liste des colonnes indispensables pour le traitement RH
     champs_requis = ["id_salarie", "nom", "prenom", "adresse_du_domicile", "moyen_de_deplacement"]
-
-    # Vérification que toutes sont bien présentes dans le fichier
     if not all(col in df.columns for col in champs_requis):
-        logger.error("❌ Colonnes requises manquantes")
-        return
-    # -- 5. Vérification d’éligibilité
+        raise ValueError("❌ Colonnes essentielles manquantes")
+
+    # Eligibility
     eligibles, exclus = [], []
-    logger.info("Calcul des distances et éligibilité (API Google Maps)…")
     for _, row in df.iterrows():
-        is_eligible, motif, distance, mode_projet = verifier_eligibilite(
-            row["adresse_du_domicile"], row["moyen_de_deplacement"]
-        )
+        is_ok, motif, dist, mode = verifier_eligibilite(row["adresse_du_domicile"], row["moyen_de_deplacement"])
         ligne = {
             "uid": str(uuid.uuid4()),
             "id_salarie": row.get("id_salarie"),
@@ -322,143 +263,71 @@ def pipeline_nettoyage_rh():
             "prenom": row.get("prenom"),
             "adresse_du_domicile": row.get("adresse_du_domicile"),
             "moyen_de_deplacement": row.get("moyen_de_deplacement"),
-            "mode_normalise": mode_projet,
-            "distance_km": distance,
-            "eligible": is_eligible,
+            "mode_normalise": mode,
+            "distance_km": dist,
+            "eligible": is_ok,
             "motif_exclusion": motif,
-            "salaire_brut_annuel": row.get("salaire_brut") 
+            "salaire_brut_annuel": int(row.get("salaire_brut", 0) or 0)
         }
-        (eligibles if is_eligible else exclus).append(ligne)
+        (eligibles if is_ok else exclus).append(ligne)
 
-    df_eligibles = pd.DataFrame(eligibles)
-    df_exclus = pd.DataFrame(exclus)
-    
-    # -- Ajout colonne deplacement_sportif : True si le mode est sportif
-    df_eligibles["deplacement_sportif"] = df_eligibles["mode_normalise"].isin(["marche", "vélo"])
-    df_eligibles["salaire_brut_annuel"] = pd.to_numeric(df_eligibles["salaire_brut_annuel"], errors="coerce").fillna(0).astype(int)
+    df_ok = pd.DataFrame(eligibles)
+    df_ko = pd.DataFrame(exclus)
 
-    logger.info(f"{len(df_eligibles)} éligibles / {len(df_exclus)} exclus.")
-    logger.info(f"Taux d'éligibilité : {100 * len(df_eligibles)/len(df):.2f}%")
+    df_ok["deplacement_sportif"] = df_ok["mode_normalise"].isin(["marche", "vélo"])
 
-    # -- 6. Validation qualité (Great Expectations)
-    if not df_eligibles.empty:
-        logger.info("Validation de la qualité avec Great Expectations…")
+    logger.info(f"✅ {len(df_ok)} éligibles / {len(df_ko)} exclus")
 
-        ge_df = ge.from_pandas(df_eligibles)
+    # Great Expectations
+    if not df_ok.empty:
+        ge_df = ge.from_pandas(df_ok)
+        ge_df.expect_column_values_to_not_be_null(column="id_salarie")
+        ge_df.expect_column_values_to_be_between(column="distance_km", min_value=0, max_value=100)
+        ge_df.expect_column_values_to_be_of_type(column="deplacement_sportif", type_="bool")
 
-        # Expectations détaillées (modifie selon tes besoins)
-        expectations = [
-            ("expect_column_values_to_not_be_null", dict(column="id_salarie")),
-            ("expect_column_values_to_not_be_null", dict(column="nom")),
-            ("expect_column_values_to_not_be_null", dict(column="prenom")),
-            ("expect_column_values_to_not_be_null", dict(column="adresse_du_domicile")),
-            ("expect_column_values_to_not_be_null", dict(column="distance_km")),
-            ("expect_column_values_to_be_between", dict(column="distance_km", min_value=0, max_value=100)),
-            ("expect_column_values_to_be_of_type", dict(column="distance_km", type_="float64")),
-            ("expect_column_values_to_be_of_type", dict(column="deplacement_sportif", type_="bool")),
-            ("expect_column_values_to_be_between", dict(column="salaire_brut_annuel", min_value=10000, max_value=100000)),
-            ("expect_column_values_to_be_of_type", dict(column="salaire_brut_annuel", type_="int64")),
+        result = ge_df.validate(result_format="SUMMARY")
+        if not result.success:
+            raise Exception("❌ Échec validation Great Expectations")
 
-        ]
-        # Dates (optionnel)
-        if "date_de_naissance" in df_eligibles.columns:
-            expectations.append(("expect_column_values_to_be_between", dict(
-                column="date_de_naissance",
-                min_value="1900-01-01",
-                max_value=pd.Timestamp.today().strftime("%Y-%m-%d")
-            )))
-        if "date_d_embauche" in df_eligibles.columns:
-            expectations.append(("expect_column_values_to_be_between", dict(
-                column="date_d_embauche",
-                min_value="1990-01-01",
-                max_value=pd.Timestamp.today().strftime("%Y-%m-%d")
-            )))
-
-        # Appliquer toutes les expectations à ge_df
-        for exp_type, kwargs in expectations:
-            logger.info(f"Test expectation: {exp_type} -- {kwargs}")
-            getattr(ge_df, exp_type)(**kwargs)
-
-        # ✅ Validation globale du DataFrame selon toutes les expectations définies ci-dessus
-        checkpoint_result = ge_df.validate(result_format="SUMMARY")
-
-        # Vérification du succès global
-        if not checkpoint_result.success:
-            logger.error("❌ Certaines expectations ont échoué.")
-            raise Exception("Validation Great Expectations échouée, pipeline interrompu.")
-        else:
-            logger.success("✅ Validation Great Expectations réussie : toutes les expectations sont remplies.")
-
-        # ✅ Génération du rapport HTML lisible
-        rendered = ValidationResultsPageRenderer().render(checkpoint_result)
-        html = DefaultJinjaPageView().render(rendered)
-
-        # Nom du rapport horodaté
-        report_name = f"validation_reports/rapport_GE_RH_{datetime.now().strftime('%Y%m%d_%H%M%S')}.html"
-        report_path = os.path.join(TMP_DIR, "rapport.html")        # Emplacement temporaire
-
-        # Sauvegarde du rapport HTML localement (dans le container)
+        html = DefaultJinjaPageView().render(ValidationResultsPageRenderer().render(result))
+        report_key = f"validation/rapport_GE_RH_{datetime.now().strftime('%Y%m%d_%H%M%S')}.html"
+        report_path = os.path.join(TMP_DIR, "rapport_ge.html")
         with open(report_path, "w", encoding="utf-8") as f:
             f.write(html)
+        helper.client.upload_file(report_path, helper.bucket, report_key)
+        logger.success(f"📄 Rapport GE uploadé : {report_key}")
 
-        # Upload vers MinIO dans le dossier prévu (via boto3)
-        try:
-            helper.client.upload_file(
-                Filename=report_path,
-                Bucket=helper.bucket,
-                Key=report_name
-            )
-            logger.success(f"📄 Rapport GE HTML uploadé dans MinIO : {report_name}")
-        except Exception as e:
-            logger.error(f"Erreur upload rapport GE : {e}")
-
-        # Vérification que le fichier est bien présent dans MinIO
-        if report_name in helper.list_objects("validation_reports/"):
-            logger.info(f"✅ Vérification MinIO : {report_name} est bien présent dans le bucket.")
-        else:
-            logger.warning(f"⚠️ Rapport non trouvé après upload : {report_name}")
-
-    # -- 7. Export vers MinIO
+    # Upload Excel MinIO
     def upload_excel(df, key, label):
-        """
-        Upload un DataFrame Excel dans MinIO via un buffer en mémoire (sans fichier temporaire)
-        """
         buffer = io.BytesIO()
         with pd.ExcelWriter(buffer, engine="xlsxwriter") as writer:
             df.to_excel(writer, index=False)
         buffer.seek(0)
-        helper.client.put_object(
-            Bucket=helper.bucket,
-            Key=key,
-            Body=buffer,
-            ContentLength=buffer.getbuffer().nbytes
-        )
-        logger.success(f"✅ Fichier {label} uploadé sur MinIO : {key}")
+        helper.client.put_object(Bucket=helper.bucket, Key=key, Body=buffer,
+                                 ContentLength=buffer.getbuffer().nbytes)
+        logger.success(f"📤 Upload {label} : {key}")
 
+    if not df_ok.empty:
+        upload_excel(df_ok, MINIO_CLEANED_KEY, "RH éligibles")
+    if not df_ko.empty:
+        upload_excel(df_ko, MINIO_EXCLUS_KEY, "RH exclus")
 
-    if not df_eligibles.empty:
-        upload_excel(df_eligibles, MINIO_CLEANED_KEY, "RH éligibles")
-    if not df_exclus.empty:
-        upload_excel(df_exclus, MINIO_EXCLUS_KEY, "RH exclus")
-
-    # -- 8. Insertion PostgreSQL
-    if not df_eligibles.empty:
+    # Export vers PostgreSQL
+    if not df_ok.empty:
         engine = create_engine(DB_CONN_STRING)
-        df_eligibles.to_sql("employes", engine, if_exists="replace", index=False, schema="sportdata")
-        logger.success("✅ Données insérées dans PostgreSQL (sportdata.employes)")
+        df_ok.to_sql("employes", engine, if_exists="replace", index=False, schema="sportdata")
+        logger.success("🗃️ Données RH insérées dans PostgreSQL")
+        engine.dispose()
 
-    logger.info("=== Pipeline terminé ===")
+    logger.info("🏁 Fin du pipeline RH")
 
 # ==========================================================================================
-# 7. Point d’entrée
+# Point d’entrée CLI
 # ==========================================================================================
+
 if __name__ == "__main__":
     try:
         pipeline_nettoyage_rh()
     except Exception as e:
-        logger.error(f"❌ Pipeline interrompu : {e}")
-        raise
-
-# ==========================================================================================
-# Fin du fichier – Nettoyage RH avec audit, mapping dynamique, logs pédagogiques
-# ==========================================================================================
+        logger.error(f"💥 Pipeline échoué : {e}")
+        sys.exit(1)
