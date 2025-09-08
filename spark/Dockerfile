@@ -47,3 +47,13 @@ RUN curl -L -o /opt/bitnami/spark/jars/delta-core_2.12-3.1.0.jar \
     	https://repo1.maven.org/maven2/org/apache/commons/commons-pool2/2.11.1/commons-pool2-2.11.1.jar
 
 USER 1001
+
+# --- JMX → Prometheus ---
+USER root
+RUN mkdir -p /opt/bitnami/spark/jmx && \
+    curl -fsSL -o /opt/bitnami/spark/jmx/jmx_prometheus_javaagent.jar \
+      https://repo1.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/0.20.0/jmx_prometheus_javaagent-0.20.0.jar
+# Config minimale JMX Exporter : lisible et stable
+COPY spark/jmx_config.yaml /opt/bitnami/spark/jmx/jmx_config.yaml
+RUN chmod 644 /opt/bitnami/spark/jmx/* && chown -R 1001:1001 /opt/bitnami/spark/jmx
+USER 1001

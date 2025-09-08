@@ -1,20 +1,21 @@
 # ======================================================================================
 # Fichier : dbt/profiles.yml
-# Objectif : Configuration de la connexion PostgreSQL pour dbt
+# Objet   : Connexion PostgreSQL pour dbt (pilotée par variables d’environnement)
 # ======================================================================================
-# Configuration DBT pour le projet sportdata
 
 sportdata:
-  target: dev        # Environnement actif (dev/test/prod)
+  # Cible active (dev/test/prod) — se cale sur DBT_TARGET, "dev" par défaut
+  target: "{{ env_var('DBT_TARGET', 'dev') }}"
+
   outputs:
     dev:
-      type: postgres              # Type de base de données
-      host: sport-postgres        # Nom du conteneur PostgreSQL
-      user: user                  # Identifiant (cf. .env)
-      password: password          # Mot de passe (cf. .env)
-      port: 5432                  # Port PostgreSQL exposé en interne
-      dbname: sportdata           # Nom de la base de données
-      schema: public              # Schéma de destination des modèles
-      threads: 1                  # Nombre de connexions en parallèle
-      keepalives_idle: 0         # (optionnel)
-      connect_timeout: 10        # (optionnel)
+      type: postgres
+      host: "{{ env_var('PGHOST', 'sport-postgres') }}"
+      user: "{{ env_var('PGUSER', 'user') }}"
+      password: "{{ env_var('PGPASSWORD', 'password') }}"
+      port: "{{ env_var('PGPORT', '5432') | as_number }}"
+      dbname: "{{ env_var('PGDATABASE', 'sportdata') }}"
+      schema: "{{ env_var('DBT_SCHEMA', 'public') }}"   # Optionnel: mets DBT_SCHEMA=analytics dans .env
+      threads: 4
+      keepalives_idle: 0
+      connect_timeout: 10

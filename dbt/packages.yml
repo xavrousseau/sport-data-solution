@@ -1,0 +1,9 @@
+# ./dbt/packages.yml
+packages:
+  # Macros indispensables (relations, tests, pivots, unions, etc.)
+  - package: dbt-labs/dbt_utils
+    version: "1.4.0"        # compatible dbt 1.7.x
+
+  # Tests de qualité "à la Great Expectations" directement en dbt
+  - package: calogica/dbt_expectations
+    version: "0.10.4"       # compatible dbt 1.7.x

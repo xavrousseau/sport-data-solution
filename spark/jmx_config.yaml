@@ -1,0 +1,18 @@
+lowercaseOutputName: true
+lowercaseOutputLabelNames: true
+ssl: false
+rules:
+  - pattern: 'java.lang<type=Memory><>(.*):'
+    name: jvm_memory_$1
+    type: GAUGE
+    attrNameSnakeCase: true
+  - pattern: 'java.lang<type=GarbageCollector,name=(.*)><>CollectionTime'
+    name: jvm_gc_collection_time
+    type: GAUGE
+    labels:
+      gc: $1
+  - pattern: 'org.apache.spark<name=(.*)><>(.*)'
+    name: spark_$2
+    type: GAUGE
+    labels:
+      name: "$1"

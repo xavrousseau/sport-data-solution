@@ -1,63 +1,56 @@
 # ====================================================================================
 # FICHIER   : docker/docker-compose.override.dbt.yml
-# OBJET     : Déploiement de DBT (modélisation et transformation de données SQL)
-# CONTEXTE  : Utilise l’image officielle dbt-postgres, reliée à PostgreSQL local
+# OBJET     : Service DBT (modélisation SQL) — exécutions interactives & docs
+# CONTEXTE  : S’appuie sur PostgreSQL interne ("sport-postgres") et variables du .env
 # ====================================================================================
 
 services:
 
-  # -------------------------------------------------------------------------------
-  # 🧱 Service DBT — Transformation et modélisation SQL orientée analytique
-  # -------------------------------------------------------------------------------
+  # -----------------------------------------------------------------------------
+  # 🧱 DBT CLI — écrire/tester des modèles SQL, générer la doc, lancer des tests
+  # -----------------------------------------------------------------------------
   sport-dbt:
-    image: ghcr.io/dbt-labs/dbt-postgres:1.7.13
+    image: ghcr.io/dbt-labs/dbt-postgres:1.7.13   # version explicite, stable
     container_name: sport-dbt
+    working_dir: /usr/app                          # racine du projet dbt dans le conteneur
 
-    working_dir: /usr/app  # 📁 Répertoire de travail DBT à l’intérieur du conteneur
-
+    # On monte le projet et le profile au bon endroit (cohérent avec DBT_PROFILES_DIR)
     volumes:
-      # 📦 Montage du projet DBT local
       - ./dbt:/usr/app
-
-      # ⚙️ Fichier profiles.yml avec les connexions DBT (standard ~/.dbt/profiles.yml)
-      - ./dbt/profiles.yml:/root/.dbt/profiles.yml
+      - ./dbt/profiles.yml:/usr/app/profiles.yml:ro
 
     environment:
-      # 📂 Répertoire du profile DBT
-      DBT_PROFILES_DIR: /root/.dbt
-
-      # 🔑 Connexion à PostgreSQL (injectée depuis .env)
+      # DBT lira ce profiles.yml (évite /root/.dbt et aligne avec ton .env)
+      DBT_PROFILES_DIR: /usr/app                  # ← cf. .env
+      # Connexion Postgres (injectée depuis .env pour rester DRY)
       PGHOST: ${PGHOST}
       PGPORT: ${PGPORT}
       PGUSER: ${PGUSER}
       PGPASSWORD: ${PGPASSWORD}
       PGDATABASE: ${PGDATABASE}
-
-      # 🎯 Cible active du projet (ex : dev, prod…)
       DBT_TARGET: ${DBT_TARGET}
+      TZ: Europe/Paris
 
-    # ✅ Garde le conteneur actif sans générer d’erreur liée à une commande shell inexistante
+    # Service persistant pour pouvoir docker exec / docker compose run selon tes usages
     entrypoint: ["sleep", "infinity"]
 
     healthcheck:
-      # ❤️ Vérifie que la CLI DBT fonctionne correctement
+      # Vérifie simplement que la CLI dbt répond (la connexion DB n’est pas requise ici)
       test: ["CMD-SHELL", "dbt --version || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 3
 
     depends_on:
+      # Attend Postgres "healthy" pour éviter les messages d’erreur au premier run
       sport-postgres:
-        condition: service_healthy  # ✅ Attend que PostgreSQL soit prêt
+        condition: service_healthy
 
-    restart: unless-stopped  # 🔁 Redémarre sauf en cas d’arrêt manuel
-
+    restart: unless-stopped
     networks:
-      - sport-network  # 🌐 Réseau partagé avec les autres services
+      - sport-network   # même réseau que le reste de la stack
 
-# -------------------------------------------------------------------------------
-# 🌐 Réseau Docker partagé pour l’ensemble de la stack
-# -------------------------------------------------------------------------------
+# Réutilise le réseau commun déjà défini dans le compose principal
 networks:
   sport-network:
     driver: bridge

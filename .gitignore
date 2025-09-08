@@ -23,6 +23,7 @@ old/
 logs/
 __pycache__/
 jars/
+old_*
 
 # 📦 Fichiers d’archives
 *.zip

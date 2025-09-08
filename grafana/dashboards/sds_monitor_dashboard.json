@@ -1,0 +1,402 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 1,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "type": "row",
+      "title": "Santé des services",
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 },
+      "collapsed": false,
+      "panels": []
+    },
+    {
+      "type": "stat",
+      "title": "MinIO Up",
+      "datasource": "${DS_PROM}",
+      "targets": [
+        { "expr": "sds_minio_up", "legendFormat": "", "refId": "A" }
+      ],
+      "gridPos": { "h": 4, "w": 8, "x": 0, "y": 1 },
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "textMode": "auto"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": 0 },
+              { "color": "green", "value": 1 }
+            ]
+          },
+          "mappings": [
+            { "type": "value", "options": { "0": { "index": 0, "text": "DOWN" }, "1": { "index": 1, "text": "UP" } } }
+          ]
+        },
+        "overrides": []
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Postgres Up",
+      "datasource": "${DS_PROM}",
+      "targets": [
+        { "expr": "sds_postgres_up", "legendFormat": "", "refId": "A" }
+      ],
+      "gridPos": { "h": 4, "w": 8, "x": 8, "y": 1 },
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "textMode": "auto"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": 0 },
+              { "color": "green", "value": 1 }
+            ]
+          },
+          "mappings": [
+            { "type": "value", "options": { "0": { "index": 0, "text": "DOWN" }, "1": { "index": 1, "text": "UP" } } }
+          ]
+        },
+        "overrides": []
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Kafka Up",
+      "datasource": "${DS_PROM}",
+      "targets": [
+        { "expr": "sds_kafka_up", "legendFormat": "", "refId": "A" }
+      ],
+      "gridPos": { "h": 4, "w": 8, "x": 16, "y": 1 },
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "textMode": "auto"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": 0 },
+              { "color": "green", "value": 1 }
+            ]
+          },
+          "mappings": [
+            { "type": "value", "options": { "0": { "index": 0, "text": "DOWN" }, "1": { "index": 1, "text": "UP" } } }
+          ]
+        },
+        "overrides": []
+      }
+    },
+
+    {
+      "type": "row",
+      "title": "Volumétrie MinIO",
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 5 },
+      "collapsed": false,
+      "panels": []
+    },
+    {
+      "type": "barchart",
+      "title": "Objets par préfixe (total)",
+      "datasource": "${DS_PROM}",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 6 },
+      "targets": [
+        { "expr": "sds_minio_objects_total", "legendFormat": "{{prefix}}", "refId": "A" }
+      ],
+      "options": {
+        "legend": { "displayMode": "list", "placement": "bottom" },
+        "xTickLabelRotation": 0,
+        "barWidth": 0.8,
+        "tooltip": { "mode": "single " },
+        "stacking": "none",
+        "orientation": "horizontal"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "links": [
+            {
+              "title": "Ouvrir dans la console MinIO",
+              "url": "${MINIO_CONSOLE_URL}/browser/${BUCKET}/${__series.name}"
+            }
+          ],
+          "unit": "short"
+        },
+        "overrides": []
+      }
+    },
+    {
+      "type": "barchart",
+      "title": "Octets par préfixe (total)",
+      "datasource": "${DS_PROM}",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 6 },
+      "targets": [
+        { "expr": "sds_minio_bytes_total", "legendFormat": "{{prefix}}", "refId": "A" }
+      ],
+      "options": {
+        "legend": { "displayMode": "list", "placement": "bottom" },
+        "xTickLabelRotation": 0,
+        "barWidth": 0.8,
+        "tooltip": { "mode": "single" },
+        "stacking": "none",
+        "orientation": "horizontal"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "links": [
+            {
+              "title": "Ouvrir dans la console MinIO",
+              "url": "${MINIO_CONSOLE_URL}/browser/${BUCKET}/${__series.name}"
+            }
+          ]
+        },
+        "overrides": []
+      }
+    },
+
+    {
+      "type": "row",
+      "title": "Fraîcheur des checkpoints Spark",
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 14 },
+      "collapsed": false,
+      "panels": []
+    },
+    {
+      "type": "timeseries",
+      "title": "Checkpoint freshness (sec) – bronze_activites / bronze_qc / primes_jbe",
+      "datasource": "${DS_PROM}",
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 15 },
+      "targets": [
+        { "expr": "clamp_min(sds_spark_checkpoint_freshness_seconds{job=\"bronze_activites\"}, 0)", "legendFormat": "bronze_activites", "refId": "A" },
+        { "expr": "clamp_min(sds_spark_checkpoint_freshness_seconds{job=\"bronze_qc\"}, 0)", "legendFormat": "bronze_qc", "refId": "B" },
+        { "expr": "clamp_min(sds_spark_checkpoint_freshness_seconds{job=\"primes_jbe\"}, 0)", "legendFormat": "primes_jbe", "refId": "C" }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "orange", "value": 600 },
+              { "color": "red", "value": 1800 }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": { "displayMode": "table", "placement": "bottom" },
+        "tooltip": { "mode": "single", "sort": "none" }
+      }
+    },
+
+    {
+      "type": "row",
+      "title": "PostgreSQL – Rowcounts",
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 23 },
+      "collapsed": false,
+      "panels": []
+    },
+    {
+      "type": "table",
+      "title": "Tables clés – rowcount",
+      "datasource": "${DS_PROM}",
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 24 },
+      "targets": [
+        { "expr": "sds_postgres_rowcount", "legendFormat": "{{table}}", "refId": "A" }
+      ],
+      "transformations": [
+        { "id": "organize", "options": { "renameByName": { "Value": "rows" } } }
+      ],
+      "options": {
+        "showHeader": true,
+        "footer": { "show": false }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "mappings": [
+            { "type": "range", "options": { "from": -1, "to": -1, "result": { "text": "ERR" } } }
+          ]
+        },
+        "overrides": []
+      }
+    },
+
+    {
+      "type": "row",
+      "title": "Great Expectations & Kafka",
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 32 },
+      "collapsed": false,
+      "panels": []
+    },
+    {
+      "type": "stat",
+      "title": "Dernier rapport GE – heures depuis",
+      "datasource": "${DS_PROM}",
+      "gridPos": { "h": 4, "w": 12, "x": 0, "y": 33 },
+      "targets": [
+        { "expr": "(time() - sds_ge_last_success_timestamp) / 3600", "legendFormat": "", "refId": "A" }
+      ],
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "colorMode": "value"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "h",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "orange", "value": 24 },
+              { "color": "red", "value": 48 }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "type": "barchart",
+      "title": "Kafka – lag par topic (group=${KAFKA_GROUP})",
+      "datasource": "${DS_PROM}",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 33 },
+      "targets": [
+        { "expr": "sds_kafka_group_lag", "legendFormat": "{{topic}}", "refId": "A" }
+      ],
+      "options": {
+        "legend": { "displayMode": "list", "placement": "bottom" },
+        "orientation": "horizontal",
+        "stacking": "none",
+        "xTickLabelRotation": 0
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "orange", "value": 1000 },
+              { "color": "red", "value": 10000 }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+
+    {
+      "type": "row",
+      "title": "Fraîcheur des tables Delta",
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 41 },
+      "collapsed": false,
+      "panels": []
+    },
+    {
+      "type": "timeseries",
+      "title": "Delta freshness (sec) – bronze_activites_sportives / bronze_primes_jbe",
+      "datasource": "${DS_PROM}",
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 42 },
+      "targets": [
+        { "expr": "clamp_min(sds_delta_table_freshness_seconds{table=\"bronze_activites_sportives\"}, 0)", "legendFormat": "bronze_activites_sportives", "refId": "A" },
+        { "expr": "clamp_min(sds_delta_table_freshness_seconds{table=\"bronze_primes_jbe\"}, 0)", "legendFormat": "bronze_primes_jbe", "refId": "B" }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "orange", "value": 600 },
+              { "color": "red", "value": 1800 }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": { "displayMode": "table", "placement": "bottom" },
+        "tooltip": { "mode": "single", "sort": "none" }
+      }
+    }
+  ],
+  "refresh": "30s",
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": ["sds", "monitoring", "prometheus", "minio", "spark", "postgres", "kafka", "ge"],
+  "templating": {
+    "list": [
+      {
+        "name": "DS_PROM",
+        "type": "datasource",
+        "query": "prometheus",
+        "current": { "selected": true },
+        "label": "Prometheus",
+        "hide": 0
+      },
+      {
+        "name": "MINIO_CONSOLE_URL",
+        "type": "textbox",
+        "label": "MinIO Console URL",
+        "query": "",
+        "current": { "text": "http://localhost:9001", "value": "http://localhost:9001" }
+      },
+      {
+        "name": "BUCKET",
+        "type": "textbox",
+        "label": "Bucket",
+        "query": "",
+        "current": { "text": "sportdata", "value": "sportdata" }
+      },
+      {
+        "name": "KAFKA_GROUP",
+        "type": "textbox",
+        "label": "Kafka group (display only)",
+        "query": "",
+        "current": { "text": "—", "value": "—" }
+      }
+    ]
+  },
+  "time": { "from": "now-24h", "to": "now" },
+  "timezone": "",
+  "title": "SDS – Monitoring",
+  "uid": "sds-monitor",
+  "version": 2,
+  "weekStart": ""
+}

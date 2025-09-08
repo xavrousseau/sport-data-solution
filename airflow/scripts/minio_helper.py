@@ -2,37 +2,48 @@
 # Fichier     : scripts/minio_helper.py
 # Objet       : Classe utilitaire pour interagir facilement avec MinIO (S3-compatible)
 #
-# Description :
-#   Permet de centraliser les opérations courantes sur un bucket MinIO depuis un pipeline :
-#     - Connexion simple via boto3 en utilisant les variables d'environnement
-#     - Liste des objets d'un bucket
-#     - Suppression d'un objet
-#     - Suppression complète d'un bucket (avec purge)
+# Compatibilité :
+#   - API inchangée vs version précédente :
+#       class MinIOHelper:
+#         - list_objects(prefix="")
+#         - delete(object_key)
+#         - delete_bucket()
+#         - read_excel(key)
+#         - upload_file(local_path, key)
+#         - upload_excel(df, key, label="Fichier Excel")
 #
-# Prérequis :
-#   - Les variables d'environnement suivantes doivent être définies dans le .env :
-#       MINIO_HOST, MINIO_PORT, MINIO_ROOT_USER, MINIO_ROOT_PASSWORD, MINIO_BUCKET_NAME
-#   - Le fichier .env doit être présent dans /opt/airflow/.env (dans le container)
-#
-# Auteur      : Xavier Rousseau | Juillet 2025
+# Améliorations :
+#   - .env harmonisé (/opt/airflow/.env puis .env)
+#   - Timeouts + retries réseau via botocore.config.Config
+#   - ContentType explicite pour Excel
+#   - Pagination list_objects (gestion >1000 objets)
 # ==========================================================================================
 
 import os
 import io
+import mimetypes
+
 import boto3
 import pandas as pd
+from botocore.config import Config
 from botocore.exceptions import ClientError
 from dotenv import load_dotenv
 from loguru import logger
 
 # ------------------------------------------------------------------------------------------
-# 1. Chargement du .env pour récupérer les variables MinIO (appelé au chargement du module)
+# 1) Chargement .env : priorité Airflow, fallback local
 # ------------------------------------------------------------------------------------------
-load_dotenv("/opt/airflow/.env", override=True)
+try:
+    load_dotenv("/opt/airflow/.env", override=True)
+except Exception:
+    pass
+load_dotenv(".env", override=True)
+
 
 class MinIOHelper:
     """
-    Classe utilitaire pour manipuler MinIO (S3) : connexion, listing, suppression objets/bucket.
+    Classe utilitaire pour manipuler MinIO (S3).
+    Compatibilité totale avec la version existante.
     """
 
     def __init__(self):
@@ -42,96 +53,115 @@ class MinIOHelper:
         self.endpoint_url = f"http://{os.getenv('MINIO_HOST')}:{os.getenv('MINIO_PORT')}"
         self.access_key = os.getenv("MINIO_ROOT_USER")
         self.secret_key = os.getenv("MINIO_ROOT_PASSWORD")
-        self.bucket = os.getenv("MINIO_BUCKET_NAME", "sportdata")  # Valeur par défaut si non précisé
+        self.bucket = os.getenv("MINIO_BUCKET_NAME", "sportdata")  # défaut inchangé
 
-        # Sécurisation : vérification des credentials
         if not self.access_key or not self.secret_key:
             raise EnvironmentError("❌ Clés MinIO manquantes dans le .env")
 
         logger.info(f"📡 Connexion MinIO → {self.endpoint_url} | Bucket : {self.bucket}")
 
-        # Initialisation du client boto3 S3
+        # Config plus robuste : retries & timeouts (évite les blocages réseau)
+        cfg = Config(
+            retries={"max_attempts": 3, "mode": "standard"},
+            connect_timeout=5,
+            read_timeout=30,
+        )
+
         self.client = boto3.client(
             "s3",
             endpoint_url=self.endpoint_url,
             aws_access_key_id=self.access_key,
             aws_secret_access_key=self.secret_key,
-            region_name="us-east-1"  # MinIO ignore la région, mais boto3 l'exige
+            region_name="us-east-1",  # exigé par boto3 même si MinIO ignore
+            config=cfg,
         )
 
     # --------------------------------------------------------------------------------------
-    # 2. Lister les objets présents dans le bucket (option : préfixe de chemin)
+    # 2) Lister les objets du bucket (avec pagination)
     # --------------------------------------------------------------------------------------
-    def list_objects(self, prefix=""):
+    def list_objects(self, prefix: str = ""):
         """
-        Liste tous les objets du bucket MinIO correspondant à un préfixe donné.
+        Liste tous les objets du bucket correspondant à un préfixe donné.
 
         Args:
-            prefix (str) : Filtre sur le début du nom de fichier (ex : 'raw/' ou '')
-
+            prefix (str): ex. 'raw/' ou '' (tout le bucket)
         Returns:
-            list : Liste des clés objets (paths) présents dans le bucket.
+            list[str]: clés S3 (paths) présentes dans le bucket
         """
+        keys = []
         try:
-            response = self.client.list_objects_v2(Bucket=self.bucket, Prefix=prefix)
-            return [obj["Key"] for obj in response.get("Contents", [])]
+            continuation_token = None
+            while True:
+                kwargs = {"Bucket": self.bucket, "Prefix": prefix}
+                if continuation_token:
+                    kwargs["ContinuationToken"] = continuation_token
+                resp = self.client.list_objects_v2(**kwargs)
+                contents = resp.get("Contents", [])
+                keys.extend(obj["Key"] for obj in contents)
+                if resp.get("IsTruncated"):
+                    continuation_token = resp.get("NextContinuationToken")
+                else:
+                    break
+            return keys
         except Exception as e:
-            logger.error(f"❌ Erreur list_objects : {e}")
+            logger.error(f"❌ Erreur list_objects(prefix='{prefix}') : {e}")
             return []
 
     # --------------------------------------------------------------------------------------
-    # 3. Supprimer un objet spécifique dans le bucket
+    # 3) Supprimer un objet
     # --------------------------------------------------------------------------------------
-    def delete(self, object_key):
+    def delete(self, object_key: str):
         """
-        Supprime un objet identifié par sa clé dans le bucket MinIO.
+        Supprime un objet identifié par sa clé dans le bucket.
 
         Args:
             object_key (str): Clé de l'objet (chemin complet dans le bucket)
         """
         try:
             self.client.delete_object(Bucket=self.bucket, Key=object_key)
-            print(f"🗑️ Supprimé : {self.bucket}/{object_key}")
+            logger.success(f"🗑️ Supprimé : {self.bucket}/{object_key}")
         except Exception as e:
-            print(f"❌ Erreur suppression : {object_key} — {e}")
+            logger.error(f"❌ Erreur suppression : {object_key} — {e}")
 
     # --------------------------------------------------------------------------------------
-    # 4. Supprimer l'intégralité du bucket (purge objets + bucket)
+    # 4) Supprimer l'intégralité du bucket (purge objets + bucket)
     # --------------------------------------------------------------------------------------
     def delete_bucket(self):
         """
-        Supprime tous les objets du bucket puis le bucket lui-même.
-
-        Attention : opération destructive ! Assure-toi de ne pas supprimer un bucket important par erreur.
+        Supprime tous les objets puis le bucket lui-même.
+        ATTENTION : opération destructive.
         """
         try:
-            # Suppression de tous les objets du bucket
             objets = self.list_objects()
             if objets:
-                print(f"🧺 Suppression de {len(objets)} fichiers dans le bucket '{self.bucket}'")
-                for obj in objets:
-                    self.delete(obj)
+                logger.info(f"🧺 Suppression de {len(objets)} fichiers dans '{self.bucket}'")
+                # suppression par paquets (S3 DeleteObjects accepte jusqu'à 1000 keys)
+                for i in range(0, len(objets), 1000):
+                    chunk = objets[i : i + 1000]
+                    self.client.delete_objects(
+                        Bucket=self.bucket,
+                        Delete={"Objects": [{"Key": k} for k in chunk], "Quiet": True},
+                    )
             else:
-                print(f"🧼 Bucket '{self.bucket}' déjà vide.")
+                logger.info(f"🧼 Bucket '{self.bucket}' déjà vide.")
 
-            # Suppression du bucket lui-même
             self.client.delete_bucket(Bucket=self.bucket)
-            print(f"💥 Bucket '{self.bucket}' supprimé avec succès.")
+            logger.success(f"💥 Bucket '{self.bucket}' supprimé avec succès.")
         except Exception as e:
-            print(f"❌ Erreur lors de la suppression du bucket : {e}")
+            logger.error(f"❌ Erreur lors de la suppression du bucket : {e}")
 
     # --------------------------------------------------------------------------------------
-    # 5. Lire un fichier Excel depuis MinIO dans un DataFrame Pandas
+    # 5) Lire un Excel depuis MinIO dans un DataFrame Pandas
     # --------------------------------------------------------------------------------------
-    def read_excel(self, key):
+    def read_excel(self, key: str) -> pd.DataFrame:
         """
         Télécharge un fichier Excel depuis MinIO et retourne un DataFrame Pandas.
         """
         try:
-            response = self.client.get_object(Bucket=self.bucket, Key=key)
-            return pd.read_excel(io.BytesIO(response['Body'].read()))
+            obj = self.client.get_object(Bucket=self.bucket, Key=key)
+            return pd.read_excel(io.BytesIO(obj["Body"].read()))
         except ClientError as e:
-            if e.response['Error']['Code'] == 'NoSuchKey':
+            if e.response.get("Error", {}).get("Code") == "NoSuchKey":
                 logger.error(f"❌ Fichier {key} non trouvé dans le bucket {self.bucket}")
             else:
                 logger.error(f"❌ Erreur lors du téléchargement de {key} : {e}")
@@ -141,23 +171,29 @@ class MinIOHelper:
             raise
 
     # --------------------------------------------------------------------------------------
-    # 6. Uploader un fichier local vers MinIO
+    # 6) Uploader un fichier local vers MinIO
     # --------------------------------------------------------------------------------------
-    def upload_file(self, local_path, key):
+    def upload_file(self, local_path: str, key: str):
         """
         Upload un fichier local vers MinIO à la clé spécifiée.
         """
         try:
-            self.client.upload_file(local_path, self.bucket, key)
+            # On essaye de deviner le Content-Type pour une meilleure UX côté outils aval
+            content_type, _ = mimetypes.guess_type(local_path)
+            extra_args = {"ContentType": content_type} if content_type else None
+            if extra_args:
+                self.client.upload_file(local_path, self.bucket, key, ExtraArgs=extra_args)
+            else:
+                self.client.upload_file(local_path, self.bucket, key)
             logger.success(f"📤 Fichier uploadé : {local_path} ➜ {key}")
         except Exception as e:
             logger.error(f"❌ Erreur upload {local_path} : {e}")
             raise
 
     # --------------------------------------------------------------------------------------
-    # 7. Uploader un DataFrame Pandas en Excel directement vers MinIO (en mémoire)
+    # 7) Uploader un DataFrame Pandas en Excel directement (en mémoire)
     # --------------------------------------------------------------------------------------
-    def upload_excel(self, df, key, label="Fichier Excel"):
+    def upload_excel(self, df: pd.DataFrame, key: str, label: str = "Fichier Excel"):
         """
         Upload un DataFrame Pandas sous format Excel vers MinIO (sans fichier temporaire).
         """
@@ -170,7 +206,8 @@ class MinIOHelper:
                 Bucket=self.bucket,
                 Key=key,
                 Body=buffer,
-                ContentLength=buffer.getbuffer().nbytes
+                ContentLength=buffer.getbuffer().nbytes,
+                ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             )
             logger.success(f"📤 {label} uploadé sur MinIO : {key}")
         except Exception as e:
@@ -178,5 +215,5 @@ class MinIOHelper:
             raise
 
 # ------------------------------------------------------------------------------------------
-# Fin du fichier (aucun code d'exécution directe ici : importer la classe pour utilisation)
+# Fin du fichier
 # ------------------------------------------------------------------------------------------

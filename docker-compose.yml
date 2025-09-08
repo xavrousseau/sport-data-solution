@@ -1,199 +1,449 @@
 # ====================================================================================
 # FICHIER   : docker-compose.yml
-# OBJET     : Services centraux de la stack Sport Data Solution (ingestion, stockage, traitement)
-# AUTEUR    : Xavier Rousseau — Juillet 2025
+# OBJET     : Stack complète Sport Data Solution (CDC → Kafka/Redpanda → Spark/Delta S3 → BI/Monitoring)
+# AUTEUR    : Xavier Rousseau — Août 2025
+# NOTE      : Version corrigée, lisible et commentée.
+# ====================================================================================
+# Prérequis :
+#   - Docker + Docker Compose v2
+#   - Un fichier .env à la racine (ports, identifiants, clés MinIO, etc.)
+#   - Arborescence:
+#       ./postgres/init/*.sql                 # 00_init_postgres.sql, 01_publication.sql, 99_test_cdc.sql
+#       ./minio/init/init_minio.sh            # script d’init MinIO (idempotent)
+#       ./debezium/sportdata_connector.json   # connecteur Debezium (name + config)
+#       ./prometheus/prometheus.yml           # config Prometheus
+#       ./spark/Dockerfile                    # image Spark
+#       ./spark/jobs                          # jobs Spark
+#       ./spark/conf/spark-defaults.conf      # conf Spark (packages JAR)
+#
+# Lancement (PowerShell) :
+#   docker compose `
+#     --env-file .env `
+#     up -d --build
+#
+# Notes d’archi :
+#   - Postgres exécute ./postgres/init/* au PREMIER démarrage du volume.
+#   - MinIO est initialisé via “sport-minio-init” (bucket + préfixes).
+#   - Debezium est auto-configuré via “sport-debezium-init” (POST puis PUT si déjà créé).
 # ====================================================================================
 
 services:
 
   # ================================================================================
-  # 1. PostgreSQL — Base de données relationnelle principale
-  #    - Utilisé par Airflow, Metabase, pgAdmin, DBT et autres
-  #    - Contient les données métiers de la plateforme
+  # 1) PostgreSQL — Base relationnelle (source de vérité + cibles BI)
+  #    - Réplication logique activée pour Debezium (CDC)
+  #    - Exécute ./postgres/init/*.sql au premier init du volume
   # ================================================================================
   sport-postgres:
     image: postgres:15
     container_name: sport-postgres
     restart: unless-stopped
+    env_file: .env
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}             # Identifiant de connexion
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}     # Mot de passe PostgreSQL
-      POSTGRES_DB: ${POSTGRES_DB}                 # Base de données principale
-    ports:
-      - "${POSTGRES_PORT}:5432"                   # Port PostgreSQL exposé
-    volumes:
-      - postgres_data:/var/lib/postgresql/data    # Volume persistant des données
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     command:
-      - "postgres"
-      - "-c"
-      - "wal_level=logical"
+      - postgres
+      - -c
+      - wal_level=logical
+      - -c
+      - max_replication_slots=20
+      - -c
+      - max_wal_senders=20
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./postgres/init:/docker-entrypoint-initdb.d:ro
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB} -h 127.0.0.1"]
       interval: 10s
       timeout: 5s
-      retries: 5
-    networks:
-      - sport-network
+      retries: 10
+    networks: [sport-network]
 
   # ================================================================================
-  # 2. MinIO — Stockage objet S3-compatible
-  #    - Utilisé pour stocker les fichiers bruts, logs, exports, rapports
-  #    - Console web incluse pour navigation
-  # ================================================================================
-  sport-minio:
-    image: minio/minio:latest
-    container_name: sport-minio
-    command: server /data --console-address ":${MINIO_CONSOLE_PORT}"
-    environment:
-      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
-      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
-    ports:
-      - "${MINIO_PORT}:9000"                       # API S3
-      - "${MINIO_CONSOLE_PORT}:9001"               # Console web MinIO
-    volumes:
-      - minio_data:/data                           # Stockage des objets
-    restart: unless-stopped
-    networks:
-      - sport-network
-
-  # ================================================================================
-  # 3. Redpanda — Broker Kafka-compatible (streaming temps réel)
-  #    - Utilisé pour gérer les flux temps réel (CDC, événements)
+  # 2) Redpanda — Broker Kafka-compatible
+  #    - Mode dev-container, ports Kafka (9092) + Admin API (9644)
+  #    - Healthcheck via rpk (inclus dans l'image officielle)
   # ================================================================================
   sport-redpanda:
-    image: docker.redpanda.com/redpandadata/redpanda:latest
+    image: redpandadata/redpanda:v24.2.9
     container_name: sport-redpanda
-    command: redpanda start --overprovisioned --smp 1 --memory 512M --reserve-memory 0M --node-id 0 --check=false \
-      --advertise-kafka-addr sport-redpanda:9092 --kafka-addr 0.0.0.0:9092
+    restart: unless-stopped
+    command:
+      - redpanda
+      - start
+      - --overprovisioned
+      - --smp
+      - "1"
+      - --memory
+      - 512M
+      - --reserve-memory
+      - 0M
+      - --node-id
+      - "0"
+      - --check=false
+      - --mode
+      - dev-container
+      - --kafka-addr
+      - PLAINTEXT://0.0.0.0:9092
+      - --advertise-kafka-addr
+      - PLAINTEXT://sport-redpanda:9092
+      - --rpc-addr
+      - 0.0.0.0:33145
+      - --advertise-rpc-addr
+      - sport-redpanda:33145
+      - --set
+      - 'redpanda.admin=[{"address":"0.0.0.0","port":9644}]'
     ports:
       - "${REDPANDA_BROKER_PORT}:9092"
       - "${REDPANDA_ADMIN_PORT}:9644"
     volumes:
       - redpanda_data:/var/lib/redpanda/data
-    restart: unless-stopped
-    networks:
-      - sport-network
+    healthcheck:
+      test: ["CMD", "rpk", "cluster", "health", "--api-urls", "localhost:9644", "--exit-when-healthy"]
+      interval: 5s
+      timeout: 10s
+      retries: 60
+    networks: [sport-network]
 
-  # --------------------------------------------------------------------------------
-  # Console Redpanda — UI web pour explorer les topics, messages, schémas
-  # --------------------------------------------------------------------------------
+  # Console Redpanda — UI web pour explorer topics/messages
   sport-redpanda-console:
-    image: docker.redpanda.com/redpandadata/console:latest
+    image: redpandadata/console:v2.7.2
     container_name: sport-redpanda-console
-    restart: always
+    restart: unless-stopped
     environment:
-      - KAFKA_BROKERS=sport-redpanda:9092
-      - REDPANDA_ADMIN_URL=http://sport-redpanda:9644
+      KAFKA_BROKERS: sport-redpanda:9092
+      REDPANDA_ADMIN_URL: http://sport-redpanda:9644
     ports:
-      - "${REDPANDA_CONSOLE_PORT}:8080"           # Interface console web
+      - "${REDPANDA_CONSOLE_PORT}:8080"
     depends_on:
-      - sport-redpanda
-    networks:
-      - sport-network
+      sport-redpanda:
+        condition: service_healthy
+    networks: [sport-network]
 
   # ================================================================================
-  # 4. Debezium — Change Data Capture (CDC) PostgreSQL vers Redpanda (Kafka)
-  #    - Capture les changements en temps réel dans PostgreSQL
-  #    - Publie les événements dans Redpanda
+  # 3) Debezium (Kafka Connect) — CDC Postgres → Kafka
+  #    - BOOTSTRAP_SERVERS/Topics internes/GROUP_ID via .env
+  #    - REST_ADVERTISED_HOST_NAME = nom du service Docker (résolution interne)
   # ================================================================================
   sport-debezium:
     image: debezium/connect:2.5
     container_name: sport-debezium
-    depends_on:
-      sport-postgres:
-        condition: service_healthy
-      sport-redpanda:
-        condition: service_started
+    restart: unless-stopped
+    env_file: .env
     environment:
-      BOOTSTRAP_SERVERS: ${DEBEZIUM_BOOTSTRAP_SERVERS}
+      BOOTSTRAP_SERVERS: ${DEBEZIUM_BOOTSTRAP_SERVERS}   # ex: sport-redpanda:9092
       GROUP_ID: ${DEBEZIUM_GROUP_ID}
       CONFIG_STORAGE_TOPIC: ${DEBEZIUM_CONFIG_STORAGE_TOPIC}
       OFFSET_STORAGE_TOPIC: ${DEBEZIUM_OFFSET_STORAGE_TOPIC}
       STATUS_STORAGE_TOPIC: ${DEBEZIUM_STATUS_STORAGE_TOPIC}
-      REST_ADVERTISED_HOST_NAME: ${DEBEZIUM_CONNECT_REST_ADVERTISED_HOST_NAME}
+      REST_ADVERTISED_HOST_NAME: sport-debezium
     ports:
       - "${DEBEZIUM_CONNECT_PORT}:8083"
-    volumes:
-      - ./.env:/opt/airflow/.env:ro 
-    restart: unless-stopped
-    networks:
-      - sport-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:8083/connectors || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+    depends_on:
+      sport-postgres:
+        condition: service_healthy
+      sport-redpanda:
+        condition: service_healthy
+    networks: [sport-network]
 
-   # ================================================================================
-  # 5. Spark — Traitement de données (batch, streaming)
-  #    - Peut consommer des topics Kafka et écrire en Delta Lake ou PostgreSQL
-  #    - 🔔 Peut aussi envoyer des notifications via NTFY si utilisé dans les scripts
+  # Debezium init — auto-enregistrement/mise à jour du connecteur
+  # - Lit ./debezium/sportdata_connector.json (contenant "name" et "config")
+  # - POST si absent (201), PUT /{name}/config si déjà présent (409)
+  sport-debezium-init:
+    image: alpine:3.20
+    container_name: sport-debezium-init
+    restart: "no"
+    volumes:
+      - ./debezium/sportdata_connector.json:/connector.json:ro
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        set -eu
+        apk add --no-cache curl jq >/dev/null
+        echo "Attente Debezium Connect..."
+        until curl -sf http://sport-debezium:8083/connectors >/dev/null; do sleep 2; done
+        echo "Debezium OK — enregistrement du connecteur"
+
+        HTTP_CODE=$$(curl -s -o /tmp/resp.txt -w "%{http_code}" -X POST \
+          -H "Content-Type: application/json" \
+          --data @/connector.json \
+          http://sport-debezium:8083/connectors || true)
+
+        if [ "$$HTTP_CODE" = "201" ]; then
+          echo "Connecteur créé."
+          exit 0
+        fi
+
+        if [ "$$HTTP_CODE" = "409" ]; then
+          echo "Connecteur déjà présent — mise à jour de la config."
+          NAME=$$(jq -r '.name' /connector.json)
+          jq -r '.config' /connector.json > /tmp/config.json
+          curl -sf -X PUT -H "Content-Type: application/json" \
+            --data @/tmp/config.json \
+            http://sport-debezium:8083/connectors/$$NAME/config
+          echo "Connecteur mis à jour."
+          exit 0
+        fi
+
+        echo "Echec (HTTP $$HTTP_CODE) :"; cat /tmp/resp.txt; exit 1
+    depends_on:
+      sport-debezium:
+        condition: service_healthy
+      sport-postgres:
+        condition: service_healthy
+      sport-redpanda:
+        condition: service_healthy
+    networks: [sport-network]
+
   # ================================================================================
+  # 4) MinIO — Stockage objet S3-compatible (Delta Lake, exports…)
+  # ================================================================================
+  sport-minio:
+    image: minio/minio:latest   # Conseil: pinner une release MinIO pour éviter les régressions
+    container_name: sport-minio
+    restart: unless-stopped
+    env_file: .env
+    # IMPORTANT: la console écoute en 9001 DANS le conteneur
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+      MINIO_PROMETHEUS_AUTH_TYPE: ${MINIO_PROMETHEUS_AUTH_TYPE}
+    ports:
+      - "${MINIO_PORT}:9000"
+      - "${MINIO_CONSOLE_PORT}:9001"
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks: [sport-network]
+
+  # Init MinIO — exécute TON script idempotent (bucket + préfixes)
+  sport-minio-init:
+    image: minio/mc:latest
+    container_name: sport-minio-init
+    restart: "no"
+    env_file: .env
+    volumes:
+      - ./minio/init/init_minio.sh:/init_minio.sh:ro
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        set -eu
+        echo "⏳ Attente MinIO (via mc)..."
+
+        # Normalisation CRLF→LF (compat Windows)
+        tr -d '\r' < /init_minio.sh > /tmp/init_minio.sh
+        chmod +x /tmp/init_minio.sh
+
+        # Boucle d'attente (tous les $ sont DOUBLÉS pour éviter l'interpolation Compose)
+        i=0
+        while ! mc alias set local http://sport-minio:9000 "$${MINIO_ROOT_USER}" "$${MINIO_ROOT_PASSWORD}" >/dev/null 2>&1; do
+          i=$$((i+1))
+          if [ $$i -ge 60 ]; then
+            echo "❌ MinIO indisponible après 120s"
+            exit 1
+          fi
+          sleep 2
+        done
+
+        echo "✅ MinIO OK — exécution du bootstrap"
+        /bin/sh /tmp/init_minio.sh
+    depends_on:
+      sport-minio: { condition: service_started }
+    networks: [sport-network]
+
+# ================================================================================
+# 5) Spark — Traitements batch/streaming
+#     - Mode : Standalone (1 master + 1 worker)
+#     - Lecture Kafka, écriture Delta (MinIO via S3A)
+#     - Monitoring : JMX Exporter (daemons) + UI /metrics/prometheus (apps)
+# ================================================================================
   sport-spark:
     build:
       context: .
-      dockerfile: spark/Dockerfile  # Dockerfile situé dans ./spark/
+      dockerfile: spark/Dockerfile            # Image custom avec jars Delta/S3A + JMX exporter
     image: sport-spark:latest
     container_name: sport-spark
-
+    restart: unless-stopped
+    env_file: .env
     environment:
       SPARK_MODE: master
-      KAFKA_BOOTSTRAP_SERVERS: sport-redpanda:9092
-
-      # 🪣 Accès MinIO via S3A
+      # Kafka / MinIO (doublon pratique des props S3A — inoffensif)
+      KAFKA_BOOTSTRAP_SERVERS: ${KAFKA_BOOTSTRAP_SERVERS}
       AWS_ACCESS_KEY_ID: ${MINIO_ROOT_USER}
       AWS_SECRET_ACCESS_KEY: ${MINIO_ROOT_PASSWORD}
       AWS_REGION: us-east-1
       S3_ENDPOINT: http://sport-minio:9000
-      S3_PATH_STYLE_ACCESS: true
-      PYSPARK_PYTHON: python3
-
-      # 🔔 Notifications ntfy
+      S3_PATH_STYLE_ACCESS: "true"
+      # Python de l’image Bitnami
+      PYSPARK_PYTHON: /opt/bitnami/python/bin/python
+      PYSPARK_DRIVER_PYTHON: /opt/bitnami/python/bin/python
+      # JMX exporter sur le daemon (métriques stables)
+      SPARK_DAEMON_JAVA_OPTS: -javaagent:/opt/bitnami/spark/jmx/jmx_prometheus_javaagent.jar=7080:/opt/bitnami/spark/jmx/jmx_config.yaml
+      # Notifications (optionnel)
       NTFY_URL: ${NTFY_URL}
       NTFY_TOPIC: ${NTFY_TOPIC}
-
     ports:
-      - "${SPARK_UI_PORT}:4040"
-      - "${SPARK_CLUSTER_PORT}:7077"
+      - "${SPARK_UI_PORT}:4040"              # UI d'app (active pendant un job)
+      - "${SPARK_CLUSTER_PORT}:7077"         # RPC Master (nécessaire si soumission depuis l'hôte)
+      # - "8080:8080"                        # (optionnel) UI Master Standalone
     volumes:
-      - ./spark/jobs:/opt/bitnami/spark/jobs
-      - ./spark/conf/spark-defaults.conf:/opt/bitnami/spark/conf/spark-defaults.conf
+      - ./spark/jobs:/opt/bitnami/spark/jobs:ro
+      - ./spark/conf/spark-defaults.conf:/opt/bitnami/spark/conf/spark-defaults.conf:ro
       - ./airflow/scripts:/opt/airflow/scripts:ro
       - ./.env:/opt/airflow/.env:ro 
-    networks:
-      - sport-network
+      # Si le JMX exporter n’est PAS baked dans l’image, décommentez :
+      # - ./spark/jmx/jmx_prometheus_javaagent.jar:/opt/bitnami/spark/jmx/jmx_prometheus_javaagent.jar:ro
+      # - ./spark/conf/jmx_config.yaml:/opt/bitnami/spark/jmx/jmx_config.yaml:ro
+    depends_on:
+      sport-minio:    { condition: service_healthy }
+      sport-redpanda: { condition: service_healthy }
+    networks: [sport-network]
+
+  # Worker
+  sport-spark-worker:
+    image: sport-spark:latest
+    container_name: sport-spark-worker
     restart: unless-stopped
+    env_file: .env
+    environment:
+      SPARK_MODE: worker
+      SPARK_MASTER_URL: spark://sport-spark:7077
+      PYSPARK_PYTHON: /opt/bitnami/python/bin/python
+      PYSPARK_DRIVER_PYTHON: /opt/bitnami/python/bin/python
+      SPARK_DAEMON_JAVA_OPTS: -javaagent:/opt/bitnami/spark/jmx/jmx_prometheus_javaagent.jar=7081:/opt/bitnami/spark/jmx/jmx_config.yaml
+    # UI Worker (optionnel)
+    # ports:
+    #   - "8081:8081"
+    # Si le JMX exporter n’est PAS baked :
+    # volumes:
+    #   - ./spark/jmx/jmx_prometheus_javaagent.jar:/opt/bitnami/spark/jmx/jmx_prometheus_javaagent.jar:ro
+    #   - ./spark/conf/jmx_config.yaml:/opt/bitnami/spark/jmx/jmx_config.yaml:ro
+    depends_on:
+      sport-spark: { condition: service_started }
+    networks: [sport-network]
+
 
   # ================================================================================
-  # 6. Redis — Broker Celery pour Airflow (exécuteur distribué)
+  # 6) Metabase — BI légère (exploration, dashboards) — PERSISTANTE
+  # ================================================================================
+  sport-metabase:
+    image: metabase/metabase:v0.49.15
+    container_name: sport-metabase
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      MB_TIMEZONE: ${MB_TIMEZONE}
+      MB_DB_FILE: /metabase-data/metabase.db   # ← persistance H2 locale
+      # Alternative prod recommandée: pointer Metabase vers Postgres
+      # (MB_DB_TYPE, MB_DB_DBNAME, MB_DB_PORT, MB_DB_USER, MB_DB_PASS, MB_DB_HOST)
+    ports:
+      - "${METABASE_PORT}:3000"   # Metabase écoute en 3000 dans le conteneur
+    volumes:
+      - metabase_data:/metabase-data
+    depends_on:
+      sport-postgres:
+        condition: service_healthy
+    networks: [sport-network]
+
+  # ================================================================================
+  # 7) pgAdmin — Administration PostgreSQL
+  # ================================================================================
+  sport-pgadmin:
+    image: dpage/pgadmin4:8.9
+    container_name: sport-pgadmin
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+    ports:
+      - "${PGADMIN_PORT}:80"       # pgAdmin écoute en 80 dans le conteneur
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    depends_on:
+      sport-postgres:
+        condition: service_healthy
+    networks: [sport-network]
+
+  # ================================================================================
+  # 8) Prometheus — Monitoring (scrape des métriques)
+  # ================================================================================
+  sport-prometheus:
+    image: prom/prometheus:v2.54.1
+    container_name: sport-prometheus
+    restart: unless-stopped
+    ports:
+      - "${PROMETHEUS_PORT}:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    networks: [sport-network]
+
+  # ================================================================================
+  # 9) Grafana — Visualisation de métriques
+  # ================================================================================
+  sport-grafana:
+    image: grafana/grafana:11.1.4
+    container_name: sport-grafana
+    restart: unless-stopped
+    ports:
+      - "${GRAFANA_PORT}:3000"   # Grafana écoute en 3000 dans le conteneur
+    volumes:
+      - grafana_data:/var/lib/grafana
+      # - ./grafana/provisioning:/etc/grafana/provisioning:ro   # (optionnel)
+    depends_on:
+      sport-prometheus:
+        condition: service_started
+    networks: [sport-network]
+
+  # ================================================================================
+  # 10) Redis — Broker (utile si Airflow Celery, etc.)
   # ================================================================================
   sport-redis:
     image: redis:7
     container_name: sport-redis
+    restart: unless-stopped
     ports:
       - "${REDIS_PORT}:6379"
-    restart: unless-stopped
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ["CMD", "redis-cli", "-h", "127.0.0.1", "ping"]
       interval: 10s
       timeout: 3s
       retries: 5
-    networks:
-      - sport-network
+    networks: [sport-network]
 
   # ================================================================================
-  # 7. ntfy — Service de notifications simples (via CLI, API REST ou Webhook)
-  #    - Notifications d’alertes ou messages techniques
+  # 11) ntfy — Notifications HTTP (UI + API)
   # ================================================================================
   sport-ntfy:
-    image: binwiederhier/ntfy
+    image: binwiederhier/ntfy:latest   # Conseil: pinner une version (ex: v2.x)
     container_name: sport-ntfy
-    command: serve
+    command: ["serve", "--enable-metrics"] 
     ports:
-      - "${NTFY_HTTP_PORT}:80"         # API REST et UI Web (http://localhost:<port>)
+      - "${NTFY_HTTP_PORT}:80"
     volumes:
-      - ./docker/ntfy:/etc/ntfy  # Montre le dossier où est ntfy.yml
+      - ./docker/ntfy:/etc/ntfy   # optionnel (ntfy.yml)
     restart: always
-    networks:
-      - sport-network
+    networks: [sport-network]
 
 # ====================================================================================
-# 🔗 Réseau Docker partagé entre tous les services
+# Réseau partagé
 # ====================================================================================
 networks:
   sport-network:
@@ -201,10 +451,13 @@ networks:
     driver: bridge
 
 # ====================================================================================
-# 💾 Volumes persistants (conservation des données et états)
+# Volumes persistants
 # ====================================================================================
 volumes:
   postgres_data:
   minio_data:
   redpanda_data:
-  spark_data:
+  metabase_data:
+  pgadmin_data:
+  prometheus_data:
+  grafana_data:

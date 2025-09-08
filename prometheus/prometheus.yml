@@ -1,0 +1,108 @@
+# ====================================================================================
+# Fichier : prometheus.yml
+# Objet   : Monitoring complet de la stack Sport Data Solution
+# Auteur  : Xavier Rousseau | MAJ : Août 2025
+# ====================================================================================
+
+global:
+  scrape_interval: 15s            # Fréquence de collecte par défaut
+  scrape_timeout: 10s             # Délai max de collecte (doit < scrape_interval)
+  evaluation_interval: 15s        # Fréquence d’évaluation des règles (si alerting)
+  external_labels:                # Utile pour fédération/ha multi-envs (facultatif)
+    project: sport-data-solution
+    env: local
+
+# Optionnel : accepte les labels des cibles (évite d’écraser 'job'/'instance' existants)
+# honor_labels: true
+
+scrape_configs:
+
+  # ------------------------------------------------------------------------------
+  # 0) Prometheus lui‑même (santé & perf du serveur de scrape)
+  # ------------------------------------------------------------------------------
+  - job_name: sds-prometheus
+    static_configs:
+      - targets: ["localhost:9090"]  # 'localhost' vu depuis le conteneur Prometheus
+
+  # ------------------------------------------------------------------------------
+  # 1) Redpanda (Kafka) — Admin API /public_metrics
+  #    → Très utile : latences, débit, partitions, etc.
+  # ------------------------------------------------------------------------------
+  - job_name: sds-redpanda
+    metrics_path: /public_metrics
+    scrape_interval: 10s
+    static_configs:
+      - targets: ["sport-redpanda:9644"]
+
+  # ------------------------------------------------------------------------------
+  # 2) MinIO (Data Lake) — métriques cluster
+  #    ⚠️ Requiert MINIO_PROMETHEUS_AUTH_TYPE=public côté MinIO, sinon 401.
+  # ------------------------------------------------------------------------------
+  - job_name: sds-minio
+    metrics_path: /minio/v2/metrics/cluster
+    scrape_interval: 15s
+    static_configs:
+      - targets: ["sport-minio:9000"]
+    # Exemple : filtrer des metrics très verbeuses (optionnel)
+    # metric_relabel_configs:
+    #   - source_labels: [__name__]
+    #     regex: 'go_.*|process_.*'
+    #     action: drop
+
+  # ------------------------------------------------------------------------------
+  # 3) ntfy — Notifications (expose /metrics quand lancé avec --enable-metrics)
+  # ------------------------------------------------------------------------------
+  - job_name: sds-ntfy
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["sport-ntfy:80"]
+
+  # ------------------------------------------------------------------------------
+  # 4) Spark — UI de l’application courante (/metrics/prometheus)
+  #    ⚠️ N’existe QUE quand une app tourne (4040, 4041, 4042, …)
+  # ------------------------------------------------------------------------------
+  - job_name: sds-spark-ui
+    metrics_path: /metrics/prometheus
+    scrape_interval: 10s
+    static_configs:
+      - targets: ["sport-spark:4040"]   # Ajouter 4041/4042 si plusieurs apps en //.
+
+  # ------------------------------------------------------------------------------
+  # 5) Spark — JMX Exporter du DRIVER (pendant l'app)
+  #    ⚠️ Requiert l’agent jmx_prometheus_javaagent (port 7078)
+  # ------------------------------------------------------------------------------
+  - job_name: sds-spark-jmx-driver
+    metrics_path: /metrics
+    scrape_interval: 10s
+    static_configs:
+      - targets: ["sport-spark:7078"]
+
+  # ------------------------------------------------------------------------------
+  # 6) Spark — Daemons **toujours vivants** (Master + Worker)
+  #    → fournit un signal “UP” permanent pour les dashboards
+  # ------------------------------------------------------------------------------
+  - job_name: sds-spark-daemons
+    scrape_interval: 15s
+    static_configs:
+      - targets:
+          - "sport-spark:7080"        # Master daemon (SPARK_DAEMON_JAVA_OPTS sur le master)
+          - "sport-spark-worker:7081" # Worker daemon (SPARK_DAEMON_JAVA_OPTS sur le worker)
+
+  # ------------------------------------------------------------------------------
+  # 7) Exporters/applications optionnels — décommente si présents
+  # ------------------------------------------------------------------------------
+  # - job_name: sds-postgres
+  #   static_configs:
+  #     - targets: ["postgres_exporter:9187"]
+  #
+  # - job_name: sds-airflow
+  #   static_configs:
+  #     - targets: ["sport-airflow-webserver:9108"]
+  #
+  # - job_name: sds-app
+  #   static_configs:
+  #     - targets: ["sportdata-app:8000"]
+
+# ====================================================================================
+# FIN DU FICHIER — prometheus.yml
+# ====================================================================================
