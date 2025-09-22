@@ -4,8 +4,6 @@
 
 Prototype d'une architecture de données moderne pour analyser l'activité sportive des employés, incluant collecte, traitement, orchestration, monitoring et visualisation.
 
-Projet réalisé dans le cadre de l'option B "Créez et automatisez une architecture de données".
-
 ---
 
 ## 🧰 Stack technique
